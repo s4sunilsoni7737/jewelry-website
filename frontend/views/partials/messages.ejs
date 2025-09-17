@@ -1,0 +1,17 @@
+<% if (success_msg && success_msg.length > 0) { %>
+  <div class="alert alert-success alert-dismissible fade show mx-auto" 
+       role="alert" 
+       style="max-width: 500px; margin: 12px;" !important>
+    <%= success_msg %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+<% } %>
+
+<% if (error_msg && error_msg.length > 0) { %>
+  <div class="alert alert-danger alert-dismissible fade show mx-auto" 
+       role="alert" 
+       style="max-width: 500px; margin: 12px;" !important>
+    <%= error_msg %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+<% } %>

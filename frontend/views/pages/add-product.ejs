@@ -1,0 +1,574 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<%- include('../partials/messages') %>
+
+<style>
+  /* Add Product Page - Contact Page Style */
+  .form-container {
+    background: linear-gradient(135deg, #fff 0%, #fefefe 100%);
+    border: 2px solid #e0bf50;
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 8px 25px rgba(224, 191, 80, 0.1);
+    transition: transform 0.3s ease;
+    margin-bottom: 30px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .form-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(224, 191, 80, 0.15);
+  }
+
+  .page-title {
+    color: #2c2c2c;
+    font-weight: 700;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .form-section {
+    background: #fff;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+  }
+
+  .section-title {
+    color: #2c2c2c;
+    font-weight: 600;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 4px solid #e0bf50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-icon {
+    color: #e0bf50;
+    font-size: 1.2rem;
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: #2c2c2c;
+    margin-bottom: 8px;
+    font-size: 1rem;
+  }
+
+  .form-control, .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .form-control:focus, .form-select:focus {
+    border-color: #e0bf50;
+    box-shadow: 0 0 0 0.2rem rgba(224, 191, 80, 0.25);
+  }
+
+  .btn-primary-gold {
+    background: linear-gradient(135deg, #e0bf50, #ffc107);
+    border: none;
+    color: #000;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 1rem;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .btn-primary-gold:hover {
+    background: linear-gradient(135deg, #ffc107, #ffed4e);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(224, 191, 80, 0.3);
+    color: #000;
+  }
+
+  .back-button {
+    margin-bottom: 20px;
+  }
+
+  .image-preview-container {
+    background: rgba(224, 191, 80, 0.05);
+    border: 2px dashed #e0bf50;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .image-preview-container:hover {
+    background: rgba(224, 191, 80, 0.1);
+  }
+
+  .image-preview {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(224, 191, 80, 0.2);
+  }
+
+  .price-toggle {
+    background: rgba(224, 191, 80, 0.05);
+    border: 2px solid #e0bf50;
+    border-radius: 8px;
+    padding: 15px;
+  }
+
+  .form-check-input:checked {
+    background-color: #e0bf50;
+    border-color: #e0bf50;
+  }
+
+  .input-group-text {
+    background: linear-gradient(135deg, #e0bf50, #ffc107);
+    border: 2px solid #e0bf50;
+    color: #000;
+    font-weight: 600;
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .form-container {
+      margin: 0 15px;
+      padding: 25px;
+    }
+    
+    .page-title {
+      font-size: 2rem;
+    }
+    
+    .form-section {
+      padding: 20px;
+    }
+  }
+
+  /* Animation for page load */
+  @keyframes fadeInUp {
+    from { 
+      opacity: 0; 
+      transform: translateY(30px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+
+  .form-container {
+    animation: fadeInUp 0.6s ease-out;
+  }
+</style>
+
+<a type="button" class="btn btn-outline-warning back-button" href="/products">
+  <i class="fa-solid fa-arrow-left"></i>
+</a>
+
+<div class="container">
+  <div class="form-container">
+    <h1 class="page-title">
+      <i class="fas fa-plus-circle me-3" style="color: #ffd700;"></i>
+      <span class="lang" data-en="Add New Product" data-hi="नया उत्पाद जोड़ें">Add New Product</span>
+    </h1>
+
+    <% if (!session.isSeller) { %>
+      <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <span class="lang" data-en="Only shop owners can add products." data-hi="केवल दुकान मालिक उत्पाद जोड़ सकते हैं।">Only shop owners can add products.</span>
+      </div>
+    <% } else { %>
+
+    <p class="text-muted mb-4">You are adding products to: <strong><%= currentShop.name %>'s Shop</strong></p>
+
+    <form class="needs-validation" id="addProductForm" action="/products/add" method="POST" enctype="multipart/form-data" novalidate>
+
+      <!-- Basic Information Section -->
+      <div class="form-section">
+        <h4 class="section-title">
+          <i class="fas fa-info-circle section-icon"></i>
+          <span class="lang" data-en="Basic Information" data-hi="बुनियादी जानकारी">Basic Information</span>
+        </h4>
+        
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="name" class="form-label">
+              <span class="lang" data-en="Product Name" data-hi="उत्पाद का नाम">Product Name</span>
+              <span class="text-danger">*</span>
+            </label>
+            <input type="text" class="form-control" id="name" name="name" required value="<%= typeof product !== 'undefined' ? product.name : '' %>">
+            <div class="invalid-feedback">
+              <span class="lang" data-en="Please provide a product name." data-hi="कृपया उत्पाद का नाम प्रदान करें।">Please provide a product name.</span>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="category" class="form-label">
+              <span class="lang" data-en="Category" data-hi="श्रेणी">Category</span>
+              <span class="text-danger">*</span>
+            </label>
+            <select class="form-select" id="category" name="category" required>
+              <option value="">
+                <span class="lang" data-en="Select Category" data-hi="श्रेणी चुनें">Select Category</span>
+              </option>
+              <% categories.forEach(cat => { %>
+                <option value="<%= cat._id %>"><%= cat.name %></option>
+              <% }) %>
+            </select>
+            <div class="invalid-feedback">
+              <span class="lang" data-en="Please select a category." data-hi="कृपया एक श्रेणी चुनें।">Please select a category.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="description" class="form-label">
+            <span class="lang" data-en="Description" data-hi="विवरण">Description</span>
+          </label>
+          <textarea class="form-control" id="description" name="description" rows="3" 
+                    placeholder="Describe your product..." 
+                    data-en="Describe your product..." 
+                    data-hi="अपने उत्पाद का वर्णन करें..."></textarea>
+        </div>
+      </div>
+
+      <!-- Pricing Section -->
+      <div class="form-section">
+        <h4 class="section-title">
+          <i class="fas fa-rupee-sign section-icon"></i>
+          <span class="lang" data-en="Pricing" data-hi="मूल्य निर्धारण">Pricing</span>
+        </h4>
+        
+        <!-- Price Type Toggle -->
+        <div class="price-toggle mb-4">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="isManualPrice" name="isManualPrice">
+            <label class="form-check-label" for="isManualPrice">
+              <span class="lang" data-en="Set Manual Price" data-hi="मैन्युअल मूल्य सेट करें">Set Manual Price</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Auto Price Field -->
+        <div id="autoPriceField">
+          <label for="autoPrice" class="form-label">
+            <span class="lang" data-en="Auto Price (₹)" data-hi="स्वचालित मूल्य (₹)">Auto Price (₹)</span>
+          </label>
+          <input type="text" class="form-control" id="autoPrice" name="autoPrice" readonly>
+          <div class="form-text">
+            <span class="lang" data-en="Price calculated automatically based on current market rates" data-hi="वर्तमान बाजार दरों के आधार पर स्वचालित रूप से गणना की गई कीमत">Price calculated automatically based on current market rates</span>
+          </div>
+        </div>
+
+        <!-- Manual Price Field -->
+        <div class="d-none" id="manualPriceField">
+          <label for="manualPrice" class="form-label">
+            <span class="lang" data-en="Manual Price (₹)" data-hi="मैन्युअल मूल्य (₹)">Manual Price (₹)</span>
+          </label>
+          <input type="number" step="0.01" min="0" class="form-control" id="manualPrice" name="manualPrice">
+          <div class="form-text">
+            <span class="lang" data-en="Set your own custom price" data-hi="अपनी कस्टम कीमत सेट करें">Set your own custom price</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Specifications Section -->
+      <div class="form-section">
+        <h4 class="section-title">
+          <i class="fas fa-cogs section-icon"></i>
+          <span class="lang" data-en="Specifications" data-hi="विशिष्टताएं">Specifications</span>
+        </h4>
+        
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="material" class="form-label">
+              <span class="lang" data-en="Material" data-hi="सामग्री">Material</span>
+              <span class="text-danger">*</span>
+            </label>
+            <select class="form-select" id="material" name="material" required>
+              <option value="">
+                <span class="lang" data-en="Select Material" data-hi="सामग्री चुनें">Select Material</span>
+              </option>
+              <option value="gold">Gold</option>
+              <option value="silver">Silver</option>
+              <option value="platinum">Platinum</option>
+            </select>
+            <div class="invalid-feedback">
+              <span class="lang" data-en="Please select a material." data-hi="कृपया एक सामग्री चुनें।">Please select a material.</span>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="weight" class="form-label">
+              <span class="lang" data-en="Weight" data-hi="वजन">Weight</span>
+              <span class="text-danger">*</span>
+            </label>
+            <div class="input-group">
+              <input type="number" step="0.01" min="0" class="form-control" id="weight" name="specifications[weight]" required>
+              <span class="input-group-text">gm</span>
+            </div>
+            <div class="invalid-feedback">
+              <span class="lang" data-en="Please enter product weight." data-hi="कृपया उत्पाद का वजन दर्ज करें।">Please enter product weight.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="size" class="form-label">
+              <span class="lang" data-en="Size" data-hi="आकार">Size</span>
+            </label>
+            <input type="text" class="form-control" id="size" name="specifications[size]">
+            <div class="form-text">
+              <span class="lang" data-en="e.g., Small, Medium, Large, or custom dimensions" data-hi="जैसे छोटा, मध्यम, बड़ा, या कस्टम आयाम">e.g., Small, Medium, Large, or custom dimensions</span>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="metalPurity" class="form-label">
+              <span class="lang" data-en="Metal Purity" data-hi="धातु की शुद्धता">Metal Purity</span>
+            </label>
+            <input type="number" class="form-control" id="metalPurity" name="specifications[metalPurity]">
+            <div class="form-text">
+              <span class="lang" data-en="e.g., 24K, 22K, 18K for Gold or 925 for Silver" data-hi="जैसे सोने के लिए 24K, 22K, 18K या चांदी के लिए 925">e.g., 24K, 22K, 18K for Gold or 925 for Silver</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="gemstone" class="form-label">
+            <span class="lang" data-en="Gemstone" data-hi="रत्न">Gemstone</span>
+          </label>
+          <input type="text" class="form-control" id="gemstone" name="specifications[gemstone]">
+          <div class="form-text">
+            <span class="lang" data-en="e.g., Diamond, Ruby, Emerald (if applicable)" data-hi="जैसे हीरा, माणिक, पन्ना (यदि लागू हो)">e.g., Diamond, Ruby, Emerald (if applicable)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Status Section -->
+      <div class="form-section">
+        <h4 class="section-title">
+          <i class="fas fa-toggle-on section-icon"></i>
+          <span class="lang" data-en="Product Status" data-hi="उत्पाद स्थिति">Product Status</span>
+        </h4>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-check form-switch mb-3">
+              <input class="form-check-input" type="checkbox" id="featured" name="featured">
+              <label class="form-check-label" for="featured">
+                <span class="lang" data-en="Featured Product" data-hi="फीचर्ड उत्पाद">Featured Product</span>
+              </label>
+              <div class="form-text">
+                <span class="lang" data-en="Featured products appear prominently on the homepage" data-hi="फीचर्ड उत्पाद होमपेज पर प्रमुखता से दिखाई देते हैं">Featured products appear prominently on the homepage</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-check form-switch mb-3">
+              <input class="form-check-input" type="checkbox" id="inStock" name="inStock" checked>
+              <label class="form-check-label" for="inStock">
+                <span class="lang" data-en="In Stock" data-hi="स्टॉक में">In Stock</span>
+              </label>
+              <div class="form-text">
+                <span class="lang" data-en="Uncheck if product is currently unavailable" data-hi="यदि उत्पाद वर्तमान में अनुपलब्ध है तो अनचेक करें">Uncheck if product is currently unavailable</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Image Upload Section -->
+      <div class="form-section">
+        <h4 class="section-title">
+          <i class="fas fa-image section-icon"></i>
+          <span class="lang" data-en="Product Image" data-hi="उत्पाद छवि">Product Image</span>
+        </h4>
+        
+        <div class="mb-3">
+          <label for="image" class="form-label">
+            <span class="lang" data-en="Upload Image" data-hi="छवि अपलोड करें">Upload Image</span>
+            <span class="text-danger">*</span>
+          </label>
+          <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+          <div class="form-text">
+            <span class="lang" data-en="Supported formats: JPG, PNG, WEBP. Max size: 5MB" data-hi="समर्थित प्रारूप: JPG, PNG, WEBP। अधिकतम आकार: 5MB">Supported formats: JPG, PNG, WEBP. Max size: 5MB</span>
+          </div>
+          <div class="invalid-feedback">
+            <span class="lang" data-en="Please upload a valid image file (JPG/PNG/WEBP)." data-hi="कृपया एक वैध छवि फ़ाइल अपलोड करें (JPG/PNG/WEBP)।">Please upload a valid image file (JPG/PNG/WEBP).</span>
+          </div>
+        </div>
+
+        <!-- Image Preview -->
+        <div id="imagePreview" class="image-preview-container" style="display: none;">
+          <label class="form-label">
+            <span class="lang" data-en="Image Preview" data-hi="छवि पूर्वावलोकन">Image Preview</span>
+          </label>
+          <div class="text-center">
+            <img id="imageThumbnail" class="image-preview">
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn-primary-gold">
+        <i class="fas fa-plus me-2"></i>
+        <span class="lang" data-en="Add Product" data-hi="उत्पाद जोड़ें">Add Product</span>
+      </button>
+      </div>
+    </form>
+
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const isManualPriceEl = document.getElementById('isManualPrice');
+    const manualField = document.getElementById('manualPriceField');
+    const autoField = document.getElementById('autoPriceField');
+    const manualInput = document.getElementById('manualPrice');
+    const autoInput = document.getElementById('autoPrice');
+    const materialEl = document.getElementById('material');
+    const weightEl = document.getElementById('weight');
+    const form = document.getElementById('addProductForm');
+
+    function recalcAutoPrice() {
+      const weight = parseFloat(weightEl.value);
+      const material = materialEl.value;
+      if (!weight || weight <= 0 || !material) {
+        autoInput.value = '';
+        return;
+      }
+
+      // get stored rates from localStorage
+      const metalsData = JSON.parse(localStorage.getItem('metalsData'));
+      if (!metalsData) {
+        autoInput.value = '';
+        return;
+      }
+
+      let ratePerGram = 0;
+
+      if (material === "gold" && metalsData.gold) {
+        ratePerGram = metalsData.gold.ratePerGram;
+      } else if (material === "silver" && metalsData.silver) {
+        ratePerGram = metalsData.silver.ratePerGram;
+      } else if (material === "platinum" && metalsData.platinum) {
+        ratePerGram = metalsData.platinum.ratePerGram;
+      } else {
+        autoInput.value = '';
+        return;
+      }
+
+      const price = ratePerGram * weight;
+      autoInput.value = ratePerGram > 0 ? price.toFixed(2) : '0.00';
+    }
+
+    function togglePriceFields() {
+      const isManual = isManualPriceEl.checked;
+      if (isManual) {
+        manualField.classList.remove('d-none');
+        autoField.classList.add('d-none');
+        manualInput.required = true;
+        autoInput.required = false;
+      } else {
+        manualField.classList.add('d-none');
+        autoField.classList.remove('d-none');
+        manualInput.required = false;
+        autoInput.required = true;
+        recalcAutoPrice();
+      }
+    }
+
+    // Bootstrap validation
+    form.addEventListener('submit', function(event) {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.classList.add('was-validated');
+    }, false);
+
+    // wire events
+    isManualPriceEl.addEventListener('change', togglePriceFields);
+    materialEl.addEventListener('change', recalcAutoPrice);
+    weightEl.addEventListener('input', recalcAutoPrice);
+
+    // initial state
+    togglePriceFields();
+    recalcAutoPrice();
+
+    // 🔄 re-calc if rates are updated in another tab/window
+    window.addEventListener("storage", function (e) {
+      if (e.key === "metalsData") {
+        recalcAutoPrice();
+      }
+    });
+
+    // 🔄 also re-calc if metalsData changes in the same page (rate.ejs updates localStorage)
+    setInterval(() => {
+      recalcAutoPrice();
+    }, 2000); // every 2 seconds refresh price
+
+    // Image preview functionality
+    const imageInput = document.getElementById('image');
+    const imagePreview = document.getElementById('imagePreview');
+    const imageThumbnail = document.getElementById('imageThumbnail');
+
+    imageInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      
+      if (file) {
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+          alert('Please select a valid image file (JPG, PNG, WEBP)');
+          imageInput.value = '';
+          imagePreview.style.display = 'none';
+          return;
+        }
+
+        // Validate file size (5MB limit)
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        if (file.size > maxSize) {
+          alert('File size must be less than 5MB');
+          imageInput.value = '';
+          imagePreview.style.display = 'none';
+          return;
+        }
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          imageThumbnail.src = e.target.result;
+          imagePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        imagePreview.style.display = 'none';
+      }
+    });
+
+    // Apply current language on page load
+    if (typeof window.applyCurrentLanguage === 'function') {
+      window.applyCurrentLanguage();
+    }
+  });
+</script>

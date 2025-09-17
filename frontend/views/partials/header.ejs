@@ -1,0 +1,407 @@
+<style>
+  /* Enhanced Navigation Styles */
+  .navbar {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%) !important;
+    padding: 0.75rem 0;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    border-bottom: 2px solid #e0bf50;
+  }
+  
+  .navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #e0bf50 !important;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+  }
+  
+  .navbar-brand:hover {
+    color: #ffc107 !important;
+    transform: scale(1.05);
+  }
+  
+  .navbar-brand .brand-icon {
+    font-size: 1.75rem;
+    margin-right: 0.5rem;
+    animation: sparklee 2s ease-in-out infinite;
+  }
+  
+  @keyframes sparklee {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(10deg) scale(1.1); }
+  }
+  
+  .navbar-nav .nav-link {
+    color: #ffffff !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    margin: 0 0.25rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  
+  .navbar-nav .nav-link:hover {
+    color: #e0bf50 !important;
+    background-color: rgba(224, 191, 80, 0.1);
+    transform: translateY(-2px);
+  }
+  
+  .navbar-nav .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: #e0bf50;
+    transition: all 0.3s ease;
+  }
+  
+  .navbar-nav .nav-link:hover::after {
+    width: 80%;
+    left: 10%;
+  }
+  
+  .navbar-toggler {
+    border: 2px solid #e0bf50;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+  }
+  
+  .navbar-toggler:hover {
+    background-color: rgba(224, 191, 80, 0.1);
+    transform: scale(1.05);
+  }
+  
+  .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23e0bf50' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  }
+  
+  /* Search Bar Styles */
+
+  .search-container form {
+  margin: 0;               /* remove default form spacing */
+  display: flex;
+  align-items: center;     /* vertically center input + button */
+}
+.search-container {
+  position: relative;
+  max-width: 280px;
+  margin-bottom: 0 !important; /* remove extra gap */
+  display: flex;
+  align-items: center; /* align vertically with buttons */
+}
+  
+  .search-input {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(224, 191, 80, 0.3);
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    padding-right: 2.5rem;
+    height: 40px;            /* uniform height */
+  line-height: 40px;
+  padding: 0 1rem;
+  }
+  
+  .search-input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+  }
+  
+  .search-input:focus {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: #e0bf50;
+    box-shadow: 0 0 0 0.2rem rgba(224, 191, 80, 0.25);
+    color: #ffffff;
+  }
+  
+  .search-btn {
+     width: 36px;
+  height: 36px;
+  right: 4px;
+    position: absolute;
+    right: 0.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, #e0bf50, #ffc107);
+    border: none;
+    color: #000;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+  
+  .search-btn:hover {
+    background: linear-gradient(135deg, #ffc107, #ffed4e);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 4px 12px rgba(224, 191, 80, 0.3);
+  }
+  
+  /* Improve login/logout button */
+.auth-btn {
+  padding: 0.45rem 1.2rem !important;
+  font-size: 0.85rem;
+  border-radius: 25px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+/* Login (green gradient) */
+.btn-login {
+  background: linear-gradient(135deg, #28a745, #3ddc84);
+  border: none;
+  color: #fff !important;
+}
+.btn-login:hover {
+  background: linear-gradient(135deg, #3ddc84, #28a745);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Logout (red gradient) */
+.btn-logout {
+  background: linear-gradient(135deg, #dc3545, #ff6b6b);
+  border: none;
+  color: #fff !important;
+}
+.btn-logout:hover {
+  background: linear-gradient(135deg, #ff6b6b, #dc3545);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+  transform: translateY(-2px);
+}
+  .d-flex.flex-column.flex-lg-row.align-items-center.gap-2 {
+  gap: 0.75rem !important;
+}
+  /* Mobile Responsive */
+  @media (max-width: 991.98px) {
+    .navbar-collapse {
+      background: rgba(26, 26, 26, 0.98);
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid rgba(224, 191, 80, 0.2);
+    }
+    
+    .navbar-nav {
+      text-align: center;
+    }
+    
+    .navbar-nav .nav-link {
+      margin: 0.25rem 0;
+      padding: 0.75rem 1rem !important;
+    }
+    
+    .search-container {
+      max-width: 100%;
+      margin: 1rem 0;
+    }
+    
+    .auth-btn {
+      margin: 0.5rem 0;
+      width: 100%;
+      text-align: center;
+    }
+  }
+  
+  @media (max-width: 767.98px) {
+    .navbar-brand {
+      font-size: 1.25rem;
+    }
+    
+    .navbar-brand .brand-icon {
+      font-size: 1.5rem;
+      margin-right: 0.35rem;
+    }
+    
+    .navbar {
+      padding: 0.5rem 0;
+    }
+  }
+  
+  @media (max-width: 575.98px) {
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    
+    .navbar-brand {
+      font-size: 1.1rem;
+    }
+    
+    .search-input {
+      font-size: 0.9rem;
+      padding: 0.45rem 0.85rem;
+    }
+  }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+  <div class="container">
+    <!-- Brand -->
+    <a class="navbar-brand" href="/products">
+  <span class="brand-icon">✨</span>
+  <span class="lang" 
+        data-en="Royal Jewels" 
+        data-hi="रॉयल ज्वेल्स">
+    Royal Jewels
+  </span>
+</a>
+
+    
+    <!-- Mobile Toggle Button -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navigation Content -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- Left Navigation Links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="/products"
+             data-en="Home" 
+             data-hi="होम">
+            <i class="fas fa-home me-1 d-lg-none"></i>Home
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#about"
+             data-en="About" 
+             data-hi="हमारे बारे में">
+            <i class="fas fa-info-circle me-1 d-lg-none"></i>About
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#rate"
+             data-en="Metal Rate" 
+             data-hi="धातु दरें">
+            <i class="fas fa-chart-line me-1 d-lg-none"></i>Metal Rate
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#categories"
+             data-en="Products" 
+             data-hi="उत्पाद">
+            <i class="fas fa-gem me-1 d-lg-none"></i>Products
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#contact"
+             data-en="Contact" 
+             data-hi="संपर्क करें">
+            <i class="fas fa-envelope me-1 d-lg-none"></i>Contact
+          </a>
+        </li>
+      </ul>
+
+      <!-- Search Bar -->
+      <div class="search-container me-lg-3">
+        <form role="search" action="/products/search-results" method="GET" class="position-relative">
+          <input
+            class="form-control search-input"
+            type="text"
+            name="search"
+            placeholder="Search jewelry..."
+            aria-label="Search"
+            data-en="Search jewelry..."
+            data-hi="आभूषण खोजें..."
+          />
+          <button class="search-btn" type="submit" aria-label="Search">
+            <i class="fas fa-search"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- Authentication Buttons + Language Toggle -->
+<div class="d-flex flex-column flex-lg-row align-items-center gap-2">
+  <% if (!isLoggedIn) { %>
+    <a href="/products/login" class="btn btn-login auth-btn"
+       data-en="Login" 
+       data-hi="लॉगिन">
+      <i class="fas fa-sign-in-alt me-1"></i>Login
+    </a>
+  <% } else { %>
+    <a href="/products/logout" class="btn btn-logout auth-btn"
+       data-en="Logout" 
+       data-hi="लॉगआउट">
+      <i class="fas fa-sign-out-alt me-1"></i>Logout
+    </a>
+  <% } %>
+
+  <!-- Language Toggle Button -->
+  <button class="btn btn-outline-warning rounded-pill ms-lg-3 px-3 py-1 fw-bold"
+          id="languageToggle"
+          onclick="toggleLanguage()">
+    हिं
+  </button>
+</div>
+
+</nav>
+<script src="/js/script.js"></script>
+
+<script>
+  // Enhanced navbar functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Auto-close mobile menu when clicking on links
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+    const navbarToggler = document.querySelector('.navbar-toggler');
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        if (navbarCollapse.classList.contains('show')) {
+          navbarToggler.click();
+        }
+      });
+    });
+
+    // Search form enhancement
+    const searchForm = document.querySelector('form[role="search"]');
+    const searchInput = searchForm.querySelector('input[name="search"]');
+    
+    searchInput.addEventListener('focus', function() {
+      this.parentElement.style.transform = 'scale(1.02)';
+    });
+    
+    searchInput.addEventListener('blur', function() {
+      this.parentElement.style.transform = 'scale(1)';
+    });
+
+    // Add loading state to search
+    searchForm.addEventListener('submit', function() {
+      const submitBtn = this.querySelector('.search-btn');
+      const originalContent = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      
+      setTimeout(() => {
+        submitBtn.innerHTML = originalContent;
+      }, 1000);
+    });
+  });
+</script>

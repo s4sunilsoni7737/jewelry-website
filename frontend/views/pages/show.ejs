@@ -1,0 +1,588 @@
+<%- include('../partials/head') %> 
+<%- include('../partials/header') %>
+<%- include('../partials/messages') %>
+
+<style>
+  /* Product Show Page - Contact Page Style */
+  .product-container {
+    background: linear-gradient(135deg, #fff 0%, #fefefe 100%);
+    border: 2px solid #e0bf50;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 8px 25px rgba(224, 191, 80, 0.1);
+    transition: transform 0.3s ease;
+    margin-bottom: 30px;
+  }
+
+  .product-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(224, 191, 80, 0.15);
+  }
+
+  .product-image {
+    max-height: 450px;
+    object-fit: contain;
+    border: 2px solid #e0bf50;
+    padding: 15px;
+    background: rgba(224, 191, 80, 0.05);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(224, 191, 80, 0.2);
+  }
+  
+  .product-image:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 25px rgba(224, 191, 80, 0.3);
+    background: rgba(224, 191, 80, 0.1);
+  }
+
+  .product-title {
+    color: #2c2c2c;
+    font-weight: 700;
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .product-description {
+    color: #6c757d;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 25px;
+  }
+
+  .price {
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #e0bf50, #ffc107);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 25px;
+  }
+
+  .product-meta {
+    background: rgba(224, 191, 80, 0.05);
+    border-radius: 8px;
+    padding: 15px;
+    border: 2px solid #e0bf50;
+    margin-bottom: 20px;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+  }
+
+  .meta-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .meta-label {
+    font-weight: 600;
+    color: #2c2c2c;
+    margin-right: 10px;
+    min-width: 100px;
+  }
+
+  .meta-value {
+    color: #6c757d;
+    font-weight: 500;
+  }
+
+  .specifications-card {
+    background: #fff;
+    border-radius: 15px;
+    border: 2px solid #e0bf50;
+    box-shadow: 0 8px 25px rgba(224, 191, 80, 0.1);
+    overflow: hidden;
+    margin-bottom: 25px;
+  }
+
+  .specifications-header {
+    background: linear-gradient(135deg, #e0bf50, #ffc107);
+    color: #000;
+    padding: 15px 20px;
+    font-weight: 700;
+    font-size: 1.3rem;
+    border-bottom: 2px solid #e0bf50;
+  }
+
+  .spec-item {
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(224, 191, 80, 0.2);
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .spec-item:last-child {
+    border-bottom: none;
+  }
+
+  .spec-item:hover {
+    background: rgba(224, 191, 80, 0.05);
+    transform: translateX(5px);
+  }
+
+  .spec-label {
+    font-weight: 600;
+    color: #2c2c2c;
+    font-size: 1rem;
+  }
+
+  .spec-value {
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 1rem;
+  }
+
+  .status-badges {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+  }
+
+  .status-badge {
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+  }
+
+  .status-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  }
+
+  .badge-in-stock {
+    background: linear-gradient(135deg, #28a745, #3ddc84);
+    color: white;
+  }
+
+  .badge-out-stock {
+    background: linear-gradient(135deg, #dc3545, #ff6b6b);
+    color: white;
+  }
+
+  .badge-featured {
+    background: linear-gradient(135deg, #e0bf50, #ffc107);
+    color: #000;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+  }
+
+  .btn-primary-gold {
+    background: linear-gradient(135deg, #e0bf50, #ffc107);
+    border: none;
+    color: #000;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(224, 191, 80, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+  }
+
+  .btn-primary-gold:hover {
+    background: linear-gradient(135deg, #ffc107, #ffed4e);
+    color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(224, 191, 80, 0.4);
+  }
+
+  .btn-danger-gradient {
+    background: linear-gradient(135deg, #dc3545, #ff6b6b);
+    border: 2px solid #dc3545;
+    color: white;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+  }
+
+  .btn-danger-gradient:hover {
+    background: linear-gradient(135deg, #ff6b6b, #dc3545);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+    color: white;
+  }
+
+  .secondary-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .btn-outline-gold {
+    border: 2px solid #ffd700;
+    color: #ffd700;
+    background: transparent;
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-outline-gold:hover {
+    background: #ffd700;
+    color: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3);
+    text-decoration: none;
+  }
+
+  .back-button {
+    margin-bottom: 20px;
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .product-container {
+      margin: 0 15px;
+      padding: 20px;
+    }
+    
+    .product-title {
+      font-size: 1.8rem;
+    }
+    
+    .price {
+      font-size: 1.8rem;
+    }
+    
+    .action-buttons {
+      flex-direction: column;
+    }
+    
+    .btn-primary-gold,
+    .btn-danger-gradient {
+      width: 100%;
+      text-align: center;
+    }
+    
+    .secondary-actions {
+      flex-direction: column;
+    }
+    
+    .btn-outline-gold {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* Animation for page load */
+  @keyframes fadeInUp {
+    from { 
+      opacity: 0; 
+      transform: translateY(30px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+
+  .product-container {
+    animation: fadeInUp 0.6s ease-out;
+  }
+</style>
+
+<body>
+  <a type="button" class="btn btn-outline-warning back-button" href="/products">
+    <i class="fa-solid fa-arrow-left"></i>
+  </a>
+
+  <div class="container my-5">
+    <div class="product-container">
+      <div class="row g-5">
+        <!-- Product Image -->
+        <div class="col-md-5">
+          <% if (product.image) { %>
+            <img 
+              src="<%= product.image %>" 
+              alt="<%= product.name %>" 
+              class="img-fluid product-image w-100"
+              data-bs-toggle="modal" 
+              data-bs-target="#imageModal"
+            >
+            <small class="d-block text-muted text-center mt-3 lang"
+                   data-en="Click image to view full size"
+                   data-hi="पूरे आकार में देखने के लिए छवि पर क्लिक करें">
+              Click image to view full size
+            </small>
+          <% } else { %>
+            <img src="/images/default.png" alt="No image" class="img-fluid product-image w-100">
+          <% } %>
+        </div>
+
+        <!-- Product Info -->
+        <div class="col-md-7">
+          <h2 class="product-title"><%= product.name %></h2>
+          <p class="product-description"><%= product.description %></p>
+          
+          <h4 class="price"
+              data-metal="<%= (product.material || '').toLowerCase() %>"
+              data-weight="<%= product.specifications?.weight || 1 %>"
+              data-pricetype="<%= product.isManualPrice ? 'manual' : 'auto' %>"
+              data-manual="<%= product.price %>">
+              ₹ <%= product.isManualPrice ? product.price.toFixed(2) : '0.00' %> 
+              <span class="lang" data-en="+ Making Charges" data-hi="+ मेकिंग चार्जेस">+ Making Charges</span>
+          </h4>
+          
+          <!-- Product Meta Information -->
+          <div class="product-meta">
+            <div class="meta-item">
+              <span class="meta-label lang" data-en="Category:" data-hi="श्रेणी:">Category:</span>
+              <span class="meta-value">
+                <%= product.category?.icon %> 
+                <%= product.category?.name.charAt(0).toUpperCase() + product.category?.name.slice(1) %>
+              </span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label lang" data-en="Material:" data-hi="सामग्री:">Material:</span>
+              <span class="meta-value"><%= product.material.charAt(0).toUpperCase() + product.material.slice(1) %></span>
+            </div>
+          </div>
+          
+          <!-- Specifications -->
+          <% if (product.specifications) { %>
+            <div class="specifications-card">
+              <div class="specifications-header lang" data-en="Specifications" data-hi="विशेष विवरण">
+                Specifications
+              </div>
+              <% if (product.specifications.weight) { %>
+                <div class="spec-item">
+                  <span class="spec-label lang" data-en="Weight:" data-hi="वजन:">Weight:</span> 
+                  <span class="spec-value"><%= product.specifications.weight %> gm</span>
+                </div>
+              <% } %>
+              <% if (product.specifications.size) { %>
+                <div class="spec-item">
+                  <span class="spec-label lang" data-en="Size:" data-hi="आकार:">Size:</span> 
+                  <span class="spec-value"><%= product.specifications.size %></span>
+                </div>
+              <% } %>
+              <% if (product.specifications.metalPurity) { %>
+                <div class="spec-item">
+                  <span class="spec-label lang" data-en="Metal Purity:" data-hi="धातु शुद्धता:">Metal Purity:</span> 
+                  <span class="spec-value"><%= product.specifications.metalPurity %>k <%= product.material %></span>
+                </div>
+              <% } %>
+              <% if (product.specifications.gemstone) { %>
+                <div class="spec-item">
+                  <span class="spec-label lang" data-en="Gemstone:" data-hi="रत्न:">Gemstone:</span> 
+                  <span class="spec-value"><%= product.specifications.gemstone %></span>
+                </div>
+              <% } %>
+            </div>
+          <% } %>
+
+          <!-- Status Badges -->
+          <div class="status-badges">
+            <% if (product.inStock) { %>
+              <span class="status-badge badge-in-stock lang" data-en="In Stock" data-hi="स्टॉक में">In Stock</span>
+            <% } else { %>
+              <span class="status-badge badge-out-stock lang" data-en="Out of Stock" data-hi="स्टॉक समाप्त">Out of Stock</span>
+            <% } %>
+            <% if (product.featured) { %>
+              <span class="status-badge badge-featured lang" data-en="Featured" data-hi="विशेष">Featured</span>
+            <% } %>
+          </div>
+
+          <!-- Admin Actions -->
+          <% if (isLoggedIn) { %>
+            <div class="action-buttons">
+              <a href="/products/<%= product._id %>/edit" class="btn-primary-gold lang"
+                 data-en="Edit Product" data-hi="उत्पाद संपादित करें">Edit Product</a>
+              <button class="btn-danger-gradient lang" onclick="showDeleteModal()"
+                      data-en="Delete Product" data-hi="उत्पाद हटाएं">Delete Product</button>
+              <form id="deleteProductForm" action="/products/<%= product._id %>/delete" method="POST" style="display: none;"></form>
+            </div>
+          <% } %>
+
+          <!-- Secondary Actions -->
+          <div class="secondary-actions">
+            <a href="/products/category/<%= product.category?.name %>" class="btn-outline-gold">
+              <i class="fa-solid fa-clone"></i> 
+              <span class="lang" data-en="View Similar Products" data-hi="समान उत्पाद देखें">View Similar Products</span>
+            </a>
+            
+            <a href="tel:+911234567890" class="btn-outline-gold">
+              <i class="fa-solid fa-phone"></i> 
+              <span class="lang" data-en="Call for Query" data-hi="प्रश्न के लिए कॉल करें">Call for Query</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Modal -->
+  <% if (product.image) { %>
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="imageModalLabel"><%= product.name %></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <img src="<%= product.image %>" alt="<%= product.name %>" class="img-fluid" style="max-height: 80vh;">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary lang" data-bs-dismiss="modal"
+                    data-en="Close" data-hi="बंद करें">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- Confirmation Modal -->
+  <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h5 class="modal-title lang" id="deleteConfirmModalLabel" data-en="Confirm Deletion" data-hi="हटाने की पुष्टि करें">Confirm Deletion</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <p class="lang" data-en="Are you sure you want to delete" data-hi="क्या आप वाकई हटाना चाहते हैं">Are you sure you want to delete</p>
+          "<%= product.name %>"?
+          <p class="text-muted small lang"
+             data-en="This action cannot be undone and will also delete the product image."
+             data-hi="यह क्रिया वापस नहीं की जा सकती और यह उत्पाद की छवि भी हटा देगी।">
+            This action cannot be undone and will also delete the product image.
+          </p>
+        </div>
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn btn-secondary lang" data-bs-dismiss="modal"
+                  data-en="Cancel" data-hi="रद्द करें">Cancel</button>
+          <button type="button" class="btn btn-danger lang" onclick="submitDelete()"
+                  data-en="Yes, Delete" data-hi="हाँ, हटाएं">Yes, Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Include Bootstrap JS (if not already included in head or footer) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Include your main script.js FIRST -->
+  <script src="/public/js/script.js"></script>
+
+  <!-- Page-specific scripts -->
+  <script>
+    // Back button functionality
+    function goBack() {
+      // Always go to products home page to avoid edit page loop
+      window.location.href = '/products';
+    }
+
+    // Wait for DOM and all scripts to load
+    document.addEventListener("DOMContentLoaded", function() {
+      
+      // Delete modal functionality
+      window.showDeleteModal = function() {
+        const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+        modal.show();
+      };
+      
+      window.submitDelete = function() {
+        document.getElementById('deleteProductForm').submit();
+      };
+
+      // Price update functionality
+      function updateRates() {
+        const metalsData = JSON.parse(localStorage.getItem("metalsData") || "{}");
+        if (!metalsData || Object.keys(metalsData).length === 0) return;
+
+        const { gold, silver } = metalsData;
+        const goldTotal10g = gold?.ratePerGram ? (gold.ratePerGram * 10) : 0;
+        const silverTotal10g = silver?.ratePerGram ? (silver.ratePerGram * 10) : 0;
+
+        // Update gold rate displays
+        document.querySelectorAll(".goldRateDisplay").forEach(el => {
+          el.textContent = `₹ ${goldTotal10g.toFixed(2)}`;
+        });
+        
+        // Update silver rate displays
+        document.querySelectorAll(".silverRateDisplay").forEach(el => {
+          el.textContent = `₹ ${silverTotal10g.toFixed(2)}`;
+        });
+
+        // Update product prices
+        document.querySelectorAll(".price").forEach(el => {
+          const priceType = el.dataset.pricetype;
+          const currentLang = localStorage.getItem("language") || "en";
+          const makingChargesText = currentLang === "hi" ? "+ मेकिंग चार्जेस" : "+ Making Charges";
+          
+          if (priceType === "manual") {
+            el.innerHTML = `₹ ${parseFloat(el.dataset.manual || 0).toFixed(2)} <span class="lang" data-en="+ Making Charges" data-hi="+ मेकिंग चार्जेस">${makingChargesText}</span>`;
+            return;
+          }
+          
+          const metal = el.dataset.metal?.toLowerCase() || '';
+          const weight = parseFloat(el.dataset.weight) || 1;
+
+          let ratePerGram = 0;
+          if (metal === "gold" && gold?.ratePerGram) ratePerGram = gold.ratePerGram;
+          else if (metal === "silver" && silver?.ratePerGram) ratePerGram = silver.ratePerGram;
+
+          const price = ratePerGram * weight;
+          el.innerHTML = ratePerGram > 0 
+            ? `₹ ${price.toFixed(2)} <span class="lang" data-en="+ Making Charges" data-hi="+ मेकिंग चार्जेस">${makingChargesText}</span>`
+            : `₹ 0.00 <span class="lang" data-en="+ Making Charges" data-hi="+ मेकिंग चार्जेस">${makingChargesText}</span>`;
+        });
+      }
+
+      // Initial price update
+      updateRates();
+      
+      // Listen for storage changes
+      window.addEventListener("storage", function(e) {
+        if (e.key === "metalsData") {
+          updateRates();
+        }
+      });
+      
+      // Periodic price updates
+      setInterval(updateRates, 5000);
+
+      // Force language update after price updates
+      setTimeout(() => {
+        if (window.applyCurrentLanguage) {
+          window.applyCurrentLanguage();
+        }
+      }, 100);
+    });
+  </script>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

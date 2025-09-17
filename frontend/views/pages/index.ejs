@@ -1,0 +1,1071 @@
+<style>
+  #featuredSlider::-webkit-scrollbar {
+    display: none;
+  }
+  #featuredSlider {
+    scrollbar-width: none;
+  }
+  .left-button {
+    z-index: 1;
+    border: 2px solid #e0bf50;
+    border-radius: 50%;
+    color: #e0bf50;
+    background: rgba(255, 255, 255, 0.9);
+    position: absolute !important;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+  .right-button {
+    z-index: 1;
+    border: 2px solid #e0bf50;
+    border-radius: 50%;
+    color: #e0bf50;
+    background: rgba(255, 255, 255, 0.9);
+    position: absolute !important;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+  .left-button:hover,
+  .right-button:hover {
+    background: #e0bf50;
+    color: #fff;
+    transform: translateY(-50%) scale(1.1);
+  }
+   .shop-header-section {
+    position: relative;
+    padding: 0;
+    margin-bottom: 0;
+  }
+
+  .shop-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(224, 191, 80, 0.1);
+    max-width: 900px;
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+  }
+
+  .shop-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 30px 80px rgba(224, 191, 80, 0.2);
+    border-color: #e0bf50;
+  }
+
+
+  .shop-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #333;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+  }
+
+  .shop-name {
+    color: #2c3e50;
+    font-weight: 700;
+    font-size: 1.4rem;
+    margin: 0;
+  }
+
+  .shop-subtitle {
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-style: italic;
+  }
+
+  .shop-stats {
+    margin-top: 15px;
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: 10px 8px;
+    background: linear-gradient(145deg, #f8f9fa, #ffffff);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 215, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .stat-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
+  }
+
+  .stat-icon {
+    display: block;
+    font-size: 1.2rem;
+    color: #ffd700;
+    margin-bottom: 5px;
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2c3e50;
+    line-height: 1;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+  }
+
+  .btn-change-shop {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    border: 2px solid #ffd700;
+    color: #333;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+  }
+
+  .btn-change-shop:hover {
+    background: linear-gradient(135deg, #c0c0c0, #d6d6d6);
+    border-color: #c0c0c0;
+    color: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(192, 192, 192, 0.4);
+  }
+
+  .btn-change-shop:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+  }
+
+  .btn-change-shop i {
+    font-size: 1rem;
+  }
+
+  /* Language Toggle Button Styles */
+  .language-toggle {
+    position: fixed;
+    top: 120px;
+    right: 20px;
+    z-index: 1000;
+    background: linear-gradient(135deg, #e0bf50, #ffc107);
+    border: 2px solid #e0bf50;
+    color: #333;
+    font-weight: 700;
+    padding: 12px 16px;
+    border-radius: 50px;
+    box-shadow: 0 6px 20px rgba(224, 191, 80, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-size: 0.9rem;
+    min-width: 60px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+  }
+
+  .language-toggle:hover {
+    background: linear-gradient(135deg, #ffc107, #ffed4e);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(224, 191, 80, 0.4);
+  }
+
+  .language-toggle:active {
+    transform: translateY(0) scale(1);
+  }
+
+  /* Hindi Font Support */
+  .hindi {
+    font-family: 'Noto Sans Devanagari', 'Mangal', 'Kruti Dev', sans-serif;
+    font-weight: 500;
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .shop-card {
+      margin: 0 15px;
+      padding: 20px;
+    }
+    
+    .shop-name {
+      font-size: 1.2rem;
+    }
+    
+    .shop-icon {
+      width: 45px;
+      height: 45px;
+      font-size: 1.3rem;
+    }
+    
+    .btn-change-shop {
+      padding: 10px 20px;
+      font-size: 0.85rem;
+      width: 100%;
+      margin-top: 10px;
+    }
+    
+    .stat-item {
+      padding: 8px 6px;
+    }
+    
+    .stat-number {
+      font-size: 1.1rem;
+    }
+    
+    .stat-label {
+      font-size: 0.7rem;
+    }
+
+    .language-toggle {
+      top: 100px;
+      right: 15px;
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      min-width: 55px;
+    }
+  }
+
+  /* Animation for stats */
+  @keyframes countUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .stat-number {
+    animation: countUp 0.6s ease-out;
+  }
+
+  /* Luxury touches */
+  .shop-card {
+    transition: all 0.3s ease;
+  }
+
+  .shop-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 12px 40px rgba(255, 215, 0, 0.15),
+      0 4px 12px rgba(192, 192, 192, 0.15);
+  }
+  
+  /* Mobile slider buttons */
+  @media (max-width: 768px) {
+    .left-button, .right-button {
+      width: 35px;
+      height: 35px;
+      font-size: 0.9rem;
+    }
+    .left-button {
+      left: 5px;
+    }
+    .right-button {
+      right: 5px;
+    }
+  }
+
+  /* Fade transition for language switch */
+  .lang-transition {
+    transition: opacity 0.3s ease;
+  }
+
+  /* Admin FAB Styles */
+  .admin-fab-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+  }
+
+  .main-fab {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #e0bf50, #ffc107);
+    border: 2px solid #e0bf50;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(224, 191, 80, 0.3);
+    color: #2c2c2c;
+    font-size: 1.2rem;
+  }
+
+  .main-fab:hover {
+    background: linear-gradient(135deg, #ffc107, #ffed4e);
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(224, 191, 80, 0.4);
+  }
+
+  .main-fab.active {
+    transform: rotate(45deg) scale(1.1);
+  }
+
+  .fab-menu {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+  }
+
+  .fab-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .fab-item {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #fff, #f8f9fa);
+    border: 2px solid #e0bf50;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(224, 191, 80, 0.2);
+    color: #e0bf50;
+    font-size: 1rem;
+    position: relative;
+  }
+
+  .fab-item:hover {
+    background: linear-gradient(135deg, #e0bf50, #ffc107);
+    color: #2c2c2c;
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(224, 191, 80, 0.4);
+  }
+
+  .fab-tooltip {
+    position: absolute;
+    right: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(44, 44, 44, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
+
+  .fab-item:hover .fab-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(-5px);
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .main-fab {
+      width: 50px;
+      height: 50px;
+      font-size: 1rem;
+    }
+    
+    .fab-item {
+      width: 45px;
+      height: 45px;
+      font-size: 0.9rem;
+    }
+    
+    .admin-fab-container {
+      bottom: 15px;
+      right: 15px;
+    }
+  }
+</style>
+
+<% title = 'Home' %>
+<%- include("../partials/head") %>
+<%- include("../partials/header") %>
+<!-- <%- include('../partials/messages') %> -->
+ <%- include("../components/hero") %>
+
+  <%- include("../components/about") %>
+
+
+
+<!-- Language Toggle Button -->
+<!-- <button class="language-toggle" id="languageToggle" onclick="toggleLanguage()">
+  हिं
+</button> -->
+
+<% if (!session.selectedShop && !session.isSeller) { %>
+  <%- include("./shop-selection") %>
+<% } else { %>
+
+  <!-- 🔁 Change Shop Button -->
+<section id="rate" class="shop-header-section py-5 bg-white">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="section-title mb-3" data-en="Current Shop" data-hi="वर्तमान दुकान">Current Shop</h2>
+      <div class="title-underline mx-auto"></div>
+    </div>
+    <!-- Shop Selection Card -->
+    <div class="shop-card mx-auto position-relative">
+      <!-- User Info Button in Top Corner -->
+      <!-- <button class="btn btn-sm btn-outline-primary position-absolute top-0 end-0 m-3" onclick="showUserInfo()" style="z-index: 10;">
+        <i class="fas fa-user-circle"></i>
+      </button> -->
+      
+      <div class="row align-items-center g-4">
+        <!-- Current Shop Info -->
+        <div class="col-lg-8 col-md-12">
+          <% if (currentShop) { %>
+            <div class="shop-info">
+              <div class="d-flex align-items-center mb-3">
+                <div class="shop-icon me-3">
+                  <i class="fas fa-store"></i>
+                </div>
+                <div>
+                  <h4 class="shop-name mb-1"><%= currentShop.name %></h4>
+                  <p class="shop-subtitle mb-0 text-muted" data-en="Premium Jewellery Collection" data-hi="प्रीमियम आभूषण संग्रह">Premium Jewellery Collection</p>
+                </div>
+              </div>
+              
+              <!-- Shop Stats -->
+              <div class="shop-stats">
+                <div class="row g-2">
+                  <div class="col-4">
+                    <div class="stat-item">
+                      <i class="fas fa-gem stat-icon"></i>
+                      <span class="stat-number"><%= products ? products.length : 0 %></span>
+                      <span class="stat-label" data-en="Products" data-hi="उत्पाद">Products</span>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="stat-item">
+                      <i class="fas fa-star stat-icon"></i>
+                      <span class="stat-number"><%= products ? products.filter(p => p.featured).length : 0 %></span>
+                      <span class="stat-label" data-en="Featured" data-hi="फीचर्ड">Featured</span>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="stat-item">
+                      <i class="fas fa-check-circle stat-icon"></i>
+                      <span class="stat-number"><%= products ? products.filter(p => p.inStock).length : 0 %></span>
+                      <span class="stat-label" data-en="In Stock" data-hi="स्टॉक में">In Stock</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% } else { %>
+            <div class="shop-info">
+              <h5 class="text-muted" data-en="No Shop Selected" data-hi="कोई दुकान चयनित नहीं">No Shop Selected</h5>
+              <p class="mb-0" data-en="Please select a shop to browse products" data-hi="उत्पादों को देखने के लिए कृपया एक दुकान चुनें">Please select a shop to browse products</p>
+            </div>
+          <% } %>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="col-lg-4 col-md-12 text-center">
+          <form action="/products/reset-shop" method="POST" class="d-inline">
+            <button class="btn btn-change-shop btn-lg w-100">
+              <i class="fas fa-exchange-alt me-2"></i>
+              <span data-en="Change Shop" data-hi="दुकान बदलें">Change Shop</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <hr>
+  <%- include("../components/gold-rate-manager") %>
+  <hr>
+
+  <!-- 🔍 Search and Category Filter -->
+  <%- include("../components/search-filter") %>
+  <%- include("../components/categories") %>
+  <hr>
+
+  <!-- 🌟 Featured Products -->
+  <section id="featured" class="featured-products py-5 bg-white">
+    <div class="container position-relative">
+      <h2 class="section-title text-center mb-4" data-en="Featured Collection" data-hi="फीचर्ड संग्रह">Featured Collection</h2>
+
+      <!-- Slide Buttons -->
+      <button class="btn left-button" id="slide-left" aria-label="Slide left">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <button class="btn right-button" id="slide-right" aria-label="Slide right">
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+
+      <!-- Slider Container -->
+      <div class="d-flex overflow-auto bg-white" id="featuredSlider" style="scroll-behavior: smooth; gap: 1rem; padding: 0 50px;">
+        <% products.filter(p => p.featured).forEach(product => { %>
+          <div class="card flex-shrink-0" style="width: 250px;">
+            <% if (product.image && product.image !== 'default.png') { %>
+              <img src="<%= product.image %>" class="card-img-top" alt="<%= product.name %>">
+            <% } else { %>
+              <img src="/images/default.png" class="card-img-top" alt="No image available">
+            <% } %>
+            <div class="card-body text-center">
+              <h5 class="card-title"><%= product.name %></h5>
+              <p class="card-text price"
+                 data-metal="<%= product.material || '' %>"
+                 data-weight="<%= product.specifications?.weight || 1 %>"
+                 data-pricetype="<%= product.isManualPrice ? 'manual' : 'auto' %>"
+                 data-manual="<%= product.price %>">
+                 ₹ <%= product.isManualPrice ? product.price.toFixed(2) : '0.00' %> 
+              </p>
+              <a href="/products/<%= product._id %>" class="btn btn-sm btn-outline-warning" data-en="View More" data-hi="और देखें">View More</a>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+  <hr>
+
+  <!-- 🛒 All Products -->
+  <section id="all-collection"></section>
+  <section class="featured-products py-5 bg-white">
+    <div class="container">
+      <h2 class="section-title text-center" data-en="All Collection" data-hi="सभी संग्रह">All Collection</h2>
+      <div class="row g-3 g-md-4">
+        <% products.forEach(product => { %>
+          <div class="col-6 col-md-4 col-lg-3">
+            <div class="card shadow-sm h-100">
+              <% if (product.image && product.image !== 'default.png') { %>
+                <img src="<%= product.image %>" class="card-img-top" alt="<%= product.name %>">
+              <% } else { %>
+                <img src="/images/default.png" class="card-img-top" alt="No image available">
+              <% } %>
+
+              <div class="card-body text-center d-flex flex-column">
+                <h5 class="card-title flex-grow-1"><%= product.name %></h5>
+                <p class="card-text price mb-2"
+                   data-metal="<%= product.material || '' %>"
+                   data-weight="<%= product.specifications?.weight || 1 %>"
+                   data-pricetype="<%= product.isManualPrice ? 'manual' : 'auto' %>"
+                   data-manual="<%= product.price %>">
+                   ₹ <%= product.isManualPrice ? product.price.toFixed(2) : '0.00' %> 
+                </p>
+                <a href="/products/<%= product._id %>" class="btn btn-sm btn-outline-warning mt-auto" data-en="View More" data-hi="और देखें">View More</a>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+  <hr>
+
+  <!-- ➕ Admin Actions (Combined FAB) -->
+  <% if (session.isSeller) { %>
+    <div class="admin-fab-container">
+      <!-- Main FAB Button -->
+      <div class="main-fab" id="mainFab" onclick="toggleAdminMenu()">
+        <i class="fas fa-cog"></i>
+      </div>
+      
+      <!-- Sub-buttons (hidden by default) -->
+      <div class="fab-menu" id="fabMenu">
+        <div class="fab-item" onclick="window.location.href='/products/add'">
+          <i class="fas fa-plus"></i>
+          <span class="fab-tooltip">Add Product</span>
+        </div>
+        <div class="fab-item" onclick="openMetalsManager()">
+          <i class="fas fa-coins"></i>
+          <span class="fab-tooltip">Metal Rates</span>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+<% } %>
+
+<!-- User Info Modal -->
+<!-- <div class="modal fade" id="userInfoModal" tabindex="-1" aria-labelledby="userInfoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 shadow">
+      <div class="modal-header border-0 bg-primary text-white">
+        <h5 class="modal-title" id="userInfoModalLabel">
+          <i class="fas fa-user-circle me-2"></i>
+          <span data-en="User Information" data-hi="उपयोगकर्ता जानकारी">User Information</span>
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-4">
+        <div class="row g-3">
+            <div class="col-12">
+              <div class="d-flex align-items-center mb-3">
+                <div class="user-avatar me-3">
+                  <% if (session.user && session.user.profilePhoto) { %>
+                    <img src="<%= session.user.profilePhoto %>" alt="Profile Photo" class="rounded-circle" style="width: 60px; height: 60px; object-fit: cover; border: 3px solid #007bff;">
+                  <% } else { %>
+                    <i class="fas fa-user-circle text-primary" style="font-size: 3rem;"></i>
+                  <% } %>
+                </div>
+                <div>
+                  <% if (session.user) { %>
+                    <h6 class="mb-1 text-dark">
+                      <span data-en="Name" data-hi="नाम">Name</span>: <%= session.user.name || 'N/A' %>
+                    </h6>
+                    <p class="mb-0 text-muted">
+                      <span data-en="Email" data-hi="ईमेल">Email</span>: <%= session.user.email || 'N/A' %>
+                    </p>
+                    <% if (session.user.mobile) { %>
+                    <p class="mb-0 text-muted small">
+                      <i class="fas fa-phone me-1"></i>
+                      <span data-en="Mobile" data-hi="मोबाइल">Mobile</span>: <%= session.user.mobile %>
+                    </p>
+                    <% } %>
+                  <% } else { %>
+                    <h6 class="mb-1 text-warning">
+                      <span data-en="Guest User" data-hi="अतिथि उपयोगकर्ता">Guest User</span>
+                    </h6>
+                    <p class="mb-0 text-muted">
+                      <span data-en="Not logged in" data-hi="लॉग इन नहीं है">Not logged in</span>
+                    </p>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+            
+            <!-- <!-- <% if (session.user) { %>
+            <!-- Contact Information -->
+            <div class="col-md-6">
+              <div class="info-card p-3 bg-light rounded">
+                <h6 class="text-primary mb-2">
+                  <i class="fas fa-phone me-2"></i>
+                  <span data-en="Contact" data-hi="संपर्क">Contact</span>
+                </h6>
+                <p class="mb-1 small">
+                  <i class="fas fa-mobile-alt me-1"></i>
+                  <span data-en="Mobile" data-hi="मोबाइल">Mobile</span>: <%= session.user.mobile || 'Not provided' %>
+                </p>
+                <p class="mb-0 small">
+                  <i class="fas fa-envelope me-1"></i>
+                  <span data-en="Email" data-hi="ईमेल">Email</span>: <%= session.user.email || 'N/A' %>
+                </p>
+              </div>
+            </div>
+            
+            <!-- Location Information -->
+            <div class="col-md-6">
+              <div class="info-card p-3 bg-light rounded">
+                <h6 class="text-success mb-2">
+                  <i class="fas fa-map-marker-alt me-2"></i>
+                  <span data-en="Location" data-hi="स्थान">Location</span>
+                </h6>
+                <% if (session.user.location && (session.user.location.city || session.user.location.state)) { %>
+                  <p class="mb-1 small">
+                    <i class="fas fa-city me-1"></i>
+                    <%= session.user.location.city || '' %><% if (session.user.location.city && session.user.location.state) { %>, <% } %><%= session.user.location.state || '' %>
+                  </p>
+                  <% if (session.user.location.pincode) { %>
+                  <p class="mb-0 small">
+                    <i class="fas fa-map-pin me-1"></i>
+                    <span data-en="PIN" data-hi="पिन">PIN</span>: <%= session.user.location.pincode %>
+                  </p>
+                  <% } %>
+                <% } else { %>
+                  <p class="mb-0 small text-muted">
+                    <span data-en="Not provided" data-hi="प्रदान नहीं किया गया">Not provided</span>
+                  </p>
+                <% } %>
+              </div>
+            </div>
+
+            <!-- Personal Information -->
+            <div class="col-md-6">
+              <div class="info-card p-3 bg-info bg-opacity-10 rounded">
+                <h6 class="text-info mb-2">
+                  <i class="fas fa-user me-2"></i>
+                  <span data-en="Personal Info" data-hi="व्यक्तिगत जानकारी">Personal Info</span>
+                </h6>
+                <% if (session.user.gender) { %>
+                <p class="mb-1 small">
+                  <i class="fas fa-venus-mars me-1"></i>
+                  <span data-en="Gender" data-hi="लिंग">Gender</span>: <%= session.user.gender %>
+                </p>
+                <% } %>
+                <% if (session.user.dateOfBirth) { %>
+                <p class="mb-1 small">
+                  <i class="fas fa-birthday-cake me-1"></i>
+                  <span data-en="DOB" data-hi="जन्म तिथि">DOB</span>: <%= new Date(session.user.dateOfBirth).toLocaleDateString() %>
+                </p>
+                <% } %>
+                <% if (session.user.occupation) { %>
+                <p class="mb-0 small">
+                  <i class="fas fa-briefcase me-1"></i>
+                  <span data-en="Occupation" data-hi="व्यवसाय">Occupation</span>: <%= session.user.occupation %>
+                </p>
+                <% } %>
+                <% if (!session.user.gender && !session.user.dateOfBirth && !session.user.occupation) { %>
+                <p class="mb-0 small text-muted">
+                  <span data-en="Not provided" data-hi="प्रदान नहीं किया गया">Not provided</span>
+                </p>
+                <% } %>
+              </div>
+            </div>
+            
+            <!-- Account Information -->
+            <!-- div class="col-md-6">
+              <div class="info-card p-3 bg-warning bg-opacity-10 rounded">
+                <h6 class="text-warning mb-2">
+                  <i class="fas fa-shield-alt me-2"></i>
+                  <span data-en="Account Info" data-hi="खाता जानकारी">Account Info</span>
+                </h6>
+                <p class="mb-1 small">
+                  <i class="fas fa-user-tag me-1"></i>
+                  <span data-en="Type" data-hi="प्रकार">Type</span>: 
+                  <% if (session.isSeller) { %>
+                    <span class="badge bg-warning text-dark" data-en="Seller" data-hi="विक्रेता">Seller</span>
+                  <% } else { %>
+                    <span class="badge bg-info" data-en="Customer" data-hi="ग्राहक">Customer</span>
+                  <% } %>
+                </p>
+                <p class="mb-1 small">
+                  <i class="fas fa-calendar-alt me-1"></i>
+                  <span data-en="Member Since" data-hi="सदस्य बने">Member Since</span>: <%= new Date(session.user.createdAt).toLocaleDateString() %>
+                </p>
+                <p class="mb-0 small text-muted">
+                  <i class="fas fa-id-badge me-1"></i>
+                  ID: <%= session.user._id.toString().slice(-8) %>...
+                </p>
+              </div> 
+            </div> -->
+
+            <!-- Shop Information (for sellers) -->
+            <% if (session.isSeller && session.user.shopInfo && session.user.shopInfo.shopName) { %>
+            <div class="col-12">
+              <div class="info-card p-3 bg-success bg-opacity-10 rounded">
+                <h6 class="text-success mb-2">
+                  <i class="fas fa-store me-2"></i>
+                  <span data-en="Shop Information" data-hi="दुकान की जानकारी">Shop Information</span>
+                </h6>
+                <div class="row">
+                  <div class="col-md-6">
+                    <p class="mb-1 small">
+                      <i class="fas fa-shop me-1"></i>
+                      <span data-en="Shop Name" data-hi="दुकान का नाम">Shop Name</span>: <%= session.user.shopInfo.shopName %>
+                    </p>
+                    <% if (session.user.shopInfo.gstNumber) { %>
+                    <p class="mb-0 small">
+                      <i class="fas fa-file-invoice me-1"></i>
+                      <span data-en="GST" data-hi="जीएसटी">GST</span>: <%= session.user.shopInfo.gstNumber %>
+                    </p>
+                    <% } %>
+                  </div>
+                  <div class="col-md-6">
+                    <% if (session.user.shopInfo.shopDescription) { %>
+                    <p class="mb-0 small">
+                      <i class="fas fa-info-circle me-1"></i>
+                      <span data-en="Description" data-hi="विवरण">Description</span>: <%= session.user.shopInfo.shopDescription %>
+                    </p>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <% } %>
+            <% } else { %>
+            <div class="col-12">
+              <div class="info-card p-3 bg-warning bg-opacity-10 rounded text-center">
+                <h6 class="text-warning mb-2">
+                  <i class="fas fa-exclamation-triangle me-2"></i>
+                  <span data-en="Login Required" data-hi="लॉगिन आवश्यक">Login Required</span>
+                </h6>
+                <p class="mb-2 small">
+                  <span data-en="Please log in to access full features" data-hi="पूर्ण सुविधाओं का उपयोग करने के लिए कृपया लॉग इन करें">Please log in to access full features</span>
+                </p>
+                <a href="/login" class="btn btn-primary btn-sm">
+                  <i class="fas fa-sign-in-alt me-1"></i>
+                  <span data-en="Login" data-hi="लॉग इन">Login</span>
+                </a>
+              </div>
+            </div>
+            <% } %>
+            
+            <% if (currentShop) { %>
+            <div class="col-12">
+              <div class="info-card p-3 bg-warning bg-opacity-10 rounded">
+                <h6 class="text-warning mb-2">
+                  <i class="fas fa-store me-2"></i>
+                  <span data-en="Selected Shop" data-hi="चयनित दुकान">Selected Shop</span>
+                </h6>
+                <p class="mb-0"><%= currentShop.name %></p>
+                <small class="text-muted">
+                  <span data-en="Shop ID" data-hi="दुकान आईडी">Shop ID</span>: <%= currentShop._id %>
+                </small>
+              </div>
+            </div>
+            <% } %>
+            
+            <div class="col-12">
+              <div class="info-card p-3 bg-info bg-opacity-10 rounded">
+                <h6 class="text-info mb-2">
+                  <i class="fas fa-clock me-2"></i>
+                  <span data-en="Session Info" data-hi="सत्र जानकारी">Session Info</span>
+                </h6>
+                <p class="mb-1 small">
+                  <span data-en="Status" data-hi="स्थिति">Status</span>: 
+                  <% if (session.user) { %>
+                    <span class="badge bg-success" data-en="Logged In" data-hi="लॉग इन">Logged In</span>
+                  <% } else { %>
+                    <span class="badge bg-secondary" data-en="Guest" data-hi="अतिथि">Guest</span>
+                  <% } %>
+                </p>
+                <p class="mb-0 small text-muted">
+                  <span data-en="Session ID" data-hi="सत्र आईडी">Session ID</span>: <%= session.id || 'Browser Session' %>
+                </p>
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <span data-en="Close" data-hi="बंद करें">Close</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include("../partials/footer") %>
+
+<script>
+  // Language state management
+  let currentLanguage = localStorage.getItem('language') || 'en';
+  
+  // Language translations
+  const translations = {
+    en: {
+      toggleText: 'हिं',
+      toggleTooltip: 'Switch to Hindi'
+    },
+    hi: {
+      toggleText: 'EN',
+      toggleTooltip: 'Switch to English'
+    }
+  };
+
+  // Initialize language on page load
+  document.addEventListener("DOMContentLoaded", () => {
+    // Apply saved language
+    if (currentLanguage === 'hi') {
+      switchToHindi();
+    } else {
+      switchToEnglish();
+    }
+    
+    // Update toggle button
+    updateToggleButton();
+
+    // Slider functionality
+    const slider = document.getElementById('featuredSlider');
+    const slideLeft = document.getElementById('slide-left');
+    const slideRight = document.getElementById('slide-right');
+    
+    if (slideLeft && slideRight && slider) {
+      const cardWidth = 250 + 16; // card width + gap
+      
+      slideLeft.addEventListener('click', () => {
+        slider.scrollBy({ left: -cardWidth * 2, behavior: 'smooth' });
+      });
+      
+      slideRight.addEventListener('click', () => {
+        slider.scrollBy({ left: cardWidth * 2, behavior: 'smooth' });
+      });
+    }
+
+    // Price update functionality
+    function updateRates() {
+      const metalsData = JSON.parse(localStorage.getItem("metalsData"));
+      if (!metalsData) {
+        console.warn("No metalsData found in localStorage");
+        return;
+      }
+
+      const { gold, silver } = metalsData;
+
+      // 🔹 Current Rates (10g for display only, without GST)
+      const goldTotal10g = gold?.ratePerGram ? (gold.ratePerGram * 10) : 0;
+      const silverTotal10g = silver?.ratePerGram ? (silver.ratePerGram * 10) : 0;
+
+      document.querySelectorAll(".goldRate").forEach(el => {
+        el.textContent = `₹ ${goldTotal10g.toFixed(2)}`;
+      });
+      document.querySelectorAll(".silverRate").forEach(el => {
+        el.textContent = `₹ ${silverTotal10g.toFixed(2)}`;
+      });
+
+      // 🔹 Update each product card dynamically
+      document.querySelectorAll(".price").forEach(el => {
+        const priceType = el.dataset.pricetype;
+        if (priceType === "manual") {
+          el.textContent = `₹ ${parseFloat(el.dataset.manual || 0).toFixed(2)}`;
+          return; // ✅ Skip auto price calculation
+        }
+
+        const metal = el.dataset.metal;
+        const weight = parseFloat(el.dataset.weight) || 1;
+
+        let ratePerGram = 0;
+
+        if (metal === "gold" && gold?.ratePerGram) {
+          ratePerGram = gold.ratePerGram;
+        } else if (metal === "silver" && silver?.ratePerGram) {
+          ratePerGram = silver.ratePerGram;
+        }
+
+        const price = ratePerGram * weight;
+        el.textContent = ratePerGram > 0 ? `₹ ${price.toFixed(2)}` : "₹ 0.00";
+      });
+    }
+
+    // First run
+    updateRates();
+
+    // Update if metalsData changes from another tab or page
+    window.addEventListener("storage", e => {
+      if (e.key === "metalsData") updateRates();
+    });
+
+    // Periodic refresh (fallback)
+    setInterval(updateRates, 5000);
+  });
+
+  // Language toggle function
+  function toggleLanguage() {
+    const elements = document.querySelectorAll('*');
+    
+    // Add fade out effect
+    elements.forEach(el => el.classList.add('lang-transition'));
+    
+    setTimeout(() => {
+      if (currentLanguage === 'en') {
+        switchToHindi();
+        currentLanguage = 'hi';
+      } else {
+        switchToEnglish();
+        currentLanguage = 'en';
+      }
+      
+      // Save to localStorage
+      localStorage.setItem('language', currentLanguage);
+      
+      // Update toggle button
+      updateToggleButton();
+    }, 150);
+  }
+
+  function switchToHindi() {
+    document.querySelectorAll('[data-hi]').forEach(element => {
+      const hindiText = element.getAttribute('data-hi');
+      if (hindiText) {
+        element.textContent = hindiText;
+        element.classList.add('hindi');
+      }
+    });
+  }
+
+  function switchToEnglish() {
+    document.querySelectorAll('[data-en]').forEach(element => {
+      const englishText = element.getAttribute('data-en');
+      if (englishText) {
+        element.textContent = englishText;
+        element.classList.remove('hindi');
+      }
+    });
+  }
+
+  function updateToggleButton() {
+    const toggleBtn = document.getElementById('languageToggle');
+    const translation = translations[currentLanguage];
+    
+    toggleBtn.textContent = translation.toggleText;
+    toggleBtn.setAttribute('title', translation.toggleTooltip);
+    
+    // Add visual feedback
+    toggleBtn.style.transform = 'scale(1.1)';
+    setTimeout(() => {
+      toggleBtn.style.transform = 'scale(1)';
+    }, 200);
+  }
+
+  // Keyboard shortcut for language toggle (Ctrl + L)
+  document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.key === 'l') {
+      e.preventDefault();
+      toggleLanguage();
+    }
+  });
+
+  // User Info Modal functionality
+  function showUserInfo() {
+    const userInfoModal = new bootstrap.Modal(document.getElementById('userInfoModal'));
+    userInfoModal.show();
+  }
+
+  // Admin FAB functionality
+  let fabMenuOpen = false;
+
+  function toggleAdminMenu() {
+    const mainFab = document.getElementById('mainFab');
+    const fabMenu = document.getElementById('fabMenu');
+    
+    fabMenuOpen = !fabMenuOpen;
+    
+    if (fabMenuOpen) {
+      mainFab.classList.add('active');
+      fabMenu.classList.add('show');
+    } else {
+      mainFab.classList.remove('active');
+      fabMenu.classList.remove('show');
+    }
+  }
+
+  // Close FAB menu when clicking outside
+  document.addEventListener('click', function(e) {
+    const fabContainer = document.querySelector('.admin-fab-container');
+    if (fabContainer && !fabContainer.contains(e.target) && fabMenuOpen) {
+      toggleAdminMenu();
+    }
+  });
+</script>

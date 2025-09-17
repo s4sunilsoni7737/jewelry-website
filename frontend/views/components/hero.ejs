@@ -1,0 +1,460 @@
+<style>
+  /* Hero Section Styles */
+  .hero {
+    background: linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0.6) 0%,
+      rgba(44, 44, 44, 0.5) 50%,
+      rgba(0, 0, 0, 0.7) 100%
+    ),
+    url('/images/hero.png') no-repeat center center/cover;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    color: #ffffff;
+  }
+  
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, transparent 0%, rgba(224, 191, 80, 0.1) 100%);
+    pointer-events: none;
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    animation: heroFadeIn 1.5s ease-out;
+  }
+  
+  @keyframes heroFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .hero h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #ffc107, #ffed4e, #e0bf50);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    line-height: 1.2;
+    animation: titleGlow 3s ease-in-out infinite alternate;
+  }
+  
+  @keyframes titleGlow {
+    from {
+      filter: drop-shadow(0 0 20px rgba(255, 193, 7, 0.3));
+    }
+    to {
+      filter: drop-shadow(0 0 30px rgba(255, 193, 7, 0.6));
+    }
+  }
+  
+  .hero .lead {
+    font-size: 1.4rem;
+    margin-bottom: 2rem;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    animation: subtitleFadeIn 2s ease-out 0.5s both;
+  }
+  
+  @keyframes subtitleFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .hero-btn {
+    background: linear-gradient(135deg, #e0bf50, #ffc107, #ffed4e);
+    border: none;
+    color: #000;
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.4s ease;
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(224, 191, 80, 0.3);
+    animation: buttonFadeIn 2.5s ease-out 1s both;
+  }
+  
+  @keyframes buttonFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(40px) scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  .hero-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s;
+  }
+  
+  .hero-btn:hover::before {
+    left: 100%;
+  }
+  
+  .hero-btn:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(224, 191, 80, 0.5);
+    color: #000;
+  }
+  
+  .hero-btn:active {
+    transform: translateY(-3px) scale(1.02);
+  }
+  
+  /* About Section Styles */
+  .about {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f8f9fa 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .about::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #e0bf50, #ffc107, #ffed4e, #ffc107, #e0bf50);
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  
+  @keyframes shimmer {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
+  
+  .about-content {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(224, 191, 80, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .about-content::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(224, 191, 80, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+  }
+  
+  .about .section-title {
+    color: #2c2c2c;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 3rem;
+    position: relative;
+  }
+  
+  .about .section-title::after {
+    background: linear-gradient(90deg, #e0bf50, #ffc107, #ffed4e);
+    height: 4px;
+    width: 80px;
+    animation: titleUnderline 2s ease-out;
+  }
+  
+  @keyframes titleUnderline {
+    from { width: 0; }
+    to { width: 80px; }
+  }
+  
+  .about .lead {
+    font-size: 1.3rem;
+    color: #2c2c2c;
+    font-weight: 500;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+    position: relative;
+    padding-left: 1rem;
+    border-left: 4px solid #e0bf50;
+  }
+  
+  .about p {
+    font-size: 1.1rem;
+    color: #4a4a4a;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    text-align: justify;
+  }
+  
+  .highlight-text {
+    background: linear-gradient(135deg, rgba(224, 191, 80, 0.1), rgba(255, 193, 7, 0.1));
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    color: #2c2c2c;
+  }
+  
+  /* Stats or Features Section */
+  .about-features {
+    margin-top: 3rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+  }
+  
+  .feature-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(224, 191, 80, 0.05), rgba(255, 255, 255, 0.8));
+    border-radius: 15px;
+    border: 2px solid rgba(224, 191, 80, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(224, 191, 80, 0.2);
+    border-color: #e0bf50;
+  }
+  
+  .feature-icon {
+    font-size: 3rem;
+    color: #e0bf50;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  
+  .feature-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #2c2c2c;
+    margin-bottom: 0.5rem;
+  }
+  
+  .feature-text {
+    font-size: 0.95rem;
+    color: #6c757d;
+    line-height: 1.5;
+  }
+  
+  /* Mobile Responsive Styles */
+  @media (max-width: 768px) {
+    .hero {
+      min-height: 80vh;
+      padding: 2rem 0;
+    }
+    
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .hero .lead {
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+      padding: 0 1rem;
+    }
+    
+    .hero-btn {
+      font-size: 1rem;
+      padding: 0.875rem 2rem;
+      margin-top: 1rem;
+    }
+    
+    .about-content {
+      padding: 2rem 1.5rem;
+      margin: 0 1rem;
+      border-radius: 15px;
+    }
+    
+    .about .section-title {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .about .lead {
+      font-size: 1.1rem;
+      padding-left: 0.75rem;
+    }
+    
+    .about p {
+      font-size: 1rem;
+      text-align: left;
+    }
+    
+    .about-features {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    .feature-item {
+      padding: 1.25rem;
+    }
+    
+    .feature-icon {
+      font-size: 2.5rem;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .hero h1 {
+      font-size: 2rem;
+    }
+    
+    .hero .lead {
+      font-size: 1rem;
+    }
+    
+    .hero-btn {
+      font-size: 0.9rem;
+      padding: 0.75rem 1.5rem;
+    }
+    
+    .about-content {
+      padding: 1.5rem 1rem;
+    }
+    
+    .about .section-title {
+      font-size: 1.75rem;
+    }
+    
+    .about .lead {
+      font-size: 1rem;
+    }
+  }
+</style>
+
+<!-- Enhanced Hero Section -->
+<!-- Desi Style Hero Section -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <h1 data-en="The True Jewel of Tradition" data-hi="परंपरा का सच्चा रत्न">
+  The True Jewel of Tradition
+</h1>
+
+<p class="lead"
+   data-en="Discover handcrafted jewellery that celebrates the soul of Indian culture. From weddings to everyday elegance, each piece reflects heritage, purity, and timeless beauty passed down through generations."
+   data-hi="भारतीय संस्कृति की आत्मा का उत्सव मनाने वाले हस्तनिर्मित आभूषणों की खोज करें। शादियों से लेकर रोज़मर्रा की शान तक, प्रत्येक गहना विरासत, पवित्रता और शाश्वत सुंदरता को दर्शाता है।">
+  Discover handcrafted jewellery that celebrates the soul of Indian culture.  
+  From weddings to everyday elegance, each piece reflects heritage, purity, 
+  and timeless beauty passed down through generations.
+</p>
+
+<a href="#all-collection" class="hero-btn"
+   data-en="View Collection"
+   data-hi="संग्रह देखें">
+   <i class="fas fa-gem me-2"></i> View Collection
+</a>
+
+    </div>
+  </div>
+</section>
+
+
+
+<script src="/public/js/script.js"></script>
+
+
+
+<script>
+  // Scroll-triggered animations
+  document.addEventListener('DOMContentLoaded', function() {
+    // Intersection Observer for about section
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+    
+    // Observe feature items
+    const featureItems = document.querySelectorAll('.feature-item');
+    featureItems.forEach((item, index) => {
+      item.style.opacity = '0';
+      item.style.transform = 'translateY(30px)';
+      item.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+      observer.observe(item);
+    });
+    
+    // Smooth scroll for hero button
+    document.querySelector('.hero-btn').addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+    
+    // Parallax effect for hero section
+    window.addEventListener('scroll', function() {
+      const scrolled = window.pageYOffset;
+      const hero = document.querySelector('.hero');
+      const heroContent = document.querySelector('.hero-content');
+      
+      if (hero && heroContent) {
+        const rate = scrolled * -0.5;
+        heroContent.style.transform = `translateY(${rate}px)`;
+      }
+    });
+  });
+</script>

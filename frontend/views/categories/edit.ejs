@@ -1,0 +1,152 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<%- include('../partials/messages') %>
+
+<style>
+  .info { font-size: 0.9rem; color: #6c757d; }
+
+  /* Card sizing - improved responsive */
+  .add-card { 
+    width: 100%; 
+    max-width: 800px; 
+    margin: 1.5rem auto; 
+  }
+  @media (max-width: 576px) { 
+    .add-card { max-width: 95%; margin: 1rem auto; } 
+  }
+
+  /* Keep validation messages visible */
+  .was-validated .form-control:invalid, .was-validated .form-select:invalid {
+    border-color: #dc3545;
+    box-shadow: none;
+  }
+
+  /* Better spacing for form sections */
+  .form-section {
+    margin-bottom: 2rem;
+  }
+  
+  .form-section:last-child {
+    margin-bottom: 1rem;
+  }
+
+  /* Enhanced card styling */
+  .add-card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  }
+
+  /* Icon input styling */
+  #icon {
+    text-align: center;
+    font-size: 1.5rem !important;
+  }
+</style>
+
+<a type="button" class="btn btn-outline-warning back-button" href="/categories">
+  <i class="fa-solid fa-arrow-left"></i>
+</a>
+
+<div class="container">
+  <div class="card shadow p-4 add-card">
+    <h2 class="mb-3">Edit Category</h2>
+    <!-- Bootstrap validation enabled here -->
+    <form action="/categories/edit/<%= category._id %>" method="POST" class="needs-validation" novalidate>
+      
+      <!-- Basic Information Section -->
+      <div class="form-section">
+        <h5 class="text-primary mb-3">Basic Information</h5>
+        
+        <!-- Category Name -->
+        <div class="form-group mb-3">
+          <label for="name">Category Name</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="name" 
+            name="name" 
+            value="<%= category.name %>" 
+            required>
+          <div class="invalid-feedback">Category Name is required.</div>
+        </div>
+
+        <!-- Category Icon -->
+        <div class="form-group mb-3">
+          <label for="icon">Category Icon</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="icon" 
+            name="icon" 
+            value="<%= category.icon %>" 
+            required
+            pattern=".{1,5}"
+            maxlength="5">
+          <div class="form-text">Use a single emoji or short icon text (1–5 chars max)<br>
+            <span class="text-muted">Suggestions: 💍💎🪢📿🦪⚪️🫶🏻🌙🪞🦢✨</span>
+          </div>
+          <div class="invalid-feedback">Category Icon is required.</div>
+        </div>
+      </div>
+
+      <!-- Additional Information Section -->
+      <div class="form-section">
+        <h5 class="text-primary mb-3">Additional Information</h5>
+        
+        <!-- Description -->
+        <div class="form-group mb-3">
+          <label for="description">Description</label>
+          <textarea 
+            class="form-control" 
+            id="description" 
+            name="description" 
+            rows="3"
+            placeholder="Enter a brief description of this category..."
+            style="resize: vertical;"><%= category.description %></textarea>
+          <div class="form-text">Optional: Provide a brief description of this category</div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <a href="/categories" class="btn btn-secondary me-md-2">Cancel</a>
+        <button type="submit" class="btn btn-success">Update Category</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('.needs-validation');
+    const iconInput = document.getElementById('icon');
+
+    // Real-time icon validation
+    iconInput.addEventListener('input', function() {
+      if (this.value.length > 5) {
+        this.value = this.value.substring(0, 5);
+      }
+    });
+
+    // Bootstrap form validation
+    form.addEventListener('submit', function (event) {
+      // Custom validation for icon
+      const icon = document.getElementById('icon');
+      if (icon.value.length > 5) {
+        icon.setCustomValidity("Icon must be between 1 and 5 characters.");
+      } else {
+        icon.setCustomValidity("");
+      }
+
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      
+      form.classList.add('was-validated');
+    }, false);
+  });
+</script>

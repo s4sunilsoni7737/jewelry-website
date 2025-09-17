@@ -1,0 +1,412 @@
+<!-- Link to external CSS file -->
+<link rel="stylesheet" href="/css/footer.css">
+
+<% title = 'Contact Us' %>
+
+<section id="contact" class="contact-section py-5">
+  <div class="container">
+    <!-- Header -->
+    <div class="contact-header text-center mb-5">
+      <h2 class="section-title"
+          data-en="Get in Touch"
+          data-hi="संपर्क करें">Get in Touch</h2>
+      <div class="title-underline"></div>
+      <p class="lead"
+         data-en="We'd love to hear from you. Send us a message and we'll respond as soon as possible."
+         data-hi="हमें आपसे सुनकर खुशी होगी। हमें संदेश भेजें और हम जल्द ही जवाब देंगे।">
+        We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+      </p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+      <!-- Contact Information Card -->
+      <div class="col-lg-5 col-md-6">
+        <div class="contact-info-card">
+          <h4 class="contact-card-title"
+              data-en="Contact Information"
+              data-hi="संपर्क जानकारी">Contact Information</h4>
+          
+          <div class="contact-info-list">
+            <!-- Address -->
+<div class="contact-info-item">
+  <div class="contact-icon">
+    <i class="fas fa-map-marker-alt"></i>
+  </div>
+  <div class="contact-details">
+    <div class="contact-label" data-en="Address" data-hi="पता">Address</div>
+    <div class="contact-value">
+      <% if (typeof currentShop !== 'undefined' && currentShop && currentShop.location) { %>
+        <% const addressParts = []; %>
+        <% if (currentShop.location.address) addressParts.push(currentShop.location.address); %>
+        <% if (currentShop.location.city) addressParts.push(currentShop.location.city); %>
+        <% if (currentShop.location.state) addressParts.push(currentShop.location.state); %>
+        <% if (currentShop.location.pincode) addressParts.push('India - ' + currentShop.location.pincode); %>
+        
+        <% if (addressParts.length > 0) { %>
+          <%- addressParts.join('<br>') %>
+        <% } else { %>
+          123, Royal Jewels Street<br>Jewelry District, Mumbai, India - 400001
+        <% } %>
+      <% } else { %>
+        123, Royal Jewels Street<br>Jewelry District, Mumbai, India - 400001
+      <% } %>
+    </div>
+  </div>
+</div>
+
+
+            <!-- Phone -->
+            <div class="contact-info-item">
+              <div class="contact-icon">
+                <i class="fas fa-phone"></i>
+              </div>
+              <div class="contact-details">
+                <div class="contact-label" data-en="Phone" data-hi="फ़ोन">Phone</div>
+                <div class="contact-value">
+                  <% if (typeof currentShop !== 'undefined' && currentShop && currentShop.contactInfo && currentShop.contactInfo.phone) { %>
+                    <%= currentShop.contactInfo.phone %>
+                  <% } else { %>
+                    +91 98765 43210
+                  <% } %>
+                </div>
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="contact-info-item">
+              <div class="contact-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="contact-details">
+                <div class="contact-label" data-en="Email" data-hi="ईमेल">Email</div>
+                <div class="contact-value">
+                  <% if (typeof currentShop !== 'undefined' && currentShop) { %>
+                    <% if (currentShop.contactInfo && currentShop.contactInfo.email) { %>
+                      <%= currentShop.contactInfo.email %>
+                    <% } else if (currentShop.email) { %>
+                      <%= currentShop.email %>
+                    <% } else { %>
+                      support@royaljewels.com
+                    <% } %>
+                  <% } else { %>
+                    support@royaljewels.com
+                  <% } %>
+                </div>
+              </div>
+            </div>
+
+            <!-- Website -->
+            <div class="contact-info-item">
+              <div class="contact-icon">
+                <i class="fas fa-globe"></i>
+              </div>
+              <div class="contact-details">
+                <div class="contact-label" data-en="Website" data-hi="वेबसाइट">Website</div>
+                <div class="contact-value">
+                  <% if (typeof currentShop !== 'undefined' && currentShop && currentShop.contactInfo && currentShop.contactInfo.website) { %>
+                    <%= currentShop.contactInfo.website %>
+                  <% } else { %>
+                    www.royaljewels.com
+                  <% } %>
+                </div>
+              </div>
+            </div>
+
+            <!-- Business Hours -->
+            <div class="contact-info-item">
+              <div class="contact-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="contact-details">
+                <div class="contact-label" data-en="Business Hours" data-hi="व्यवसाय का समय">Business Hours</div>
+                <div class="contact-value">
+                  <% if (typeof currentShop !== 'undefined' && currentShop && currentShop.businessHours) { %>
+                    <% if (currentShop.businessHours.weekdays) { %>
+                      <%= currentShop.businessHours.weekdays %><br>
+                    <% } %>
+                    <% if (currentShop.businessHours.sunday) { %>
+                      <%= currentShop.businessHours.sunday %>
+                    <% } %>
+                  <% } else { %>
+                    Mon - Sat: 10:00 AM - 8:00 PM | Sunday: 11:00<br>AM - 6:00 PM
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Form Card -->
+      <div class="col-lg-6 col-md-6">
+        <div class="contact-form-card">
+          <h4 class="contact-card-title"
+              data-en="Send Us a Message"
+              data-hi="हमें संदेश भेजें">Send Us a Message</h4>
+          
+          <form id="contactForm" class="contact-form">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="firstName" class="form-label">
+                  <span data-en="First Name *" data-hi="पहला नाम *">First Name *</span>
+                </label>
+                <input type="text" class="form-control" id="firstName" name="firstName" required>
+              </div>
+              <div class="col-md-6">
+                <label for="lastName" class="form-label">
+                  <span data-en="Last Name *" data-hi="अंतिम नाम *">Last Name *</span>
+                </label>
+                <input type="text" class="form-control" id="lastName" name="lastName" required>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="email" class="form-label">
+                <span data-en="Email Address *" data-hi="ईमेल पता *">Email Address *</span>
+              </label>
+              <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="phone" class="form-label">
+                <span data-en="Phone Number" data-hi="फ़ोन नंबर">Phone Number</span>
+              </label>
+              <input type="tel" class="form-control" id="phone" name="phone" placeholder="+91 98765 43210">
+            </div>
+            
+            <div class="form-group">
+              <label for="subject" class="form-label">
+                <span data-en="Subject *" data-hi="विषय *">Subject *</span>
+              </label>
+              <select class="form-control" id="subject" name="subject" required>
+                <option value="">Select a subject</option>
+                <option value="inquiry" data-en="General Inquiry" data-hi="सामान्य पूछताछ">General Inquiry</option>
+                <option value="custom-order" data-en="Custom Order" data-hi="विशेष ऑर्डर">Custom Order</option>
+                <option value="repair" data-en="Jewelry Repair" data-hi="आभूषण मरम्मत">Jewelry Repair</option>
+                <option value="pricing" data-en="Pricing Information" data-hi="मूल्य जानकारी">Pricing Information</option>
+                <option value="feedback" data-en="Feedback" data-hi="प्रतिक्रिया">Feedback</option>
+                <option value="other" data-en="Other" data-hi="अन्य">Other</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="message" class="form-label">
+                <span data-en="Your Message *" data-hi="आपका संदेश *">Your Message *</span>
+              </label>
+              <textarea class="form-control" id="message" name="message" rows="6" 
+                        placeholder="Tell us about your requirements, questions, or how we can help you..." required></textarea>
+            </div>
+            
+            <div class="form-submit">
+              <button type="submit" class="btn-send-message">
+                <i class="fas fa-paper-plane"></i>
+                <span data-en="SEND MESSAGE" data-hi="संदेश भेजें">SEND MESSAGE</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer with redesigned layout but keeping contact info -->
+<footer class="bg-dark text-white py-4 mt-5">
+  <div class="container">
+    <div class="row g-4">
+      <!-- Brand Section -->
+      <div class="col-lg-3 col-md-6">
+        <h5 class="mb-3" style="color: #e0bf50;">✨ Royal Jewels</h5>
+        <p class="mb-3"
+           data-en="Crafting exquisite jewelry with passion and precision. Your trusted partner for life's precious moments."
+           data-hi="जुनून और उत्कृष्टता के साथ उत्कृष्ट आभूषण बनाना। जीवन के कीमती क्षणों के लिए आपका विश्वसनीय साथी।">
+          Crafting exquisite jewelry with passion and precision. Your trusted partner for life's precious moments.
+        </p>
+      </div>
+      
+      <!-- Quick Links -->
+      <div class="col-lg-2 col-md-6">
+        <h6 class="mb-3" style="color: #e0bf50;"
+            data-en="Quick Links"
+            data-hi="त्वरित लिंक">Quick Links</h6>
+        <ul class="list-unstyled footer-links">
+          <li><a href="/products" class="text-light text-decoration-none"
+                 data-en="Home" data-hi="होम">Home</a></li>
+          <li><a href="/products" class="text-light text-decoration-none"
+                 data-en="Products" data-hi="उत्पाद">Products</a></li>
+          <li><a href="/products/search-results" class="text-light text-decoration-none"
+                 data-en="Search" data-hi="खोजें">Search</a></li>
+          <li><a href="/contact" class="text-light text-decoration-none"
+                 data-en="Contact" data-hi="संपर्क करें">Contact</a></li>
+        </ul>
+      </div>
+      
+      <!-- Categories -->
+      <div class="col-lg-2 col-md-6">
+        <h6 class="mb-3" style="color: #e0bf50;"
+            data-en="Categories"
+            data-hi="श्रेणियाँ">Categories</h6>
+        <ul class="list-unstyled footer-links">
+          <li><a href="/products/category/gold" class="text-light text-decoration-none"
+                 data-en="Gold Jewelry" data-hi="सोने के आभूषण">Gold Jewelry</a></li>
+          <li><a href="/products/category/silver" class="text-light text-decoration-none"
+                 data-en="Silver Collection" data-hi="चाँदी संग्रह">Silver Collection</a></li>
+          <li><a href="/products/category/diamond" class="text-light text-decoration-none"
+                 data-en="Diamond Sets" data-hi="हीरे के सेट">Diamond Sets</a></li>
+          <li><a href="/products/add" class="text-light text-decoration-none"
+                 data-en="Custom Orders" data-hi="विशेष ऑर्डर">Custom Orders</a></li>
+        </ul>
+      </div>
+      
+      <!-- Services -->
+      <div class="col-lg-2 col-md-6">
+        <h6 class="mb-3" style="color: #e0bf50;"
+            data-en="Services"
+            data-hi="सेवाएं">Services</h6>
+        <ul class="list-unstyled footer-links">
+          <li><a href="#" class="text-light text-decoration-none"
+                 data-en="Custom Design" data-hi="कस्टम डिज़ाइन">Custom Design</a></li>
+          <li><a href="#" class="text-light text-decoration-none"
+                 data-en="Jewelry Repair" data-hi="आभूषण मरम्मत">Jewelry Repair</a></li>
+          <li><a href="#" class="text-light text-decoration-none"
+                 data-en="Gold Exchange" data-hi="सोना एक्सचेंज">Gold Exchange</a></li>
+          <li><a href="#" class="text-light text-decoration-none"
+                 data-en="Certification" data-hi="प्रमाणीकरण">Certification</a></li>
+        </ul>
+      </div>
+      
+      <!-- Contact Info -->
+      <div class="col-lg-3 col-md-6">
+        <h6 class="mb-3" style="color: #e0bf50;"
+            data-en="Contact Info"
+            data-hi="संपर्क जानकारी">Contact Info</h6>
+        
+        <% if (typeof currentShop !== 'undefined' && currentShop) { %>
+          <!-- Phone -->
+          <p class="mb-2 footer-contact-item">
+            <i class="fas fa-phone me-2" style="color: #e0bf50;"></i>
+            <% if (currentShop.contactInfo && currentShop.contactInfo.phone) { %>
+              <a href="tel:<%= currentShop.contactInfo.phone.replace(/\D/g, '') %>" 
+                 class="text-decoration-none text-light">
+                <%= currentShop.contactInfo.phone %>
+              </a>
+            <% } else { %>
+              <a href="tel:+919876543210" class="text-decoration-none text-light">+91 98765 43210</a>
+            <% } %>
+          </p>
+          
+          <!-- Email -->
+          <p class="mb-2 footer-contact-item">
+            <i class="fas fa-envelope me-2" style="color: #e0bf50;"></i>
+            <% if (currentShop.contactInfo && currentShop.contactInfo.email) { %>
+              <a href="mailto:<%= currentShop.contactInfo.email %>" 
+                 class="text-decoration-none text-light">
+                <%= currentShop.contactInfo.email %>
+              </a>
+            <% } else if (currentShop.email) { %>
+              <a href="mailto:<%= currentShop.email %>" 
+                 class="text-decoration-none text-light">
+                <%= currentShop.email %>
+              </a>
+            <% } else { %>
+              <a href="mailto:support@royaljewels.com" 
+                 class="text-decoration-none text-light">support@royaljewels.com</a>
+            <% } %>
+          </p>
+          
+          <!-- Address -->
+          <p class="mb-2 footer-contact-item">
+            <i class="fas fa-map-marker-alt me-2" style="color: #e0bf50;"></i>
+            <% if (currentShop.location) { %>
+              <% const addressParts = []; %>
+              <% if (currentShop.location.city) addressParts.push(currentShop.location.city); %>
+              <% if (currentShop.location.state) addressParts.push(currentShop.location.state); %>
+              
+              <% if (addressParts.length > 0) { %>
+                <%= addressParts.join(', ') %>
+              <% } else { %>
+                Mumbai, Maharashtra
+              <% } %>
+            <% } else { %>
+              Mumbai, Maharashtra
+            <% } %>
+          </p>
+          
+        <% } else { %>
+          <!-- Fallback contact info -->
+          <p class="mb-2 footer-contact-item">
+            <i class="fas fa-phone me-2" style="color: #e0bf50;"></i>
+            <a href="tel:+919876543210" class="text-decoration-none text-light">+91 98765 43210</a>
+          </p>
+          <p class="mb-2 footer-contact-item">
+            <i class="fas fa-envelope me-2" style="color: #e0bf50;"></i>
+            <a href="mailto:support@royaljewels.com" class="text-decoration-none text-light">support@royaljewels.com</a>
+          </p>
+          <p class="mb-2 footer-contact-item">
+            <i class="fas fa-map-marker-alt me-2" style="color: #e0bf50;"></i>
+            Mumbai, Maharashtra
+          </p>
+        <% } %>
+      </div>
+    </div>
+    
+    <hr class="my-3" style="border-color: #e0bf50;">
+    
+    <!-- Footer Bottom -->
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <p class="mb-2 mb-md-0 footer-copyright"
+           data-en="© <%= new Date().getFullYear() %> Royal Jewels. All rights reserved."
+           data-hi="© <%= new Date().getFullYear() %> रॉयल ज्वेल्स। सर्वाधिकार सुरक्षित।">
+          © <%= new Date().getFullYear() %> Royal Jewels. All rights reserved.
+        </p>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <p class="mb-0 footer-designer"
+           data-en="Designed with ❤️ by Sunil Soni"
+           data-hi="❤️ के साथ डिजाइन किया गया - सुनील सोनी">
+          Designed with ❤️ by <strong>Sunil Soni</strong>
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/script.js"></script>
+<script>
+  // Contact form handling
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Get form data
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    
+    // Simple validation
+    if (!data.firstName || !data.lastName || !data.email || !data.subject || !data.message) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+    
+    // Simulate form submission
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    submitBtn.disabled = true;
+    
+    setTimeout(() => {
+      alert('Thank you for your message! We will get back to you soon.');
+      this.reset();
+      submitBtn.innerHTML = originalText;
+      submitBtn.disabled = false;
+    }, 2000);
+  });
+</script>
