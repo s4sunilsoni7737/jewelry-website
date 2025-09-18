@@ -23,18 +23,23 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
+// Trust proxy (important for Render/Heroku so secure cookies work)
+app.set('trust proxy', 1);
+
 app.use(session({
   secret: process.env.SESSION_SECRET || 'royalJewelsSecretKey123',
   resave: false,
   saveUninitialized: false,
+  proxy: true,   // ✅ allow session cookies behind proxy
   cookie: {
-    secure: process.env.NODE_ENV === 'production', // HTTPS in production
+    secure: process.env.NODE_ENV === 'production', // only over HTTPS in prod
     httpOnly: true,
-    maxAge: null, // Will be set dynamically based on remember me
-    sameSite: 'lax' // CSRF protection
+    maxAge: 1000 * 60 * 60 * 24, // 1 day (you can adjust)
+    sameSite: 'lax'
   },
-  name: 'sessionId' // Don't use default session name
+  name: 'sessionId'
 }));
+
 
 app.use(flash());
 app.use(generalLimiter); // Apply rate limiting to all routes

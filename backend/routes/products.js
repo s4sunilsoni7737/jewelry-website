@@ -89,28 +89,30 @@ router.get('/logout', (req, res, next) => {
 
 router.post('/select-shop', asyncHandler(async (req, res) => {
   const { shopId } = req.body;
-  try {
-    if (!mongoose.Types.ObjectId.isValid(shopId)) {
-      req.flash('error_msg', '❌ Invalid shop selection');
-      return res.redirect('/products');
-    }
 
-    const shop = await User.findById(shopId);
-
-    if (!shop || !shop.isSeller) {
-      req.flash('error_msg', '❌ Shop not found or invalid');
-      return res.redirect('/products');
-    }
-
-    req.session.selectedShop = shop._id;
-    req.flash('success_msg', `✅ Selected shop: ${shop.name || shop.businessName || 'Shop'}`);
-
-    res.redirect('/products');
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error selecting shop');
+  if (!mongoose.Types.ObjectId.isValid(shopId)) {
+    req.flash('error_msg', '❌ Invalid shop selection');
+    return res.redirect('/products');
   }
+
+  const shop = await User.findById(shopId);
+
+  if (!shop || !shop.isSeller) {
+    req.flash('error_msg', '❌ Shop not found or invalid');
+    return res.redirect('/products');
+  }
+
+  // ✅ Save shop in session
+  req.session.selectedShop = shop._id;
+  console.log("✅ Selected shop stored in session:", req.session.selectedShop);
+
+  req.flash('success_msg', `✅ Selected shop: ${shop.name || shop.businessName || 'Shop'}`);
+
+  // ✅ Redirect with query param fallback
+  res.redirect(`/products?shop=${shop._id}`);
 }));
+
+
 
 
 
@@ -129,13 +131,13 @@ router.get('/', asyncHandler(async (req, res) => {
     const categories = await Categories.find();
     const adminUser = await User.findOne({ role: 'admin' });
 
-    // Get logged-in user from session - ALWAYS PROVIDE USER OBJECT
+    // Get logged-in user from session
     let user = null;
     if (req.session.userId) {
       user = await User.findById(req.session.userId).lean();
     }
-    
-    // Provide default empty user object if none found
+
+    // Provide default guest user object if none found
     if (!user) {
       user = {
         email: 'Guest User',
@@ -146,21 +148,28 @@ router.get('/', asyncHandler(async (req, res) => {
       };
     }
 
+    // ✅ Fix: allow restoring selectedShop from query param
     if (!req.session.selectedShop && !req.session.isSeller) {
-      const shops = await User.find({ isSeller: true }).lean();
-      return res.render('pages/index', {
-        title: 'Choose Shop',
-        products: [],
-        categories,
-        shops,
-        session: req.session,
-        currentShop: null,
-        admin: adminUser,
-        user // This could be null if no user is logged in
-      });
+      if (req.query.shop && mongoose.Types.ObjectId.isValid(req.query.shop)) {
+        req.session.selectedShop = req.query.shop;
+      } else {
+        const shops = await User.find({ isSeller: true }).lean();
+        return res.render('pages/index', {
+          title: 'Choose Shop',
+          products: [],
+          categories,
+          shops,
+          session: req.session,
+          currentShop: null,
+          admin: adminUser,
+          user
+        });
+      }
     }
 
+    // Determine current shop
     const shopId = req.session.isSeller ? req.session.userId : req.session.selectedShop;
+
     const products = await Product.find({ owner: shopId });
     const currentShop = await User.findById(shopId);
     const rates = await getLatestRates();
@@ -175,13 +184,14 @@ router.get('/', asyncHandler(async (req, res) => {
       goldRate: rates.gold,
       silverRate: rates.silver,
       admin: adminUser,
-      user // This could be null if no user is logged in
+      user
     });
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
   }
 }));
+
 
 // =================== PRODUCT SEARCH ===================
 
