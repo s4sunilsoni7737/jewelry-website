@@ -429,6 +429,8 @@
             </div>
           <% } %>
 
+          
+
           <!-- Secondary Actions -->
           <div class="secondary-actions">
             <a href="/products/category/<%= product.category?.name %>" class="btn-outline-gold">
@@ -436,10 +438,17 @@
               <span class="lang" data-en="View Similar Products" data-hi="समान उत्पाद देखें">View Similar Products</span>
             </a>
             
-            <a href="tel:+911234567890" class="btn-outline-gold">
-              <i class="fa-solid fa-phone"></i> 
-              <span class="lang" data-en="Call for Query" data-hi="प्रश्न के लिए कॉल करें">Call for Query</span>
-            </a>
+            <% if (product.owner && product.owner.contactInfo && product.owner.contactInfo.phone) { %>
+              <a href="tel:<%= product.owner.contactInfo.phone %>" class="btn-outline-gold">
+                <i class="fa-solid fa-phone"></i> 
+                <span class="lang" data-en="Call for Query" data-hi="प्रश्न के लिए कॉल करें">Call for Query</span>
+              </a>
+            <% } else { %>
+              <span class="btn-outline-gold" style="opacity: 0.6; cursor: not-allowed;">
+                <i class="fa-solid fa-phone"></i> 
+                <span class="lang" data-en="No Contact Number" data-hi="कोई संपर्क नंबर नहीं">No Contact Number</span>
+              </span>
+            <% } %>
           </div>
         </div>
       </div>
