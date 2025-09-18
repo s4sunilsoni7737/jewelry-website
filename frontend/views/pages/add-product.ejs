@@ -220,11 +220,11 @@
               <span class="text-danger">*</span>
             </label>
             <select class="form-select" id="category" name="category" required>
-              <option value="">
-                <span class="lang" data-en="Select Category" data-hi="श्रेणी चुनें">Select Category</span>
-              </option>
+              <option value="">-- Select Category --</option>
               <% categories.forEach(cat => { %>
-                <option value="<%= cat._id %>"><%= cat.name %></option>
+                <option value="<%= cat._id %>" <%= cat.name === 'uncategorised' ? 'selected' : '' %>>
+                  <%= cat.icon %> <%= cat.name.charAt(0).toUpperCase() + cat.name.slice(1) %>
+                </option>
               <% }) %>
             </select>
             <div class="invalid-feedback">
@@ -237,11 +237,12 @@
           <label for="description" class="form-label">
             <span class="lang" data-en="Description" data-hi="विवरण">Description</span>
           </label>
-          <textarea class="form-control" id="description" name="description" rows="3" 
-                    placeholder="Describe your product..." 
-                    data-en="Describe your product..." 
-                    data-hi="अपने उत्पाद का वर्णन करें..."></textarea>
+          <textarea class="form-control lang" id="description" name="description" rows="3"
+          data-en="Describe your product..."
+          data-hi="अपने उत्पाद का वर्णन करें..."></textarea>
+
         </div>
+        
       </div>
 
       <!-- Pricing Section -->
@@ -254,11 +255,12 @@
         <!-- Price Type Toggle -->
         <div class="price-toggle mb-4">
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="isManualPrice" name="isManualPrice">
+            <input class="form-check-input" type="checkbox" id="isManualPrice" name="priceType" value="manual">
             <label class="form-check-label" for="isManualPrice">
               <span class="lang" data-en="Set Manual Price" data-hi="मैन्युअल मूल्य सेट करें">Set Manual Price</span>
             </label>
           </div>
+          <input type="hidden" id="priceTypeHidden" name="priceType" value="auto">
         </div>
 
         <!-- Auto Price Field -->
@@ -404,7 +406,7 @@
             <span class="lang" data-en="Upload Image" data-hi="छवि अपलोड करें">Upload Image</span>
             <span class="text-danger">*</span>
           </label>
-          <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+          <input type="file" class="form-control" id="image" name="image" accept="image/*" >
           <div class="form-text">
             <span class="lang" data-en="Supported formats: JPG, PNG, WEBP. Max size: 5MB" data-hi="समर्थित प्रारूप: JPG, PNG, WEBP। अधिकतम आकार: 5MB">Supported formats: JPG, PNG, WEBP. Max size: 5MB</span>
           </div>
@@ -483,26 +485,85 @@
 
     function togglePriceFields() {
       const isManual = isManualPriceEl.checked;
+      const hiddenInput = document.getElementById('priceTypeHidden');
+      
       if (isManual) {
         manualField.classList.remove('d-none');
         autoField.classList.add('d-none');
         manualInput.required = true;
         autoInput.required = false;
+        hiddenInput.disabled = true; // Disable hidden input when manual is selected
+        isManualPriceEl.name = 'priceType'; // Use checkbox name
       } else {
         manualField.classList.add('d-none');
         autoField.classList.remove('d-none');
         manualInput.required = false;
         autoInput.required = true;
+        hiddenInput.disabled = false; // Enable hidden input for auto pricing
+        isManualPriceEl.name = ''; // Remove name from checkbox
         recalcAutoPrice();
       }
     }
 
-    // Bootstrap validation
+    // Enhanced form validation
     form.addEventListener('submit', function(event) {
-      if (!form.checkValidity()) {
+      let isValid = true;
+      
+      // Check product name
+      const nameInput = document.getElementById('name');
+      const nameValue = nameInput.value.trim();
+      if (!nameValue || nameValue.length < 2) {
+        nameInput.setCustomValidity('Product name must be at least 2 characters long');
+        isValid = false;
+      } else {
+        nameInput.setCustomValidity('');
+      }
+      
+      // Check category
+      const categoryInput = document.getElementById('category');
+      if (!categoryInput.value) {
+        categoryInput.setCustomValidity('Please select a category');
+        isValid = false;
+      } else {
+        categoryInput.setCustomValidity('');
+      }
+      
+      // Check material
+      const materialInput = document.getElementById('material');
+      if (!materialInput.value) {
+        materialInput.setCustomValidity('Please select a material');
+        isValid = false;
+      } else {
+        materialInput.setCustomValidity('');
+      }
+      
+      // Check weight
+      const weightInput = document.getElementById('weight');
+      const weightValue = parseFloat(weightInput.value);
+      if (!weightValue || weightValue <= 0) {
+        weightInput.setCustomValidity('Weight must be greater than 0');
+        isValid = false;
+      } else {
+        weightInput.setCustomValidity('');
+      }
+      
+      // Check manual price if selected
+      const isManual = isManualPriceEl.checked;
+      if (isManual) {
+        const manualPriceValue = parseFloat(manualInput.value);
+        if (!manualPriceValue || manualPriceValue <= 0) {
+          manualInput.setCustomValidity('Manual price must be greater than 0');
+          isValid = false;
+        } else {
+          manualInput.setCustomValidity('');
+        }
+      }
+      
+      if (!isValid || !form.checkValidity()) {
         event.preventDefault();
         event.stopPropagation();
       }
+      
       form.classList.add('was-validated');
     }, false);
 

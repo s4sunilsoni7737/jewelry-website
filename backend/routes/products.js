@@ -11,6 +11,8 @@ const Rate = require('../models/metalRate');
 const Categories = require('../models/category');
 const bcrypt = require('bcrypt');
 const { requireLogin } = require('../middleware/auth');
+const { loginLimiter } = require('../middleware/rateLimiter');
+const { validateLogin, validateProduct, validateSearch, validateProfile } = require('../middleware/validation');
 const getLatestRates = require('../controllers/getLatestRates');
 
 // =================== AUTH ===================
@@ -21,8 +23,8 @@ router.get('/login', (req, res) => {
 });
 
 // POST login
-router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+router.post('/login', loginLimiter, validateLogin, async (req, res) => {
+  const { email, password, rememberMe } = req.body;
   try {
     const user = await User.findOne({ email });
     if (!user) {
@@ -38,8 +40,23 @@ router.post('/login', async (req, res) => {
 
     req.session.userId = user._id;
     req.session.isSeller = user.isSeller;
+    req.session.role = user.role;
+
+    // Handle remember me functionality
+    if (rememberMe) {
+      // Set session to expire in 30 days instead of when browser closes
+      req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
+    } else {
+      // Session expires when browser closes (default)
+      req.session.cookie.maxAge = null;
+    }
+
     req.flash('success_msg', '✅ Logged in successfully!');
-    res.redirect('/products');
+    
+    // Redirect to the page user was trying to access, or default to /products
+    const redirectTo = req.session.returnTo || '/products';
+    delete req.session.returnTo; // Clean up
+    res.redirect(redirectTo);
   } catch (error) {
     console.error('Login Error:', error);
     req.flash('error_msg', '❌ Server error during login');
@@ -62,13 +79,26 @@ router.get('/logout', (req, res, next) => {
 
 // =================== SHOP SELECTION ===================
 
+
+
 router.post('/select-shop', async (req, res) => {
   const { shopId } = req.body;
   try {
+    if (!mongoose.Types.ObjectId.isValid(shopId)) {
+      req.flash('error_msg', '❌ Invalid shop selection');
+      return res.redirect('/products');
+    }
+
     const shop = await User.findById(shopId);
-    if (!shop || !shop.isSeller) return res.status(400).send('Invalid shop');
+
+    if (!shop || !shop.isSeller) {
+      req.flash('error_msg', '❌ Shop not found or invalid');
+      return res.redirect('/products');
+    }
 
     req.session.selectedShop = shop._id;
+    req.flash('success_msg', `✅ Selected shop: ${shop.name || shop.businessName || 'Shop'}`);
+
     res.redirect('/products');
   } catch (err) {
     console.error(err);
@@ -76,10 +106,14 @@ router.post('/select-shop', async (req, res) => {
   }
 });
 
+
+
+
 router.post('/reset-shop', (req, res) => {
   req.session.selectedShop = null;
   res.redirect('/products');
 });
+
 
 // =================== PRODUCT ROUTES ===================
 
@@ -87,11 +121,27 @@ router.post('/reset-shop', (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const categories = await Categories.find();
-    // Get admin user for contact info
-    const adminUser = await User.findOne({ isAdmin: true });
+    const adminUser = await User.findOne({ role: 'admin' });
+
+    // Get logged-in user from session - ALWAYS PROVIDE USER OBJECT
+    let user = null;
+    if (req.session.userId) {
+      user = await User.findById(req.session.userId).lean();
+    }
+    
+    // Provide default empty user object if none found
+    if (!user) {
+      user = {
+        email: 'Guest User',
+        name: 'Guest',
+        contactInfo: {},
+        location: {},
+        isSeller: false
+      };
+    }
 
     if (!req.session.selectedShop && !req.session.isSeller) {
-      const shops = await User.find({ isSeller: true });
+      const shops = await User.find({ isSeller: true }).lean();
       return res.render('pages/index', {
         title: 'Choose Shop',
         products: [],
@@ -99,7 +149,8 @@ router.get('/', async (req, res) => {
         shops,
         session: req.session,
         currentShop: null,
-        admin: adminUser, // Pass admin user to the view
+        admin: adminUser,
+        user // This could be null if no user is logged in
       });
     }
 
@@ -107,7 +158,7 @@ router.get('/', async (req, res) => {
     const products = await Product.find({ owner: shopId });
     const currentShop = await User.findById(shopId);
     const rates = await getLatestRates();
-    
+
     res.render('pages/index', {
       title: 'Home',
       products,
@@ -117,7 +168,8 @@ router.get('/', async (req, res) => {
       currentShop,
       goldRate: rates.gold,
       silverRate: rates.silver,
-      admin: adminUser, // Pass admin user to the view
+      admin: adminUser,
+      user // This could be null if no user is logged in
     });
   } catch (err) {
     console.error(err);
@@ -128,7 +180,7 @@ router.get('/', async (req, res) => {
 // =================== PRODUCT SEARCH ===================
 
 // Updated search-results route handler
-router.get('/search-results', async (req, res) => {
+router.get('/search-results', validateSearch, async (req, res) => {
   try {
     const { search, category, material, price } = req.query;
     const filter = {};
@@ -209,7 +261,10 @@ router.get('/search-results', async (req, res) => {
       }
     }
 
-    console.log('Search filter:', JSON.stringify(filter, null, 2));
+    // Log search for analytics (optional)
+    if (search && search.trim()) {
+      console.log(`Search performed: "${search.trim()}" by shop: ${shopId}`);
+    }
 
     // Execute search with population
     const products = await Product.find(filter)
@@ -323,7 +378,7 @@ router.get('/add', requireLogin, async (req, res) => {
   });
 });
 
-router.post('/add', requireLogin, upload.single('image'), async (req, res) => {
+router.post('/add', requireLogin, upload.single('image'), validateProduct, async (req, res) => {
   if (!req.session.isSeller) {
     req.flash('error_msg', '❌ Unauthorized');
     return res.redirect('/products');
@@ -387,22 +442,31 @@ if (isNaN(ratePerGram)) ratePerGram = 0;
       specifications,
       featured: !!featured,
       inStock: !!inStock,
-image: req.file?.path || req.file?.secure_url || '/images/default.png',
+      image: req.file ? (req.file.path || req.file.secure_url) : '/images/default.png',
       owner: req.session.userId,
     });
 
     await newProduct.save();
-    req.flash('success_msg', '✅ Product added successfully!');
+    req.flash('success_msg', `✅ Product "${name}" added successfully!`);
     res.redirect('/products');
   } catch (err) {
-    console.error('Error adding product:', err.message);
-    req.flash('error_msg', '❌ Server error while adding product');
+    console.error('Error adding product:', err);
+
+    // Handle specific MongoDB errors
+    if (err.code === 11000) {
+      req.flash('error_msg', '❌ A product with this name already exists');
+    } else if (err.name === 'ValidationError') {
+      const errors = Object.values(err.errors).map(e => e.message);
+      req.flash('error_msg', `❌ Validation Error: ${errors.join(', ')}`);
+    } else if (err.message.includes('Cloudinary')) {
+      req.flash('error_msg', '❌ Image upload failed. Please try again with a different image.');
+    } else {
+      req.flash('error_msg', '❌ Server error while adding product. Please try again.');
+    }
+
     res.redirect('/products/add');
   }
 });
-
-
-
 // =================== EDIT PRODUCT ===================
 
 router.get('/:id/edit', requireLogin, async (req, res) => {
@@ -429,7 +493,7 @@ router.get('/:id/edit', requireLogin, async (req, res) => {
 });
 
 
-router.put('/:id', requireLogin, upload.single('image'), async (req, res) => {
+router.put('/:id', requireLogin, upload.single('image'), validateProduct, async (req, res) => {
   try {
     const {
       name,
@@ -569,12 +633,30 @@ router.get('/category/:name', async (req, res) => {
 
     if (!category) return res.status(404).render('404', { message: 'Category not found' });
 
-    const products = await Product.find({ category: category._id }).populate('category');
+    // Get the current shop owner ID
+    const shopId = req.session.isSeller ? req.session.userId : req.session.selectedShop;
+    
+    if (!shopId) {
+      // If no shop is selected, redirect to shop selection
+      req.flash('error_msg', '❌ Please select a shop first');
+      return res.redirect('/products');
+    }
+
+    // Filter products by both category and shop owner
+    const products = await Product.find({ 
+      category: category._id, 
+      owner: shopId 
+    }).populate('category');
+
+    // Get current shop info for display
+    const currentShop = await User.findById(shopId);
 
     res.render('pages/show-product-by-category', {
       title: `${category.name} Collection`,
       category,
       products,
+      currentShop,
+      session: req.session
     });
   } catch (error) {
     console.error('Error fetching products by category:', error);
@@ -598,5 +680,96 @@ router.get('/:id', async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
+
+// =================== PROFILE ROUTES ===================
+
+
+
+// GET Edit User Form
+router.get('/user/:id/edit', requireLogin, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      req.flash('error_msg', '❌ User not found');
+      return res.redirect('/products');
+    }
+    res.render('pages/edit-profile', { user });
+  } catch (err) {
+    console.error('Error loading edit form:', err);
+    req.flash('error_msg', '❌ Error loading edit form');
+    res.redirect('/products');
+  }
+});
+
+// POST Update Profile
+router.post('/profile/edit/:id', requireLogin, validateProfile, async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      password,
+      phone,
+      website,
+      address,
+      city,
+      state,
+      country,
+      pincode,
+      weekdays,
+      sunday
+    } = req.body;
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      req.flash('error_msg', '❌ User not found');
+      return res.redirect('/products/profile');
+    }
+
+    // Update basic fields
+    user.name = name?.trim() || user.name;
+    user.email = email?.trim() || user.email;
+
+    // Update password if provided
+    if (password && password.trim() !== '') {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password.trim(), salt);
+    }
+
+    // Update contact info
+    user.contactInfo = {
+      phone: phone?.trim() || user.contactInfo?.phone || '',
+      website: website?.trim() || user.contactInfo?.website || ''
+    };
+
+    // Update location
+    user.location = {
+      address: address?.trim() || user.location?.address || '',
+      city: city?.trim() || user.location?.city || '',
+      state: state?.trim() || user.location?.state || '',
+      country: country?.trim() || user.location?.country || 'India',
+      pincode: pincode?.trim() || user.location?.pincode || ''
+    };
+
+    // Update business hours (only for sellers/admins)
+    if (user.isSeller || user.role === 'admin') {
+      user.businessHours = {
+        weekdays: weekdays?.trim() || user.businessHours?.weekdays || '9:00 AM - 6:00 PM',
+        sunday: sunday?.trim() || user.businessHours?.sunday || 'Closed'
+      };
+    }
+
+   
+
+    await user.save();
+
+    req.flash('success_msg', '✅ Profile updated successfully!');
+    res.redirect('/products');
+  } catch (err) {
+    console.error('Profile update error:', err);
+    req.flash('error_msg', '❌ Error updating profile');
+    res.redirect('/products/profile');
+  }
+});
+
 
 module.exports = router;

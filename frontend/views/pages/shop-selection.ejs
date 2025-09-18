@@ -1,7 +1,6 @@
 <% title = 'Choose Shop' %>
 
 <style>
-  /* Custom jewelry theme colors */
   :root {
     --gold: #DAA520;
     --silver: #C0C0C0;
@@ -9,49 +8,28 @@
     --light: #f8f9fa;
   }
 
-  body {
-    background: linear-gradient(135deg gray 100%);
-    min-height: 100vh;
-    font-family: 'Playfair Display', serif;
-  }
-
   .shop-selection-container {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.9) 100%);
     backdrop-filter: blur(10px);
     border: 2px solid var(--gold);
-    box-shadow: 
-      0 25px 50px rgba(0, 0, 0, 0.3),
-      0 0 100px rgba(218, 165, 32, 0.1);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3), 0 0 100px rgba(218, 165, 32, 0.1);
+    position: relative;
   }
 
   .shop-selection-container::before {
     content: '';
     position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
     background: linear-gradient(45deg, var(--gold), var(--silver), var(--gold));
     border-radius: 20px;
     z-index: -1;
     animation: shimmer 3s infinite;
   }
 
-  @keyframes shimmer {
-    0%, 100% { opacity: 0.7; }
-    50% { opacity: 1; }
-  }
+  @keyframes shimmer { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
 
-  .crown-icon {
-    color: var(--gold);
-    filter: drop-shadow(0 0 20px rgba(218, 165, 32, 0.5));
-    animation: glow 2s infinite alternate;
-  }
-
-  @keyframes glow {
-    from { filter: drop-shadow(0 0 20px rgba(218, 165, 32, 0.5)); }
-    to { filter: drop-shadow(0 0 30px rgba(218, 165, 32, 0.8)); }
-  }
+  .crown-icon { color: var(--gold); filter: drop-shadow(0 0 20px rgba(218, 165, 32, 0.5)); animation: glow 2s infinite alternate; }
+  @keyframes glow { from { filter: drop-shadow(0 0 20px rgba(218, 165, 32, 0.5)); } to { filter: drop-shadow(0 0 30px rgba(218, 165, 32, 0.8)); } }
 
   .shop-btn {
     background: linear-gradient(135deg, var(--gold) 0%, #ffed4e 100%);
@@ -59,96 +37,31 @@
     color: var(--dark);
     font-weight: 600;
     border-radius: 15px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 8px 25px rgba(218, 165, 32, 0.3);
-    min-width: 200px;
-    padding: 18px 30px;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    position: relative; overflow: hidden;
+    box-shadow: 0 8px 25px rgba(218,165,32,0.3);
+    min-width: 200px; padding: 18px 30px;
   }
-
   .shop-btn::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    top:0; left:-100%;
+    width:100%; height:100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
     transition: left 0.6s;
   }
+  .shop-btn:hover::before { left:100%; }
+  .shop-btn:hover { transform: translateY(-5px); box-shadow:0 15px 40px rgba(218,165,32,0.4); border-color: var(--gold); color: var(--dark); }
+  .shop-btn.shop-premium { background: linear-gradient(135deg, var(--silver)0%,#e6e6e6 100%); border-color: var(--silver); box-shadow:0 8px 25px rgba(192,192,192,0.3); }
+  .shop-btn.shop-premium:hover { box-shadow:0 15px 40px rgba(192,192,192,0.4); border-color: var(--silver); color: var(--dark); }
 
-  .shop-btn:hover::before {
-    left: 100%;
-  }
+  .shop-label { font-size:0.85rem; font-weight:300; opacity:0.8; font-style:italic; }
 
-  .shop-btn:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(218, 165, 32, 0.4);
-    border-color: var(--gold);
-    color: var(--dark);
-  }
+  .fade-in { animation: fadeInUp 0.8s cubic-bezier(0.4,0,0.2,1) both; }
+  .fade-in-delayed { animation: fadeInUp 0.8s cubic-bezier(0.4,0,0.2,1) 0.3s both; }
+  @keyframes fadeInUp { from { opacity:0; transform:translateY(30px);} to { opacity:1; transform:translateY(0);} }
 
-  .shop-btn.shop-premium {
-    background: linear-gradient(135deg, var(--silver) 0%, #e6e6e6 100%);
-    border-color: var(--silver);
-    box-shadow: 0 8px 25px rgba(192, 192, 192, 0.3);
-  }
-
-  .shop-btn.shop-premium:hover {
-    box-shadow: 0 15px 40px rgba(192, 192, 192, 0.4);
-    border-color: var(--silver);
-    color: var(--dark);
-  }
-
-  .shop-label {
-    font-size: 0.85rem;
-    font-weight: 300;
-    opacity: 0.8;
-    font-style: italic;
-  }
-
-  .sparkles {
-    position: absolute;
-    color: var(--gold);
-    font-size: 1.5rem;
-    animation: sparkle 3s infinite;
-  }
-
-  .sparkles:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
-  .sparkles:nth-child(2) { top: 20%; right: 15%; animation-delay: 1s; }
-  .sparkles:nth-child(3) { bottom: 20%; left: 15%; animation-delay: 2s; }
-  .sparkles:nth-child(4) { bottom: 10%; right: 10%; animation-delay: 1.5s; }
-
-  @keyframes sparkle {
-    0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
-    50% { opacity: 1; transform: scale(1) rotate(180deg); }
-  }
-
-  .fade-in {
-    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
-  }
-
-  .fade-in-delayed {
-    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
-  }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .divider {
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    border: none;
-  }
+  .divider { height:2px; background: linear-gradient(90deg,transparent,var(--gold),transparent); border:none; }
 </style>
 
 <!-- Background Sparkles -->
@@ -157,75 +70,47 @@
 <div class="sparkles">✨</div>
 <div class="sparkles">💎</div>
 
-<!-- Main Shop Selection Section -->
 <section class="d-flex align-items-center justify-content-center min-vh-100 py-5 position-relative">
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-8 col-xl-6">
         <div class="shop-selection-container rounded-4 p-5 text-center position-relative fade-in">
-          
-          <!-- Crown Icon -->
+
           <div class="crown-icon mb-4">
             <i class="fas fa-crown" style="font-size: 4rem;"></i>
           </div>
 
-          <!-- Welcome Text -->
-          <h1 class="display-5 fw-bold text-dark mb-2">
-            <span class="lang"
-                  data-en="Exquisite Collections"
-                  data-hi="अद्वितीय संग्रह">
-              Exquisite Collections
-            </span>
-          </h1>
-          <p class="lead text-muted mb-4 fst-italic">
-            <span class="lang"
-                  data-en="Discover timeless elegance in our curated jewelry boutiques"
-                  data-hi="हमारे आभूषण बुटीक में कालातीत सुंदरता खोजें">
-              Discover timeless elegance in our curated jewelry boutiques
-            </span>
-          </p>
+          <h1 class="display-5 fw-bold text-dark mb-2">Exquisite Collections</h1>
+          <p class="lead text-muted mb-4 fst-italic">Discover timeless elegance in our curated jewelry boutiques</p>
 
-          <!-- Decorative Divider -->
           <hr class="divider w-50 mx-auto mb-5">
 
-          <!-- Shop Selection Buttons -->
           <div class="d-flex flex-column flex-md-row gap-4 justify-content-center align-items-center fade-in-delayed">
-            
-            <!-- Shop A -->
+
+            <!-- Shop 1 -->
             <form action="/products/select-shop" method="POST">
-              <input type="hidden" name="shopId" value="688308407d30574f52400dcd">
+              <input type="hidden" name="shopId" value="688308407d30574f52400dcc">
+              
               <button type="submit" class="btn shop-btn">
                 <div class="d-flex align-items-center justify-content-center">
-                  <i class="fas fa-ring me-3" style="font-size: 1.3rem;"></i>
+                  <i class="fas fa-store me-3"></i>
                   <div class="text-start">
-                    <div class="fw-bold">
-                      <span class="lang" data-en="Manish" data-hi="मनीष">Manish</span>
-                    </div>
-                    <small class="shop-label d-block lang"
-                           data-en="Classic & Heritage Jewelry"
-                           data-hi="क्लासिक और विरासत आभूषण">
-                      Classic & Heritage Jewelry
-                    </small>
+                    <div class="fw-bold">kesarchand</div>
+                    <small class="shop-label">Jewelry Boutique</small>
                   </div>
                 </div>
               </button>
             </form>
 
-            <!-- Shop B -->
+            <!-- Shop 2 -->
             <form action="/products/select-shop" method="POST">
-              <input type="hidden" name="shopId" value="688308407d30574f52400dcc">
+              <input type="hidden" name="shopId" value="688308407d30574f52400dcd">
               <button type="submit" class="btn shop-btn shop-premium">
                 <div class="d-flex align-items-center justify-content-center">
-                  <i class="fas fa-gem me-3" style="font-size: 1.3rem;"></i>
+                  <i class="fas fa-store me-3"></i>
                   <div class="text-start">
-                    <div class="fw-bold">
-                      <span class="lang" data-en="Aone shop" data-hi="ए वन शॉप">Kesar Chand</span>
-                    </div>
-                    <small class="shop-label d-block lang"
-                           data-en="Premium & Contemporary Designs"
-                           data-hi="प्रीमियम और समकालीन डिज़ाइन">
-                      Premium & Contemporary Designs
-                    </small>
+                    <div class="fw-bold">manish</div>
+                    <small class="shop-label">Jewelry Boutique</small>
                   </div>
                 </div>
               </button>
@@ -233,15 +118,10 @@
 
           </div>
 
-          <!-- Additional Info -->
           <div class="mt-5 pt-4 border-top border-warning fade-in-delayed">
             <small class="text-muted">
               <i class="fas fa-shield-alt me-2 text-warning"></i>
-              <span class="lang"
-                    data-en="Certified Authentic • Lifetime Warranty • Free Shipping"
-                    data-hi="प्रमाणित असली • आजीवन वारंटी • मुफ्त शिपिंग">
-                Certified Authentic • Lifetime Warranty • Free Shipping
-              </span>
+              Certified Authentic • Lifetime Warranty • Free Shipping
             </small>
           </div>
 
@@ -251,19 +131,13 @@
   </div>
 </section>
 
-<!-- Optional: Add some ambient background elements -->
+
 <style>
   body::before {
     content: '';
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: 
-      radial-gradient(circle at 20% 30%, rgba(218, 165, 32, 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 80% 70%, rgba(192, 192, 192, 0.05) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: -1;
+    top:0; left:0; right:0; bottom:0;
+    background-image: radial-gradient(circle at 20% 30%, rgba(218,165,32,0.05)0%, transparent 50%), radial-gradient(circle at 80%70%, rgba(192,192,192,0.05)0%, transparent 50%);
+    pointer-events:none; z-index:-1;
   }
 </style>

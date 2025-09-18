@@ -1,17 +1,38 @@
 <% if (success_msg && success_msg.length > 0) { %>
   <div class="alert alert-success alert-dismissible fade show mx-auto" 
        role="alert" 
-       style="max-width: 500px; margin: 12px;" !important>
+       style="max-width: 500px; margin: 12px; border-left: 4px solid #28a745;">
+    <i class="fas fa-check-circle me-2"></i>
     <%= success_msg %>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
 <% } %>
 
 <% if (error_msg && error_msg.length > 0) { %>
   <div class="alert alert-danger alert-dismissible fade show mx-auto" 
        role="alert" 
-       style="max-width: 500px; margin: 12px;" !important>
+       style="max-width: 500px; margin: 12px; border-left: 4px solid #dc3545;">
+    <i class="fas fa-exclamation-triangle me-2"></i>
     <%= error_msg %>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
 <% } %>
+
+<!-- Auto-hide messages after 5 seconds -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+      setTimeout(() => {
+        if (alert && alert.parentNode) {
+          alert.classList.remove('show');
+          setTimeout(() => {
+            if (alert.parentNode) {
+              alert.remove();
+            }
+          }, 150);
+        }
+      }, 5000);
+    });
+  });
+</script>

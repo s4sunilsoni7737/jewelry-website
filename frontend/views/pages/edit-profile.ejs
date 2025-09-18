@@ -1,0 +1,268 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<%- include('../partials/messages') %>
+
+<style>
+  .form-container {
+    background: linear-gradient(135deg, #fff 0%, #fefefe 100%);
+    border: 2px solid #e0bf50;
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 8px 25px rgba(224, 191, 80, 0.1);
+    transition: transform 0.3s ease;
+    margin: 30px auto;
+    max-width: 800px;
+  }
+
+  .form-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(224, 191, 80, 0.15);
+  }
+
+  .page-title {
+    color: #2c2c2c;
+    font-weight: 700;
+    font-size: 2.2rem;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .form-section {
+    background: #fff;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+  }
+
+  .section-title {
+    color: #2c2c2c;
+    font-weight: 600;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #e0bf50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-icon {
+    color: #e0bf50;
+    font-size: 1.2rem;
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: #2c2c2c;
+    margin-bottom: 8px;
+    font-size: 1rem;
+  }
+
+  .form-control, .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .form-control:focus, .form-select:focus {
+    border-color: #e0bf50;
+    box-shadow: 0 0 0 0.2rem rgba(224, 191, 80, 0.25);
+  }
+
+  .btn-primary-gold {
+    background: linear-gradient(135deg, #e0bf50, #ffc107);
+    border: none;
+    color: #000;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+
+  .btn-primary-gold:hover {
+    background: linear-gradient(135deg, #ffc107, #ffed4e);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(224, 191, 80, 0.3);
+    color: #000;
+  }
+
+  .form-check-input:checked {
+    background-color: #e0bf50;
+    border-color: #e0bf50;
+  }
+
+  .form-check-label {
+    margin-left: 5px;
+  }
+
+  .row {
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .form-container {
+      padding: 25px;
+      margin: 15px;
+    }
+    
+    .page-title {
+      font-size: 1.8rem;
+    }
+  }
+
+  @keyframes fadeInUp {
+    from { 
+      opacity: 0; 
+      transform: translateY(20px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+
+  .form-container {
+    animation: fadeInUp 0.6s ease-out;
+  }
+</style>
+
+<div class="container mt-4">
+  <div class="form-container">
+    <h2 class="page-title">Edit Profile</h2>
+
+    <form action="/products/profile/edit/<%= user._id %>" method="POST" class="needs-validation" novalidate>
+      
+      <!-- Basic Information -->
+      <div class="form-section">
+        <h4 class="section-title">
+          <i class="fas fa-user section-icon"></i>
+          Basic Information
+        </h4>
+
+        <div class="row">
+          <div class="col-md-6">
+            <label for="name" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="<%= user.name %>" required>
+          </div>
+          <div class="col-md-6">
+            <label for="email" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" required>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <label for="password" class="form-label">New Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Leave blank to keep current password">
+          </div>
+        </div>
+
+        <% if (user.role === 'admin') { %>
+        <div class="row mt-3">
+          <div class="col-12">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="isSeller" name="isSeller" <%= user.isSeller ? 'checked' : '' %>>
+              <label class="form-check-label" for="isSeller">Seller Account</label>
+            </div>
+          </div>
+        </div>
+        <% } %>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="form-section">
+        <h4 class="section-title">
+          <i class="fas fa-phone section-icon"></i>
+          Contact Information
+        </h4>
+
+        <div class="row">
+          <div class="col-md-6">
+            <label for="phone" class="form-label">Phone Number</label>
+            <input type="text" class="form-control" id="phone" name="phone" value="<%= user.contactInfo?.phone || '' %>">
+          </div>
+          <div class="col-md-6">
+            <label for="website" class="form-label">Website</label>
+            <input type="text" class="form-control" id="website" name="website" value="<%= user.contactInfo?.website || '' %>">
+          </div>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="form-section">
+        <h4 class="section-title">
+          <i class="fas fa-map-marker-alt section-icon"></i>
+          Location
+        </h4>
+
+        <div class="row">
+          <div class="col-12">
+            <label for="address" class="form-label">Address</label>
+            <input type="text" class="form-control" id="address" name="address" value="<%= user.location?.address || '' %>">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <label for="city" class="form-label">City</label>
+            <input type="text" class="form-control" id="city" name="city" value="<%= user.location?.city || '' %>">
+          </div>
+          <div class="col-md-6">
+            <label for="state" class="form-label">State</label>
+            <input type="text" class="form-control" id="state" name="state" value="<%= user.location?.state || '' %>">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <label for="country" class="form-label">Country</label>
+            <input type="text" class="form-control" id="country" name="country" value="<%= user.location?.country || 'India' %>">
+          </div>
+          <div class="col-md-6">
+            <label for="pincode" class="form-label">Pincode</label>
+            <input type="text" class="form-control" id="pincode" name="pincode" value="<%= user.location?.pincode || '' %>">
+          </div>
+        </div>
+      </div>
+
+      <!-- Business Hours (for sellers/admins) -->
+      <% if (user.isSeller || user.role === 'admin') { %>
+      <div class="form-section">
+        <h4 class="section-title">
+          <i class="fas fa-clock section-icon"></i>
+          Business Hours
+        </h4>
+
+        <div class="row">
+          <div class="col-md-6">
+            <label for="weekdays" class="form-label">Weekdays</label>
+            <input type="text" class="form-control" id="weekdays" name="weekdays" value="<%= user.businessHours?.weekdays || '9:00 AM - 6:00 PM' %>">
+          </div>
+          <div class="col-md-6">
+            <label for="sunday" class="form-label">Sunday</label>
+            <input type="text" class="form-control" id="sunday" name="sunday" value="<%= user.businessHours?.sunday || 'Closed' %>">
+          </div>
+        </div>
+      </div>
+      <% } %>
+
+      <div class="text-center mt-4">
+        <a href="/products" class="btn btn-outline-secondary me-2"><i class="fas fa-arrow-left me-1"></i> Cancel</a>
+        <button type="submit" class="btn-primary-gold"><i class="fas fa-save me-1"></i> Save Changes</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

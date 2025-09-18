@@ -209,39 +209,124 @@
     
     .auth-btn {
       margin: 0.5rem 0;
-      width: 100%;
-      text-align: center;
-    }
-  }
-  
-  @media (max-width: 767.98px) {
-    .navbar-brand {
-      font-size: 1.25rem;
-    }
-    
-    .navbar-brand .brand-icon {
-      font-size: 1.5rem;
-      margin-right: 0.35rem;
-    }
-    
-    .navbar {
-      padding: 0.5rem 0;
-    }
-  }
-  
-  @media (max-width: 575.98px) {
-    .container {
-      padding-left: 1rem;
-      padding-right: 1rem;
-    }
-    
-    .navbar-brand {
-      font-size: 1.1rem;
     }
     
     .search-input {
       font-size: 0.9rem;
       padding: 0.45rem 0.85rem;
+    }
+  }
+  
+  /* Enhanced Mobile Responsive Design */
+  @media (max-width: 991.98px) {
+    /* Mobile navbar collapse styling */
+    .navbar-collapse {
+      background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid #e0bf50;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Mobile navigation links */
+    .navbar-nav .nav-item {
+      width: 100%;
+      margin: 0.25rem 0;
+    }
+    
+    .navbar-nav .nav-link {
+      padding: 0.75rem 1rem !important;
+      margin: 0 !important;
+      border-radius: 8px;
+      background: rgba(224, 191, 80, 0.1);
+      border: 1px solid rgba(224, 191, 80, 0.3);
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+    }
+    
+    .navbar-nav .nav-link:hover {
+      background: rgba(224, 191, 80, 0.2);
+      border-color: #e0bf50;
+      transform: none !important;
+    }
+    
+    .navbar-nav .nav-link i {
+      width: 20px;
+      text-align: center;
+      margin-right: 0.75rem !important;
+      color: #e0bf50;
+    }
+    
+    /* Mobile search container */
+    .search-container {
+      width: 100%;
+      margin: 1rem 0;
+      order: 2;
+    }
+    
+    .search-input {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 8px;
+    }
+    
+    .search-btn {
+      border-radius: 0 8px 8px 0;
+    }
+    
+    /* Mobile auth buttons */
+    .d-flex.flex-column.flex-lg-row {
+      width: 100%;
+      flex-direction: column !important;
+      gap: 0.75rem !important;
+      order: 3;
+    }
+    
+    .auth-btn {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn-login {
+      background: linear-gradient(135deg, #28a745, #20c997);
+      border: none;
+      color: white;
+    }
+    
+    .btn-logout {
+      background: linear-gradient(135deg, #dc3545, #fd7e14);
+      border: none;
+      color: white;
+    }
+    
+    /* Language toggle button */
+    #languageToggle {
+      width: 100%;
+      margin: 0 !important;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    
+    /* Mobile navbar toggler */
+    .navbar-toggler {
+      border: 2px solid #e0bf50;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+    }
+    
+    .navbar-toggler:focus {
+      box-shadow: 0 0 0 0.2rem rgba(224, 191, 80, 0.25);
+    }
+    
+    .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23e0bf50' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
     }
   }
 </style>
@@ -349,7 +434,6 @@
 </div>
 
 </nav>
-<script src="/js/script.js"></script>
 
 <script>
   // Enhanced navbar functionality

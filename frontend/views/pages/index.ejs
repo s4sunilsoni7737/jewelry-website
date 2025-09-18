@@ -418,8 +418,85 @@
 <% title = 'Home' %>
 <%- include("../partials/head") %>
 <%- include("../partials/header") %>
-<!-- <%- include('../partials/messages') %> -->
- <%- include("../components/hero") %>
+
+<!-- Flash Messages positioned absolutely to avoid spacing issues -->
+<div class="flash-messages-container">
+  <%- include('../partials/messages') %>
+</div>
+
+<style>
+/* Complete fix for white space between header and hero */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Position flash messages absolutely to not affect layout */
+.flash-messages-container {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  width: 100%;
+  max-width: 500px;
+  pointer-events: none;
+}
+
+.flash-messages-container .alert {
+  pointer-events: all;
+  margin: 0 auto 10px auto;
+}
+
+/* Remove all spacing around navbar */
+.navbar {
+  margin: 0 !important;
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+}
+
+.navbar.sticky-top {
+  margin-bottom: 0 !important;
+  border-bottom: 2px solid #e0bf50;
+}
+
+/* Remove all spacing around hero */
+.hero {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+/* Ensure no gaps between sections */
+section {
+  margin: 0 !important;
+}
+
+/* Remove Bootstrap default margins */
+.container-fluid {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Fix any spacing issues */
+.navbar + section,
+.navbar + div,
+header + section,
+header + div {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+</style>
+
+<%- include("../components/hero") %>
 
   <%- include("../components/about") %>
 
@@ -443,10 +520,398 @@
     </div>
     <!-- Shop Selection Card -->
     <div class="shop-card mx-auto position-relative">
-      <!-- User Info Button in Top Corner -->
-      <!-- <button class="btn btn-sm btn-outline-primary position-absolute top-0 end-0 m-3" onclick="showUserInfo()" style="z-index: 10;">
-        <i class="fas fa-user-circle"></i>
-      </button> -->
+      <!-- User Info Button in Top Corner - Visible only to shop owner -->
+      
+    <!-- User Info Button -->
+<!-- User Info Button -->
+<!-- User Info Button -->
+<button class="btn btn-sm btn-outline-warning position-absolute top-0 end-0 m-3" 
+    type="button"
+    data-bs-toggle="modal" 
+    data-bs-target="#userInfoModal"
+    data-bs-toggle="tooltip" 
+    data-bs-placement="left" 
+    
+    style="z-index: 1050; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+  <i class="fas fa-user"></i>
+</button>
+
+<!-- User Info Modal - Customer/Shop Info Only -->
+<div class="modal" id="userInfoModal" tabindex="-1" aria-labelledby="userInfoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 shadow">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="userInfoModalLabel">
+          <i class="fas fa-info-circle me-2"></i> 
+          <% if (session.isSeller) { %>
+            Shop Information
+          <% } else { %>
+            Customer Information
+          <% } %>
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-4">
+
+        <% if (session.isSeller && currentShop) { %>
+          <!-- Shop Owner Information -->
+          <div class="text-center mb-4">
+            <div class="shop-icon mx-auto mb-3" style="width: 80px; height: 80px; background: linear-gradient(135deg, #ffd700, #ffed4e); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #333;">
+              <i class="fas fa-store"></i>
+            </div>
+            <h4 class="mb-1"><%= currentShop.name %></h4>
+            <p class="text-muted">Shop Owner</p>
+          </div>
+
+          <!-- Shop Details -->
+          <div class="mb-3">
+            <h6 class="text-uppercase text-muted mb-3">Shop Details</h6>
+            
+            <div class="row g-2">
+              <div class="col-12">
+                <div class="info-item p-3 bg-light rounded">
+                  <i class="fas fa-envelope me-2 text-primary"></i>
+                  <strong>Email:</strong> <%= currentShop.email %>
+                </div>
+              </div>
+              
+              <% if (currentShop.contactInfo && currentShop.contactInfo.phone) { %>
+              <div class="col-12">
+                <div class="info-item p-3 bg-light rounded">
+                  <i class="fas fa-phone me-2 text-primary"></i>
+                  <strong>Phone:</strong> <%= currentShop.contactInfo.phone %>
+                </div>
+              </div>
+              <% } %>
+              
+              <% if (currentShop.location && (currentShop.location.address || currentShop.location.city)) { %>
+              <div class="col-12">
+                <div class="info-item p-3 bg-light rounded">
+                  <i class="fas fa-map-marker-alt me-2 text-primary"></i>
+                  <strong>Address:</strong> 
+                  <%= currentShop.location.address || '' %><% if (currentShop.location.address && currentShop.location.city) { %>, <% } %><%= currentShop.location.city || '' %>
+                  <% if (currentShop.location.state) { %>, <%= currentShop.location.state %><% } %>
+                </div>
+              </div>
+              <% } %>
+              
+              <% if (currentShop.businessHours) { %>
+              <div class="col-12">
+                <div class="info-item p-3 bg-light rounded">
+                  <i class="fas fa-clock me-2 text-primary"></i>
+                  <strong>Business Hours:</strong><br>
+                  <%= currentShop.businessHours.weekdays || 'Mon - Sat: 10:00 AM - 8:00 PM' %><br>
+                  <%= currentShop.businessHours.sunday || 'Sunday: 11:00 AM - 6:00 PM' %>
+                </div>
+              </div>
+              <% } %>
+            </div>
+          </div>
+
+          <!-- Shop Stats -->
+          <div class="mb-3">
+            <h6 class="text-uppercase text-muted mb-3">Shop Statistics</h6>
+            <div class="row g-2">
+              <div class="col-4">
+                <div class="stat-item text-center p-3 bg-warning bg-opacity-10 rounded">
+                  <i class="fas fa-gem d-block text-warning mb-2" style="font-size: 1.5rem;"></i>
+                  <strong><%= products ? products.length : 0 %></strong>
+                  <div class="small text-muted">Products</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="stat-item text-center p-3 bg-success bg-opacity-10 rounded">
+                  <i class="fas fa-check-circle d-block text-success mb-2" style="font-size: 1.5rem;"></i>
+                  <strong><%= products ? products.filter(p => p.inStock).length : 0 %></strong>
+                  <div class="small text-muted">In Stock</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="stat-item text-center p-3 bg-info bg-opacity-10 rounded">
+                  <i class="fas fa-star d-block text-info mb-2" style="font-size: 1.5rem;"></i>
+                  <strong><%= products ? products.filter(p => p.featured).length : 0 %></strong>
+                  <div class="small text-muted">Featured</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Edit Profile Button -->
+          <div class="text-center">
+            <a href="/products/user/<%= session.userId %>/edit" class="btn btn-outline-primary">
+              <i class="fas fa-edit me-2"></i> Update Shop Profile
+            </a>
+          </div>
+
+        <% } else { %>
+          <!-- Customer/Visitor Information -->
+          <div class="text-center mb-4">
+            <div class="customer-icon mx-auto mb-3" style="width: 80px; height: 80px; background: linear-gradient(135deg, #17a2b8, #20c997); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white;">
+              <i class="fas fa-user"></i>
+            </div>
+            <% if (isLoggedIn && user && user.name !== 'Guest') { %>
+              <h4 class="mb-1"><%= user.name %></h4>
+              <p class="text-muted"><%= user.email %></p>
+              <% if (user.contactInfo && user.contactInfo.phone) { %>
+                <p class="text-muted small">
+                  <i class="fas fa-phone me-1"></i> <%= user.contactInfo.phone %>
+                </p>
+              <% } %>
+            <% } else { %>
+              <h4 class="mb-1">Welcome Visitor</h4>
+              <p class="text-muted">Browsing as Guest</p>
+            <% } %>
+          </div>
+
+          <!-- Current Shop Being Browsed -->
+          <% if (currentShop) { %>
+          <div class="mb-3">
+            <h6 class="text-uppercase text-muted mb-3">Currently Browsing</h6>
+            <div class="info-item p-3 bg-light rounded text-center">
+              <i class="fas fa-store me-2 text-primary"></i>
+              <strong><%= currentShop.name %></strong>
+              <div class="small text-muted mt-1">
+                <%= products ? products.length : 0 %> products available
+              </div>
+              <% if (currentShop.contactInfo && currentShop.contactInfo.phone) { %>
+                <div class="small text-muted mt-1">
+                  <i class="fas fa-phone me-1"></i> <%= currentShop.contactInfo.phone %>
+                </div>
+              <% } %>
+              <% if (currentShop.location && (currentShop.location.city || currentShop.location.address)) { %>
+                <div class="small text-muted mt-1">
+                  <i class="fas fa-map-marker-alt me-1"></i> 
+                  <%= currentShop.location.city || currentShop.location.address %>
+                </div>
+              <% } %>
+            </div>
+          </div>
+          <% } %>
+
+          <!-- Session Info -->
+          <div class="mb-3">
+            <h6 class="text-uppercase text-muted mb-3">Session Information</h6>
+            <div class="info-item p-3 bg-light rounded">
+              <div class="d-flex align-items-center justify-content-between">
+                <div>
+                  <i class="fas fa-shopping-bag me-2 text-success"></i>
+                  <strong>Shopping Session</strong>
+                  <div class="small text-muted mt-1">
+                    <% if (isLoggedIn) { %>
+                      Logged in as registered user
+                    <% } else { %>
+                      Browsing as guest - No registration required
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="text-center">
+            <% if (currentShop) { %>
+              <form action="/products/reset-shop" method="POST" class="d-inline">
+                <button type="submit" class="btn btn-outline-warning me-2">
+                  <i class="fas fa-exchange-alt me-2"></i> Change Shop
+                </button>
+              </form>
+            <% } %>
+            <% if (!isLoggedIn) { %>
+              <a href="/products/login" class="btn btn-outline-primary">
+                <i class="fas fa-sign-in-alt me-2"></i> Login
+              </a>
+            <% } %>
+          </div>
+        <% } %>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.info-item {
+  transition: all 0.3s ease;
+  will-change: transform, box-shadow;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+.info-item:hover {
+  transform: translateY(-2px) translateZ(0);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.stat-item {
+  transition: all 0.3s ease;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+.stat-item:hover {
+  transform: translateY(-2px) translateZ(0);
+}
+
+/* Complete fix for modal shaking - disable all animations and transforms in modal */
+.modal * {
+  transition: none !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+.modal .info-item,
+.modal .info-item:hover,
+.modal .info-item:active,
+.modal .info-item:focus {
+  transform: none !important;
+  box-shadow: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.modal .stat-item,
+.modal .stat-item:hover,
+.modal .stat-item:active,
+.modal .stat-item:focus {
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Ensure modal content is completely stable */
+.modal-content {
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.modal-body {
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.modal-body * {
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Disable any Bootstrap modal animations that might cause issues */
+.modal.fade .modal-dialog {
+  transition: none !important;
+  transform: none !important;
+}
+
+.modal.show .modal-dialog {
+  transform: none !important;
+}
+
+/* AGGRESSIVE FIX for userInfoModal - Complete CSS Reset */
+#userInfoModal,
+#userInfoModal *,
+#userInfoModal *:before,
+#userInfoModal *:after,
+#userInfoModal *:hover,
+#userInfoModal *:active,
+#userInfoModal *:focus {
+  transition: none !important;
+  transform: none !important;
+  animation: none !important;
+  will-change: auto !important;
+  backface-visibility: visible !important;
+  perspective: none !important;
+  transform-style: flat !important;
+}
+
+/* Force static positioning and remove any movement */
+#userInfoModal .modal-content {
+  position: static !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+#userInfoModal .modal-dialog {
+  transform: none !important;
+  transition: none !important;
+  margin: 1.75rem auto !important;
+}
+
+/* Remove all hover effects completely */
+#userInfoModal .info-item,
+#userInfoModal .stat-item,
+#userInfoModal .customer-icon,
+#userInfoModal .shop-icon,
+#userInfoModal div,
+#userInfoModal p,
+#userInfoModal h1,
+#userInfoModal h2,
+#userInfoModal h3,
+#userInfoModal h4,
+#userInfoModal h5,
+#userInfoModal h6 {
+  transition: none !important;
+  transform: none !important;
+  animation: none !important;
+  box-shadow: none !important;
+}
+
+#userInfoModal .info-item:hover,
+#userInfoModal .stat-item:hover,
+#userInfoModal div:hover,
+#userInfoModal p:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  background-color: inherit !important;
+  border: inherit !important;
+  opacity: inherit !important;
+}
+
+/* Disable any Bootstrap animations */
+#userInfoModal.show {
+  display: block !important;
+}
+
+/* Force hardware acceleration off */
+#userInfoModal * {
+  transform: translateZ(0) !important;
+  transform: none !important;
+}
+
+/* Fix user info button shaking on hover */
+.btn-outline-warning {
+  transition: all 0.2s ease !important;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.btn-outline-warning:hover {
+  transform: translateZ(0) !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Specific fix for user info button */
+button[data-bs-target="#userInfoModal"] {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease !important;
+  transform: none !important;
+  will-change: background-color, border-color, color;
+}
+
+button[data-bs-target="#userInfoModal"]:hover {
+  transform: none !important;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease !important;
+}
+
+/* Remove any transform effects from Bootstrap button hover */
+.btn:hover {
+  transform: none !important;
+}
+
+.btn-outline-warning:hover {
+  transform: none !important;
+}
+</style>
+
+
       
       <div class="row align-items-center g-4">
         <!-- Current Shop Info -->
@@ -520,22 +985,24 @@
   <%- include("../components/categories") %>
   <hr>
 
-  <!-- 🌟 Featured Products -->
-  <section id="featured" class="featured-products py-5 bg-white">
-    <div class="container position-relative">
-      <h2 class="section-title text-center mb-4" data-en="Featured Collection" data-hi="फीचर्ड संग्रह">Featured Collection</h2>
+  <!-- 🌟 Featured Products - FIXED VERSION -->
+<section id="featured" class="featured-products py-5 bg-white">
+  <div class="container position-relative">
+    <h2 class="section-title text-center mb-4" data-en="Featured Collection" data-hi="फीचर्ड संग्रह">Featured Collection</h2>
 
-      <!-- Slide Buttons -->
-      <button class="btn left-button" id="slide-left" aria-label="Slide left">
-        <i class="fa-solid fa-arrow-left"></i>
-      </button>
-      <button class="btn right-button" id="slide-right" aria-label="Slide right">
-        <i class="fa-solid fa-arrow-right"></i>
-      </button>
+    <!-- Slide Buttons -->
+    <button class="btn left-button" id="slide-left" aria-label="Slide left">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <button class="btn right-button" id="slide-right" aria-label="Slide right">
+      <i class="fa-solid fa-arrow-right"></i>
+    </button>
 
-      <!-- Slider Container -->
-      <div class="d-flex overflow-auto bg-white" id="featuredSlider" style="scroll-behavior: smooth; gap: 1rem; padding: 0 50px;">
-        <% products.filter(p => p.featured).forEach(product => { %>
+    <!-- Slider Container -->
+    <div class="d-flex overflow-auto bg-white" id="featuredSlider" style="scroll-behavior: smooth; gap: 1rem; padding: 0 50px;">
+      <% const featuredProducts = products.filter(p => p.featured); %>
+      <% if (featuredProducts.length > 0) { %>
+        <% featuredProducts.forEach(product => { %>
           <div class="card flex-shrink-0" style="width: 250px;">
             <% if (product.image && product.image !== 'default.png') { %>
               <img src="<%= product.image %>" class="card-img-top" alt="<%= product.name %>">
@@ -544,28 +1011,35 @@
             <% } %>
             <div class="card-body text-center">
               <h5 class="card-title"><%= product.name %></h5>
+              <!-- FIXED: Added proper data attributes for price calculation -->
               <p class="card-text price"
-                 data-metal="<%= product.material || '' %>"
+                 data-metal="<%= (product.material || '').toLowerCase() %>"
                  data-weight="<%= product.specifications?.weight || 1 %>"
                  data-pricetype="<%= product.isManualPrice ? 'manual' : 'auto' %>"
-                 data-manual="<%= product.price %>">
-                 ₹ <%= product.isManualPrice ? product.price.toFixed(2) : '0.00' %> 
+                 data-manual="<%= product.price || 0 %>">
+                ₹ <%= product.isManualPrice ? (product.price || 0).toFixed(2) : '0.00' %>
               </p>
-              <a href="/products/<%= product._id %>" class="btn btn-sm btn-outline-warning" data-en="View More" data-hi="और देखें">View More</a>
+              <a href="/products/<%= product._id %>" class="btn btn-sm btn-outline-warning">View More</a>
             </div>
           </div>
         <% }) %>
-      </div>
+      <% } else { %>
+        <div class="d-flex justify-content-center align-items-center w-100" style="height: 200px;">
+          <p class="text-muted fs-5">No Featured Products Available</p>
+        </div>
+      <% } %>
     </div>
-  </section>
+  </div>
+</section>
   <hr>
 
-  <!-- 🛒 All Products -->
-  <section id="all-collection"></section>
-  <section class="featured-products py-5 bg-white">
-    <div class="container">
-      <h2 class="section-title text-center" data-en="All Collection" data-hi="सभी संग्रह">All Collection</h2>
-      <div class="row g-3 g-md-4">
+ <!-- 🛒 All Products - FIXED VERSION -->
+<section id="all-collection"></section>
+<section class="featured-products py-5 bg-white">
+  <div class="container">
+    <h2 class="section-title text-center" data-en="All Collection" data-hi="सभी संग्रह">All Collection</h2>
+    <div class="row g-3 g-md-4">
+      <% if (products.length > 0) { %>
         <% products.forEach(product => { %>
           <div class="col-6 col-md-4 col-lg-3">
             <div class="card shadow-sm h-100">
@@ -574,25 +1048,31 @@
               <% } else { %>
                 <img src="/images/default.png" class="card-img-top" alt="No image available">
               <% } %>
-
               <div class="card-body text-center d-flex flex-column">
                 <h5 class="card-title flex-grow-1"><%= product.name %></h5>
+                <!-- FIXED: Added proper data attributes for price calculation -->
                 <p class="card-text price mb-2"
-                   data-metal="<%= product.material || '' %>"
+                   data-metal="<%= (product.material || '').toLowerCase() %>"
                    data-weight="<%= product.specifications?.weight || 1 %>"
                    data-pricetype="<%= product.isManualPrice ? 'manual' : 'auto' %>"
-                   data-manual="<%= product.price %>">
-                   ₹ <%= product.isManualPrice ? product.price.toFixed(2) : '0.00' %> 
+                   data-manual="<%= product.price || 0 %>">
+                  ₹ <%= product.isManualPrice ? (product.price || 0).toFixed(2) : '0.00' %>
                 </p>
-                <a href="/products/<%= product._id %>" class="btn btn-sm btn-outline-warning mt-auto" data-en="View More" data-hi="और देखें">View More</a>
+                <a href="/products/<%= product._id %>" class="btn btn-sm btn-outline-warning mt-auto">View More</a>
               </div>
             </div>
           </div>
         <% }) %>
-      </div>
+      <% } else { %>
+        <div class="d-flex justify-content-center align-items-center w-100" style="height: 200px;">
+          <p class="text-muted fs-5">No Products Available</p>
+        </div>
+      <% } %>
     </div>
-  </section>
+  </div>
+</section>
   <hr>
+  
 
   <!-- ➕ Admin Actions (Combined FAB) -->
   <% if (session.isSeller) { %>
@@ -612,6 +1092,15 @@
           <i class="fas fa-coins"></i>
           <span class="fab-tooltip">Metal Rates</span>
         </div>
+        
+        
+        <div class="fab-item" onclick="window.location.href='/products/user/<%= session.userId %>/edit'">
+          <i class="fas fa-edit"></i>
+            <span class="fab-tooltip">Update Profile</span>
+          </div>
+        
+        
+        
       </div>
     </div>
   <% } %>
@@ -1042,6 +1531,54 @@
     const userInfoModal = new bootstrap.Modal(document.getElementById('userInfoModal'));
     userInfoModal.show();
   }
+
+  // AGGRESSIVE fix for modal shaking
+  document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('userInfoModal');
+    if (modal) {
+      
+      // Function to completely disable animations
+      function disableAllAnimations() {
+        const modalElements = modal.querySelectorAll('*');
+        modalElements.forEach(element => {
+          element.style.setProperty('transition', 'none', 'important');
+          element.style.setProperty('transform', 'none', 'important');
+          element.style.setProperty('animation', 'none', 'important');
+          element.style.setProperty('will-change', 'auto', 'important');
+          element.style.setProperty('backface-visibility', 'visible', 'important');
+          
+          // Remove all event listeners that might cause movement
+          element.onmouseenter = null;
+          element.onmouseleave = null;
+          element.onmouseover = null;
+          element.onmouseout = null;
+          
+          // Override any hover effects
+          element.addEventListener('mouseenter', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.target.style.setProperty('transform', 'none', 'important');
+            e.target.style.setProperty('transition', 'none', 'important');
+            e.target.style.setProperty('box-shadow', 'none', 'important');
+          }, true);
+          
+          element.addEventListener('mouseleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.target.style.setProperty('transform', 'none', 'important');
+            e.target.style.setProperty('transition', 'none', 'important');
+          }, true);
+        });
+      }
+      
+      // Apply fixes when modal is shown
+      modal.addEventListener('show.bs.modal', disableAllAnimations);
+      modal.addEventListener('shown.bs.modal', disableAllAnimations);
+      
+      // Also apply immediately if modal exists
+      disableAllAnimations();
+    }
+  });
 
   // Admin FAB functionality
   let fabMenuOpen = false;

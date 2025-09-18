@@ -9,60 +9,62 @@
     </div>
 
     <div class="row text-center g-3 g-md-4 justify-content-center">
-      <% categories.forEach(category => { %>
-        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-          <div class="card p-3 p-md-4 border-0 shadow-sm rounded-4 h-100 position-relative category-card">
-            <a href="/products/category/<%= category.name %>" class="text-decoration-none text-dark">
-              <div class="icon fs-2 fs-md-1 mb-2 mb-md-3" style="color: #e0bf50;">
-                <%= category.icon %>
-              </div>
+      <% if (categories && categories.length > 0) { %>
+        <% categories.forEach(category => { %>
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <div class="card p-3 p-md-4 border-0 shadow-sm rounded-4 h-100 position-relative category-card">
+              <a href="/products/category/<%= category.name %>" class="text-decoration-none text-dark">
+                <div class="icon fs-2 fs-md-1 mb-2 mb-md-3" style="color: #e0bf50;">
+                  <%= category.icon %>
+                </div>
+                <h6 class="h6 h5-md fw-semibold text-capitalize mb-2">
+                  <%= category.name %>
+                </h6>
+                <p class="text-muted small d-none d-md-block">
+                  <%= category.description %>
+                </p>
+              </a>
 
-              <!-- Category Name -->
-              <h6 class="h6 h5-md fw-semibold text-capitalize mb-2">
-                <%= category.name %>
-              </h6>
+              <% if (session && session.isSeller) { %>
+                <div class="d-flex justify-content-center gap-1 gap-md-2 mt-2 mt-md-3">
+                  <a href="/categories/edit/<%= category._id %>" 
+                     class="btn btn-outline-primary btn-sm" 
+                     title="Edit">
+                    <i class="fa fa-edit"></i>
+                    <span class="d-none d-md-inline"
+                          data-en="Edit"
+                          data-hi="संपादित करें">Edit</span>
+                  </a>
 
-              <!-- Category Description -->
-              <p class="text-muted small d-none d-md-block">
-                <%= category.description %>
-              </p>
-            </a>
+                  <button class="btn btn-outline-danger btn-sm" 
+                          onclick="showConfirmModal('<%= category._id %>')" 
+                          title="Delete">
+                    <i class="fa fa-trash"></i>
+                    <span class="d-none d-md-inline"
+                          data-en="Delete"
+                          data-hi="हटाएँ">Delete</span>
+                  </button>
 
-            <% if (session.isSeller) { %>
-              <!-- Action buttons -->
-              <div class="d-flex justify-content-center gap-1 gap-md-2 mt-2 mt-md-3">
-                <a href="/categories/edit/<%= category._id %>" 
-                   class="btn btn-outline-primary btn-sm" 
-                   title="Edit">
-                  <i class="fa fa-edit"></i>
-                  <span class="d-none d-md-inline"
-                        data-en="Edit"
-                        data-hi="संपादित करें">Edit</span>
-                </a>
-
-                <button class="btn btn-outline-danger btn-sm" 
-                        onclick="showConfirmModal('<%= category._id %>')" 
-                        title="Delete">
-                  <i class="fa fa-trash"></i>
-                  <span class="d-none d-md-inline"
-                        data-en="Delete"
-                        data-hi="हटाएँ">Delete</span>
-                </button>
-
-                <!-- Hidden delete form -->
-                <form id="deleteForm-<%= category._id %>" 
-                      action="/categories/delete/<%= category._id %>" 
-                      method="POST" 
-                      style="display: none;">
-                </form>
-              </div>
-            <% } %>
+                  <form id="deleteForm-<%= category._id %>" 
+                        action="/categories/delete/<%= category._id %>" 
+                        method="POST" 
+                        style="display: none;">
+                  </form>
+                </div>
+              <% } %>
+            </div>
           </div>
+        <% }) %>
+      <% } else { %>
+        <div class="col-12">
+          <p class="text-muted fs-5" data-en="No categories available" data-hi="कोई श्रेणी उपलब्ध नहीं है">
+            No categories available
+          </p>
         </div>
-      <% }) %>
+      <% } %>
     </div>
 
-    <% if (session?.isSeller) { %>
+    <% if (session && session.isSeller) { %>
       <div class="text-center mt-4 mt-md-5">
         <a href="/categories/add" class="btn btn-warning">
           <i class="fa-solid fa-plus"></i> 
@@ -77,6 +79,7 @@
     <% } %>
   </div>
 </section>
+
 
 <!-- Modal for confirmation -->
 <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
@@ -178,7 +181,6 @@
     }
   }
 </style>
-<script src="/public/js/script.js"></script>
 <script>
   let formToSubmit = null;
 

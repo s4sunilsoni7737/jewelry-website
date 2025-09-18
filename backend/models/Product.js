@@ -27,7 +27,9 @@ const productSchema = new mongoose.Schema({
   inStock: { type: Boolean, default: true },
   image: {
     type: String,
-    default: '/images/default.png', },
+    default: '/images/default.png',
+    required: false
+  },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 });
 
