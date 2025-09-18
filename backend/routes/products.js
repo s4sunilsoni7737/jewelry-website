@@ -2,17 +2,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const { storage } = require('../config/cloudinary');
-const upload = multer({ 
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
-      cb(null, true);
-    } else {
-      cb(new Error('Only image files are allowed!'), false);
-    }
-  }
-});
+const upload = multer({ storage });
 
 const mongoose = require('mongoose');
 const Product = require('../models/Product');
@@ -109,13 +99,7 @@ router.post('/select-shop', async (req, res) => {
     req.session.selectedShop = shop._id;
     req.flash('success_msg', `✅ Selected shop: ${shop.name || shop.businessName || 'Shop'}`);
 
-    // Explicitly save session before redirect
-    req.session.save((err) => {
-      if (err) {
-        console.error('Session save error:', err);
-      }
-      res.redirect('/products');
-    });
+    res.redirect('/products');
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error selecting shop');
@@ -394,7 +378,21 @@ router.get('/add', requireLogin, async (req, res) => {
   });
 });
 
-router.post('/add', requireLogin, upload.single('image'), validateProduct, async (req, res) => {
+// Async wrapper function
+const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+router.post('/add', requireLogin, (req, res, next) => {
+  upload.single('image')(req, res, (err) => {
+    if (err) {
+      console.error('Cloudinary upload error:', err);
+      req.flash('error_msg', `❌ Image upload failed: ${err.message || 'Unknown upload error'}`);
+      return res.redirect('/products/add');
+    }
+    next();
+  });
+}, validateProduct, asyncHandler(async (req, res) => {
   if (!req.session.isSeller) {
     req.flash('error_msg', '❌ Unauthorized');
     return res.redirect('/products');
@@ -425,53 +423,26 @@ router.post('/add', requireLogin, upload.single('image'), validateProduct, async
 
     // ✅ Get latest metal rates
     const rates = await getLatestRates();
-    console.log('Fetched rates:', rates);
 
-    // ✅ Calculate price
-    let finalPrice = 0;
-    let ratePerGram = 0;
+  // ✅ Calculate price
+let finalPrice = 0;
+let ratePerGram = 0;
 
-    if (priceType === 'manual') {
-      finalPrice = parseFloat(manualPrice) || 0;
-      console.log('Manual price set:', finalPrice);
-    } else {
-      if (material?.toLowerCase() === 'gold') {
-        ratePerGram = Number(rates.gold) || 0;
-      } else if (material?.toLowerCase() === 'silver') {
-        ratePerGram = Number(rates.silver) || 0;
-      }
-      finalPrice = ratePerGram * weight;
-      console.log('Auto price calculated:', { ratePerGram, weight, finalPrice });
-    }
+if (priceType === 'manual') {
+  finalPrice = parseFloat(manualPrice) || 0;
+} else {
+  if (material?.toLowerCase() === 'gold') {
+    ratePerGram = Number(rates.gold) || 0;
+  } else if (material?.toLowerCase() === 'silver') {
+    ratePerGram = Number(rates.silver) || 0;
+  }
+  finalPrice = ratePerGram * weight;
+}
 
-    // Prevent NaN
-    if (isNaN(finalPrice)) finalPrice = 0;
-    if (isNaN(ratePerGram)) ratePerGram = 0;
+// Prevent NaN
+if (isNaN(finalPrice)) finalPrice = 0;
+if (isNaN(ratePerGram)) ratePerGram = 0;
 
-    console.log('Final price values:', { finalPrice, ratePerGram });
-
-    // ✅ Validate pricing
-    if (priceType === 'auto' && (finalPrice === 0 || ratePerGram === 0)) {
-      req.flash('error_msg', '❌ Unable to calculate price. Metal rates may not be available. Please try manual pricing or contact admin.');
-      return res.redirect('/products/add');
-    }
-
-    if (priceType === 'manual' && finalPrice === 0) {
-      req.flash('error_msg', '❌ Please enter a valid manual price.');
-      return res.redirect('/products/add');
-    }
-
-    // ✅ Handle image upload
-    let imageUrl = '/images/default.png';
-    if (req.file) {
-      imageUrl = req.file.path || req.file.secure_url || '/images/default.png';
-      console.log('Image uploaded to Cloudinary:', { 
-        path: req.file.path,
-        secure_url: req.file.secure_url,
-        public_id: req.file.public_id,
-        originalname: req.file.originalname
-      });
-    }
 
     // ✅ Create product
     const newProduct = new Product({
@@ -485,7 +456,7 @@ router.post('/add', requireLogin, upload.single('image'), validateProduct, async
       specifications,
       featured: !!featured,
       inStock: !!inStock,
-      image: imageUrl,
+      image: req.file ? (req.file.path || req.file.secure_url) : '/images/default.png',
       owner: req.session.userId,
     });
 
@@ -509,7 +480,7 @@ router.post('/add', requireLogin, upload.single('image'), validateProduct, async
 
     res.redirect('/products/add');
   }
-});
+}));
 // =================== EDIT PRODUCT ===================
 
 router.get('/:id/edit', requireLogin, async (req, res) => {
@@ -536,7 +507,16 @@ router.get('/:id/edit', requireLogin, async (req, res) => {
 });
 
 
-router.put('/:id', requireLogin, upload.single('image'), validateProduct, async (req, res) => {
+router.put('/:id', requireLogin, (req, res, next) => {
+  upload.single('image')(req, res, (err) => {
+    if (err) {
+      console.error('Cloudinary update error:', err);
+      req.flash('error_msg', `❌ Image upload failed: ${err.message || 'Unknown upload error'}`);
+      return res.redirect(`/products/${req.params.id}/edit`);
+    }
+    next();
+  });
+}, validateProduct, asyncHandler(async (req, res) => {
   try {
     const {
       name,
@@ -617,39 +597,18 @@ if (isNaN(ratePerGram)) ratePerGram = 0;
     };
 
     if (req.file) {
-      const imageUrl = req.file.path || req.file.secure_url;
-      if (imageUrl) {
-        updatedProduct.image = imageUrl;
-        console.log('Image updated via Cloudinary:', { 
-          path: req.file.path,
-          secure_url: req.file.secure_url,
-          public_id: req.file.public_id,
-          originalname: req.file.originalname
-        });
-      }
+      updatedProduct.image = req.file.path;
     }
 
     await Product.findByIdAndUpdate(req.params.id, updatedProduct);
     req.flash('success_msg', '✅ Product updated successfully!');
     res.redirect(`/products/${req.params.id}`);
   } catch (err) {
-    console.error('Error updating product:', err);
-
-    // Handle specific errors
-    if (err.code === 11000) {
-      req.flash('error_msg', '❌ A product with this name already exists');
-    } else if (err.name === 'ValidationError') {
-      const errors = Object.values(err.errors).map(e => e.message);
-      req.flash('error_msg', `❌ Validation Error: ${errors.join(', ')}`);
-    } else if (err.message && err.message.includes('Cloudinary')) {
-      req.flash('error_msg', '❌ Image upload failed. Please try again with a different image.');
-    } else {
-      req.flash('error_msg', `❌ Error updating product: ${err.message || 'Unknown error'}`);
-    }
-
+    console.error(err);
+    req.flash('error_msg', '❌ Error updating product');
     res.redirect(`/products/${req.params.id}/edit`);
   }
-});
+}));
 
 
 // =================== DELETE PRODUCT ===================
