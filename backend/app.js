@@ -82,6 +82,11 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../frontend/views'));
 
 // =================== Routes ===================
+// Root route redirect to products
+app.get('/', (req, res) => {
+  res.redirect('/products');
+});
+
 app.use('/products', productRoutes);
 app.use('/categories', categoryRoutes);
 
