@@ -436,6 +436,17 @@ if (isNaN(finalPrice)) finalPrice = 0;
 if (isNaN(ratePerGram)) ratePerGram = 0;
 
 
+    // ✅ Handle image upload
+    let imageUrl = '/images/default.png';
+    if (req.file) {
+      imageUrl = req.file.path || req.file.secure_url || req.file.filename || '/images/default.png';
+      console.log('Image uploaded:', { 
+        path: req.file.path, 
+        secure_url: req.file.secure_url,
+        filename: req.file.filename 
+      });
+    }
+
     // ✅ Create product
     const newProduct = new Product({
       name,
@@ -448,7 +459,7 @@ if (isNaN(ratePerGram)) ratePerGram = 0;
       specifications,
       featured: !!featured,
       inStock: !!inStock,
-      image: req.file ? (req.file.path || req.file.secure_url) : '/images/default.png',
+      image: imageUrl,
       owner: req.session.userId,
     });
 
@@ -580,15 +591,35 @@ if (isNaN(ratePerGram)) ratePerGram = 0;
     };
 
     if (req.file) {
-      updatedProduct.image = req.file.path;
+      const imageUrl = req.file.path || req.file.secure_url || req.file.filename;
+      if (imageUrl) {
+        updatedProduct.image = imageUrl;
+        console.log('Image updated:', { 
+          path: req.file.path, 
+          secure_url: req.file.secure_url,
+          filename: req.file.filename 
+        });
+      }
     }
 
     await Product.findByIdAndUpdate(req.params.id, updatedProduct);
     req.flash('success_msg', '✅ Product updated successfully!');
     res.redirect(`/products/${req.params.id}`);
   } catch (err) {
-    console.error(err);
-    req.flash('error_msg', '❌ Error updating product');
+    console.error('Error updating product:', err);
+
+    // Handle specific errors
+    if (err.code === 11000) {
+      req.flash('error_msg', '❌ A product with this name already exists');
+    } else if (err.name === 'ValidationError') {
+      const errors = Object.values(err.errors).map(e => e.message);
+      req.flash('error_msg', `❌ Validation Error: ${errors.join(', ')}`);
+    } else if (err.message && err.message.includes('Cloudinary')) {
+      req.flash('error_msg', '❌ Image upload failed. Please try again with a different image.');
+    } else {
+      req.flash('error_msg', `❌ Error updating product: ${err.message || 'Unknown error'}`);
+    }
+
     res.redirect(`/products/${req.params.id}/edit`);
   }
 });
