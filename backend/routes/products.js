@@ -99,7 +99,13 @@ router.post('/select-shop', async (req, res) => {
     req.session.selectedShop = shop._id;
     req.flash('success_msg', `✅ Selected shop: ${shop.name || shop.businessName || 'Shop'}`);
 
-    res.redirect('/products');
+    // Explicitly save session before redirect
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save error:', err);
+      }
+      res.redirect('/products');
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error selecting shop');

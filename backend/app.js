@@ -28,9 +28,9 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production', // HTTPS in production
+    secure: false, // Set to false for Render compatibility
     httpOnly: true,
-    maxAge: null, // Will be set dynamically based on remember me
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
     sameSite: 'lax' // CSRF protection
   },
   name: 'sessionId' // Don't use default session name
