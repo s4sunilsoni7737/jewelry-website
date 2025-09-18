@@ -2,7 +2,17 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const { storage } = require('../config/cloudinary');
-const upload = multer({ storage });
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  }
+});
 
 const mongoose = require('mongoose');
 const Product = require('../models/Product');
@@ -454,11 +464,12 @@ router.post('/add', requireLogin, upload.single('image'), validateProduct, async
     // ✅ Handle image upload
     let imageUrl = '/images/default.png';
     if (req.file) {
-      imageUrl = req.file.path || req.file.secure_url || req.file.filename || '/images/default.png';
-      console.log('Image uploaded:', { 
-        path: req.file.path, 
+      imageUrl = req.file.path || req.file.secure_url || '/images/default.png';
+      console.log('Image uploaded to Cloudinary:', { 
+        path: req.file.path,
         secure_url: req.file.secure_url,
-        filename: req.file.filename 
+        public_id: req.file.public_id,
+        originalname: req.file.originalname
       });
     }
 
@@ -606,13 +617,14 @@ if (isNaN(ratePerGram)) ratePerGram = 0;
     };
 
     if (req.file) {
-      const imageUrl = req.file.path || req.file.secure_url || req.file.filename;
+      const imageUrl = req.file.path || req.file.secure_url;
       if (imageUrl) {
         updatedProduct.image = imageUrl;
-        console.log('Image updated:', { 
-          path: req.file.path, 
+        console.log('Image updated via Cloudinary:', { 
+          path: req.file.path,
           secure_url: req.file.secure_url,
-          filename: req.file.filename 
+          public_id: req.file.public_id,
+          originalname: req.file.originalname
         });
       }
     }
