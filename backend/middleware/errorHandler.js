@@ -26,17 +26,13 @@ function errorHandler(error, req, res, next) {
   
   // Log error for debugging (except ignored paths)
   if (!shouldIgnore) {
-    console.error('Error Details:', {
-      message: error.message || 'No error message',
-      stack: error.stack || 'No stack trace',
-      name: error.name || 'Unknown error type',
-      code: error.code || 'No error code',
+    console.error('Error:', {
+      message: error.message,
+      stack: error.stack,
       url: req.originalUrl,
       method: req.method,
       ip: req.ip,
-      userAgent: req.get('User-Agent'),
-      body: req.method === 'POST' || req.method === 'PUT' ? req.body : undefined,
-      file: req.file ? { filename: req.file.filename, size: req.file.size } : undefined
+      userAgent: req.get('User-Agent')
     });
   }
 

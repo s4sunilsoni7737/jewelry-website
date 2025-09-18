@@ -2,7 +2,13 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const { storage } = require('../config/cloudinary');
+const cloudinary = require('cloudinary').v2;
 const upload = multer({ storage });
+
+// Async wrapper function - MUST be defined before use
+const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
 
 const mongoose = require('mongoose');
 const Product = require('../models/Product');
@@ -23,7 +29,7 @@ router.get('/login', (req, res) => {
 });
 
 // POST login
-router.post('/login', loginLimiter, validateLogin, async (req, res) => {
+router.post('/login', loginLimiter, validateLogin, asyncHandler(async (req, res) => {
   const { email, password, rememberMe } = req.body;
   try {
     const user = await User.findOne({ email });
@@ -62,7 +68,7 @@ router.post('/login', loginLimiter, validateLogin, async (req, res) => {
     req.flash('error_msg', '❌ Server error during login');
     res.redirect('/products/login');
   }
-});
+}));
 
 
 // GET logout
@@ -81,7 +87,7 @@ router.get('/logout', (req, res, next) => {
 
 
 
-router.post('/select-shop', async (req, res) => {
+router.post('/select-shop', asyncHandler(async (req, res) => {
   const { shopId } = req.body;
   try {
     if (!mongoose.Types.ObjectId.isValid(shopId)) {
@@ -104,7 +110,7 @@ router.post('/select-shop', async (req, res) => {
     console.error(err);
     res.status(500).send('Server error selecting shop');
   }
-});
+}));
 
 
 
@@ -118,7 +124,7 @@ router.post('/reset-shop', (req, res) => {
 // =================== PRODUCT ROUTES ===================
 
 // Home - Show shop selector or products
-router.get('/', async (req, res) => {
+router.get('/', asyncHandler(async (req, res) => {
   try {
     const categories = await Categories.find();
     const adminUser = await User.findOne({ role: 'admin' });
@@ -175,12 +181,12 @@ router.get('/', async (req, res) => {
     console.error(err);
     res.status(500).send('Server Error');
   }
-});
+}));
 
 // =================== PRODUCT SEARCH ===================
 
 // Updated search-results route handler
-router.get('/search-results', validateSearch, async (req, res) => {
+router.get('/search-results', validateSearch, asyncHandler(async (req, res) => {
   try {
     const { search, category, material, price } = req.query;
     const filter = {};
@@ -305,10 +311,10 @@ router.get('/search-results', validateSearch, async (req, res) => {
       currentShop: null
     });
   }
-});
+}));
 
 // Additional helper route for advanced search
-router.get('/advanced-search', async (req, res) => {
+router.get('/advanced-search', asyncHandler(async (req, res) => {
   try {
     const shopId = req.session.isSeller ? req.session.userId : req.session.selectedShop;
     if (!shopId) {
@@ -334,10 +340,10 @@ router.get('/advanced-search', async (req, res) => {
     console.error('Advanced search page error:', err);
     res.redirect('/products');
   }
-});
+}));
 
 // API endpoint for search suggestions (for autocomplete)
-router.get('/api/search-suggestions', async (req, res) => {
+router.get('/api/search-suggestions', asyncHandler(async (req, res) => {
   try {
     const { q } = req.query;
     const shopId = req.session.isSeller ? req.session.userId : req.session.selectedShop;
@@ -361,11 +367,11 @@ router.get('/api/search-suggestions', async (req, res) => {
     console.error('Search suggestions error:', err);
     res.json([]);
   }
-});
+}));
 
 // =================== ADD PRODUCT ===================
 
-router.get('/add', requireLogin, async (req, res) => {
+router.get('/add', requireLogin, asyncHandler(async (req, res) => {
   if (!req.session.isSeller) return res.status(403).send('Unauthorized');
 
   const currentShop = await User.findById(req.session.userId);
@@ -376,11 +382,30 @@ router.get('/add', requireLogin, async (req, res) => {
     categories,
     product:{}
   });
-});
+}));
 
-// Async wrapper function
-const asyncHandler = (fn) => (req, res, next) => {
-  Promise.resolve(fn(req, res, next)).catch(next);
+// Helper function to extract public_id from Cloudinary URL
+const getCloudinaryPublicId = (imageUrl) => {
+  if (!imageUrl || imageUrl === '/images/default.png') return null;
+  
+  // Extract public_id from Cloudinary URL
+  // URL format: https://res.cloudinary.com/cloud_name/image/upload/v1234567890/public_id.jpg
+  const matches = imageUrl.match(/\/upload\/(?:v\d+\/)?([^\.]+)/);
+  return matches ? matches[1] : null;
+};
+
+// Helper function to delete image from Cloudinary
+const deleteCloudinaryImage = async (imageUrl) => {
+  try {
+    const publicId = getCloudinaryPublicId(imageUrl);
+    if (publicId) {
+      const result = await cloudinary.uploader.destroy(publicId);
+      console.log('Cloudinary deletion result:', result);
+      return result;
+    }
+  } catch (error) {
+    console.error('Error deleting image from Cloudinary:', error);
+  }
 };
 
 router.post('/add', requireLogin, (req, res, next) => {
@@ -483,28 +508,22 @@ if (isNaN(ratePerGram)) ratePerGram = 0;
 }));
 // =================== EDIT PRODUCT ===================
 
-router.get('/:id/edit', requireLogin, async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    const categories = await Categories.find();
+router.get('/:id/edit', requireLogin, asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
+  const categories = await Categories.find();
 
-    if (!product) {
-      req.flash('error_msg', '❌ Product not found');
-      return res.redirect('/products');
-    }
-
-    if (!product.owner.equals(req.session.userId)) {
-      req.flash('error_msg', '❌ Unauthorized access to edit this product');
-      return res.redirect('/products');
-    }
-
-    res.render('pages/update', { product, categories });
-  } catch (err) {
-    console.error(err);
-    req.flash('error_msg', '❌ Server error loading edit page');
-    res.redirect('/products');
+  if (!product) {
+    req.flash('error_msg', '❌ Product not found');
+    return res.redirect('/products');
   }
-});
+
+  if (!product.owner.equals(req.session.userId)) {
+    req.flash('error_msg', '❌ Unauthorized access to edit this product');
+    return res.redirect('/products');
+  }
+
+  res.render('pages/update', { product, categories });
+}));
 
 
 router.put('/:id', requireLogin, (req, res, next) => {
@@ -597,6 +616,13 @@ if (isNaN(ratePerGram)) ratePerGram = 0;
     };
 
     if (req.file) {
+      // Delete old image from Cloudinary if it exists and is not default
+      const existingProduct = await Product.findById(req.params.id);
+      if (existingProduct && existingProduct.image && existingProduct.image !== '/images/default.png') {
+        console.log('Deleting old image from Cloudinary:', existingProduct.image);
+        await deleteCloudinaryImage(existingProduct.image);
+      }
+      
       updatedProduct.image = req.file.path;
     }
 
@@ -613,19 +639,14 @@ if (isNaN(ratePerGram)) ratePerGram = 0;
 
 // =================== DELETE PRODUCT ===================
 
-router.get('/:id/delete', requireLogin, async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).send('Product not found');
-    if (!product.owner.equals(req.session.userId)) return res.status(403).send('Unauthorized');
-    res.render('pages/delete-product', { product });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server Error');
-  }
-});
+router.get('/:id/delete', requireLogin, asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
+  if (!product) return res.status(404).send('Product not found');
+  if (!product.owner.equals(req.session.userId)) return res.status(403).send('Unauthorized');
+  res.render('pages/delete-product', { product });
+}));
 
-router.post('/:id/delete', requireLogin, async (req, res) => {
+router.post('/:id/delete', requireLogin, asyncHandler(async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) {
@@ -636,20 +657,27 @@ router.post('/:id/delete', requireLogin, async (req, res) => {
       req.flash('error_msg', '❌ Unauthorized');
       return res.redirect('/products');
     }
+
+    // Delete image from Cloudinary before deleting product
+    if (product.image && product.image !== '/images/default.png') {
+      console.log('Deleting image from Cloudinary:', product.image);
+      await deleteCloudinaryImage(product.image);
+    }
+
     await Product.findByIdAndDelete(req.params.id);
-    req.flash('success_msg', '🗑️ Product deleted successfully!');
+    req.flash('success_msg', '🗑️ Product and image deleted successfully!');
     res.redirect('/products');
   } catch (err) {
-    console.error(err);
+    console.error('Error deleting product:', err);
     req.flash('error_msg', '❌ Server error while deleting product');
     res.redirect('/products');
   }
-});
+}));
 
 
 // =================== VIEW BY CATEGORY ===================
 
-router.get('/category/:name', async (req, res) => {
+router.get('/category/:name', asyncHandler(async (req, res) => {
   try {
     const categoryName = req.params.name.toLowerCase();
     const category = await Categories.findOne({ name: categoryName });
@@ -685,11 +713,11 @@ router.get('/category/:name', async (req, res) => {
     console.error('Error fetching products by category:', error);
     res.status(500).render('500', { message: 'Server error' });
   }
-});
+}));
 
 // =================== VIEW SINGLE PRODUCT ===================
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', asyncHandler(async (req, res) => {
   try {
     const product = await Product.findById(req.params.id)
       .populate('owner')
@@ -702,14 +730,14 @@ router.get('/:id', async (req, res) => {
     console.error(err);
     res.status(500).send('Server Error');
   }
-});
+}));
 
 // =================== PROFILE ROUTES ===================
 
 
 
 // GET Edit User Form
-router.get('/user/:id/edit', requireLogin, async (req, res) => {
+router.get('/user/:id/edit', requireLogin, asyncHandler(async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
@@ -722,10 +750,10 @@ router.get('/user/:id/edit', requireLogin, async (req, res) => {
     req.flash('error_msg', '❌ Error loading edit form');
     res.redirect('/products');
   }
-});
+}));
 
 // POST Update Profile
-router.post('/profile/edit/:id', requireLogin, validateProfile, async (req, res) => {
+router.post('/profile/edit/:id', requireLogin, validateProfile, asyncHandler(async (req, res) => {
   try {
     const {
       name,
@@ -792,7 +820,7 @@ router.post('/profile/edit/:id', requireLogin, validateProfile, async (req, res)
     req.flash('error_msg', '❌ Error updating profile');
     res.redirect('/products/profile');
   }
-});
+}));
 
 
 module.exports = router;
