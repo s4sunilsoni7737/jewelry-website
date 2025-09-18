@@ -17,7 +17,16 @@ const storage = new CloudinaryStorage({
   params: {
     folder: 'RoyalJewels', // Folder name in Cloudinary
     allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
-    transformation: [{ width: 800, height: 800, crop: 'limit' }], // optional
+    // Normal quality settings - balanced size and quality
+    transformation: [
+      { 
+        width: 800, 
+        height: 800, 
+        crop: 'limit', // Don't upscale, only downscale if larger
+        quality: '80', // Normal quality (80% - good balance)
+        format: 'jpg' // Standard JPEG format
+      }
+    ],
   },
 });
 
