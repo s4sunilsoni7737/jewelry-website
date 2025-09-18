@@ -415,26 +415,41 @@ router.post('/add', requireLogin, upload.single('image'), validateProduct, async
 
     // ✅ Get latest metal rates
     const rates = await getLatestRates();
+    console.log('Fetched rates:', rates);
 
-  // ✅ Calculate price
-let finalPrice = 0;
-let ratePerGram = 0;
+    // ✅ Calculate price
+    let finalPrice = 0;
+    let ratePerGram = 0;
 
-if (priceType === 'manual') {
-  finalPrice = parseFloat(manualPrice) || 0;
-} else {
-  if (material?.toLowerCase() === 'gold') {
-    ratePerGram = Number(rates.gold) || 0;
-  } else if (material?.toLowerCase() === 'silver') {
-    ratePerGram = Number(rates.silver) || 0;
-  }
-  finalPrice = ratePerGram * weight;
-}
+    if (priceType === 'manual') {
+      finalPrice = parseFloat(manualPrice) || 0;
+      console.log('Manual price set:', finalPrice);
+    } else {
+      if (material?.toLowerCase() === 'gold') {
+        ratePerGram = Number(rates.gold) || 0;
+      } else if (material?.toLowerCase() === 'silver') {
+        ratePerGram = Number(rates.silver) || 0;
+      }
+      finalPrice = ratePerGram * weight;
+      console.log('Auto price calculated:', { ratePerGram, weight, finalPrice });
+    }
 
-// Prevent NaN
-if (isNaN(finalPrice)) finalPrice = 0;
-if (isNaN(ratePerGram)) ratePerGram = 0;
+    // Prevent NaN
+    if (isNaN(finalPrice)) finalPrice = 0;
+    if (isNaN(ratePerGram)) ratePerGram = 0;
 
+    console.log('Final price values:', { finalPrice, ratePerGram });
+
+    // ✅ Validate pricing
+    if (priceType === 'auto' && (finalPrice === 0 || ratePerGram === 0)) {
+      req.flash('error_msg', '❌ Unable to calculate price. Metal rates may not be available. Please try manual pricing or contact admin.');
+      return res.redirect('/products/add');
+    }
+
+    if (priceType === 'manual' && finalPrice === 0) {
+      req.flash('error_msg', '❌ Please enter a valid manual price.');
+      return res.redirect('/products/add');
+    }
 
     // ✅ Handle image upload
     let imageUrl = '/images/default.png';
