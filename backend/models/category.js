@@ -5,9 +5,13 @@ const categorySchema = new mongoose.Schema({
     type: String,
     required: true,
     lowercase: true,
-    unique: true,
     trim: true,
     index: true
+  },
+  nameHindi: {
+    type: String,
+    required: true,
+    trim: true
   },
   icon: {
     type: String,
@@ -17,11 +21,19 @@ const categorySchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
+
+// Create compound index for unique categories per owner
+categorySchema.index({ name: 1, owner: 1 }, { unique: true });
 
 const Category = mongoose.model('Category', categorySchema);
 

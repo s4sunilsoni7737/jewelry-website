@@ -1,13 +1,26 @@
-// middleware/auth.js
+const User = require('../models/user');
 
-function requireLogin(req, res, next) {
+async function requireLogin(req, res, next) {
   if (!req.session.userId) {
-    // Store the original URL for redirect after login
     req.session.returnTo = req.originalUrl;
     req.flash('error_msg', 'Please log in to access this page');
     return res.redirect("/products/login");
   }
-  next();
+
+  try {
+    // Fetch the user and attach to req.user
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      req.flash('error_msg', 'User not found');
+      return res.redirect("/products/login");
+    }
+    req.user = user;  // ✅ Now req.user is defined
+    next();
+  } catch (err) {
+    console.error('Auth middleware error:', err);
+    req.flash('error_msg', 'Server error. Please log in again.');
+    res.redirect("/products/login");
+  }
 }
 
 module.exports = {

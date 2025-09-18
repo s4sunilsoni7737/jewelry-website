@@ -128,7 +128,6 @@ router.post('/reset-shop', (req, res) => {
 // Home - Show shop selector or products
 router.get('/', asyncHandler(async (req, res) => {
   try {
-    const categories = await Categories.find();
     const adminUser = await User.findOne({ role: 'admin' });
 
     // Get logged-in user from session
@@ -157,7 +156,7 @@ router.get('/', asyncHandler(async (req, res) => {
         return res.render('pages/index', {
           title: 'Choose Shop',
           products: [],
-          categories,
+          categories: [], // Empty for shop selection
           shops,
           session: req.session,
           currentShop: null,
@@ -170,6 +169,8 @@ router.get('/', asyncHandler(async (req, res) => {
     // Determine current shop
     const shopId = req.session.isSeller ? req.session.userId : req.session.selectedShop;
 
+    // 🔹 UPDATED: Get categories for current shop owner only
+    const categories = await Categories.find({ owner: shopId });
     const products = await Product.find({ owner: shopId });
     const currentShop = await User.findById(shopId);
     const rates = await getLatestRates();
@@ -220,19 +221,26 @@ router.get('/search-results', validateSearch, asyncHandler(async (req, res) => {
       filter.name = { $regex: search.trim(), $options: 'i' };
     }
 
-    // Filter by category (assuming category is ObjectId)
+    // 🔹 UPDATED: Filter by category (from current owner only)
     if (category && category.trim()) {
-      // If category is passed as name, find the category ObjectId
+      // If category is passed as name, find the category ObjectId from current owner only
       try {
-        const categoryDoc = await Category.findOne({ 
-          name: { $regex: category.trim(), $options: 'i' } 
+        const categoryDoc = await Categories.findOne({ 
+          name: { $regex: category.trim(), $options: 'i' },
+          owner: shopId // Only search in current owner's categories
         });
         if (categoryDoc) {
           filter.category = categoryDoc._id;
         } else {
-          // If it's already an ObjectId
+          // If it's already an ObjectId, verify it belongs to current owner
           if (mongoose.Types.ObjectId.isValid(category)) {
-            filter.category = category;
+            const categoryExists = await Categories.findOne({ 
+              _id: category, 
+              owner: shopId 
+            });
+            if (categoryExists) {
+              filter.category = category;
+            }
           }
         }
       } catch (err) {
@@ -282,9 +290,9 @@ router.get('/search-results', validateSearch, asyncHandler(async (req, res) => {
       console.log(`Search performed: "${search.trim()}" by shop: ${shopId}`);
     }
 
-    // Execute search with population
+    // 🔹 UPDATED: Execute search with population including Hindi name
     const products = await Product.find(filter)
-      .populate('category', 'name')
+      .populate('category', 'name nameHindi')
       .populate('owner', 'shopName businessName')
       .sort({ featured: -1, createdAt: -1 })
       .lean();
@@ -292,10 +300,11 @@ router.get('/search-results', validateSearch, asyncHandler(async (req, res) => {
     // Get current shop info
     const currentShop = await User.findById(shopId).lean();
 
-    // Format products for display
+    // 🔹 UPDATED: Format products for display with Hindi category names
     const formattedProducts = products.map(product => ({
       ...product,
       categoryName: product.category?.name || 'Uncategorized',
+      categoryNameHindi: product.category?.nameHindi || 'बिना श्रेणी',
       price: product.isManualPrice ? product.price : 0, // Will be calculated by frontend
     }));
 
@@ -331,9 +340,9 @@ router.get('/advanced-search', asyncHandler(async (req, res) => {
       return res.redirect('/products');
     }
 
-    // Get all categories and materials for filter options
+    // 🔹 UPDATED: Get categories for current shop owner only
     const [categories, materials] = await Promise.all([
-      Category.find({}).sort({ name: 1 }).lean(),
+      Categories.find({ owner: shopId }).sort({ name: 1 }).lean(),
       Product.distinct('material', { owner: shopId, inStock: true })
     ]);
 
@@ -385,7 +394,8 @@ router.get('/add', requireLogin, asyncHandler(async (req, res) => {
   if (!req.session.isSeller) return res.status(403).send('Unauthorized');
 
   const currentShop = await User.findById(req.session.userId);
-  const categories = await Categories.find();
+  // 🔹 UPDATED: Only get categories owned by current user
+  const categories = await Categories.find({ owner: req.session.userId });
   res.render('pages/add-product', {
     session: req.session,
     currentShop,
@@ -446,10 +456,13 @@ router.post('/add', requireLogin, (req, res, next) => {
       inStock,
     } = req.body;
 
-    // ✅ Validate category
-    const categoryDoc = await Categories.findById(category);
+    // 🔹 UPDATED: Validate category belongs to current user
+    const categoryDoc = await Categories.findOne({ 
+      _id: category, 
+      owner: req.session.userId 
+    });
     if (!categoryDoc) {
-      req.flash('error_msg', '❌ Invalid category');
+      req.flash('error_msg', '❌ Invalid category or category not found');
       return res.redirect('/products/add');
     }
 
@@ -520,7 +533,8 @@ if (isNaN(ratePerGram)) ratePerGram = 0;
 
 router.get('/:id/edit', requireLogin, asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
-  const categories = await Categories.find();
+  // 🔹 UPDATED: Only get categories owned by current user
+  const categories = await Categories.find({ owner: req.session.userId });
 
   if (!product) {
     req.flash('error_msg', '❌ Product not found');
@@ -560,16 +574,22 @@ router.put('/:id', requireLogin, (req, res, next) => {
       inStock,
     } = req.body;
 
-    // Validate category
+    // 🔹 UPDATED: Validate category belongs to current user
     let categoryDoc = null;
     if (mongoose.Types.ObjectId.isValid(category)) {
-      categoryDoc = await Categories.findById(category);
+      categoryDoc = await Categories.findOne({ 
+        _id: category, 
+        owner: req.session.userId 
+      });
     }
     if (!categoryDoc) {
-      categoryDoc = await Categories.findOne({ name: category.toLowerCase() });
+      categoryDoc = await Categories.findOne({ 
+        name: category.toLowerCase(), 
+        owner: req.session.userId 
+      });
     }
     if (!categoryDoc) {
-      req.flash('error_msg', '❌ Invalid category');
+      req.flash('error_msg', '❌ Invalid category or category not found');
       return res.redirect(`/products/${req.params.id}/edit`);
     }
 
@@ -690,40 +710,54 @@ router.post('/:id/delete', requireLogin, asyncHandler(async (req, res) => {
 router.get('/category/:name', asyncHandler(async (req, res) => {
   try {
     const categoryName = req.params.name.toLowerCase();
-    const category = await Categories.findOne({ name: categoryName });
-
-    if (!category) return res.status(404).render('404', { message: 'Category not found' });
 
     // Get the current shop owner ID
     const shopId = req.session.isSeller ? req.session.userId : req.session.selectedShop;
-    
+
     if (!shopId) {
-      // If no shop is selected, redirect to shop selection
       req.flash('error_msg', '❌ Please select a shop first');
       return res.redirect('/products');
     }
 
-    // Filter products by both category and shop owner
+    // Find category for current shop owner only
+    const category = await Categories.findOne({ 
+      name: categoryName, 
+      owner: shopId 
+    }).lean(); // Convert to plain object
+
+    if (!category) return res.status(404).render('404', { message: 'Category not found' });
+
+    // Fetch products that belong to this category and shop owner
     const products = await Product.find({ 
       category: category._id, 
       owner: shopId 
-    }).populate('category');
+    })
+    .populate('category')
+    .lean(); // Convert to plain object
+
+    // Ensure each product has category object for safety in EJS
+    const formattedProducts = products.map(product => ({
+      ...product,
+      category: product.category || { _id: '', name: 'Uncategorized' }
+    }));
 
     // Get current shop info for display
-    const currentShop = await User.findById(shopId);
+    const currentShop = await User.findById(shopId).lean();
 
     res.render('pages/show-product-by-category', {
       title: `${category.name} Collection`,
       category,
-      products,
+      products: formattedProducts,
       currentShop,
       session: req.session
     });
+
   } catch (error) {
     console.error('Error fetching products by category:', error);
     res.status(500).render('500', { message: 'Server error' });
   }
 }));
+
 
 // =================== VIEW SINGLE PRODUCT ===================
 
