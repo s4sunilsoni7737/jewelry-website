@@ -461,6 +461,16 @@
                 <i class="fa-solid fa-phone"></i> 
                 <span class="lang" data-en="Call for Query" data-hi="प्रश्न के लिए कॉल करें">Call for Query</span>
               </a>
+               <!-- User Name Input for WhatsApp Query -->
+  <!-- User Name Input -->
+  <input type="text" id="queryUserName" placeholder="Enter your name" 
+         class="form-control" style="max-width: 250px; display: inline-block; margin-right: 10px;">
+
+  <!-- WhatsApp Query Button -->
+  <button class="btn btn-outline-gold btn-success" id="whatsappQueryBtn" disabled>
+    <i class="fa-brands fa-whatsapp"></i> 
+    <span class="lang" data-en="Send WhatsApp Query" data-hi="व्हाट्सएप क्वेरी भेजें">Send WhatsApp Query</span>
+  </button>
             <% } else { %>
               <span class="btn-outline-gold" style="opacity: 0.6; cursor: not-allowed;">
                 <i class="fa-solid fa-phone"></i> 
@@ -528,6 +538,53 @@
 
   <!-- Page-specific scripts -->
   <script>
+
+    // whatsapp queryy
+    const whatsappBtn = document.getElementById("whatsappQueryBtn");
+  const userNameInput = document.getElementById("queryUserName");
+
+  // Enable button only if name is entered
+  userNameInput.addEventListener("input", function() {
+    if (userNameInput.value.trim() === "") {
+      whatsappBtn.disabled = true;
+      whatsappBtn.style.opacity = 0.6;
+      whatsappBtn.style.cursor = "not-allowed";
+    } else {
+      whatsappBtn.disabled = false;
+      whatsappBtn.style.opacity = 1;
+      whatsappBtn.style.cursor = "pointer";
+    }
+  });
+
+  // WhatsApp button click
+  whatsappBtn.addEventListener("click", function() {
+    const userName = userNameInput.value.trim();
+    if (!userName) return; // Safety check
+
+    // Product details
+    const productName = "<%= product.name %>";
+    const productCategory = "<%= product.category?.name || 'N/A' %>";
+    const productMetal = "<%= product.material || 'N/A' %>";
+    const productWeight = "<%= product.specifications?.weight || 'N/A' %> gm";
+    const productPrice = "<%= product.isManualPrice ? product.price.toFixed(2) : '0.00' %>";
+    const productURL = window.location.href;
+    const adminPhone = "8000597887"; // Replace with your admin number
+
+    const message = `Hello Admin,%0AI am ${encodeURIComponent(userName)}.%0AI have a query about this product:%0A
+Product: ${encodeURIComponent(productName)}%0A
+Category: ${encodeURIComponent(productCategory)}%0A
+Metal: ${encodeURIComponent(productMetal)}%0A
+Weight: ${encodeURIComponent(productWeight)}%0A
+Price: ₹${encodeURIComponent(productPrice)}%0A
+Link: ${encodeURIComponent(productURL)}`;
+
+    const whatsappURL = `https://wa.me/${adminPhone}?text=${message}`;
+    window.open(whatsappURL, "_blank");
+  });
+
+
+
+
     // Back button functionality
     function goBack() {
       // Always go to products home page to avoid edit page loop
