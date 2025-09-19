@@ -543,7 +543,6 @@
     const whatsappBtn = document.getElementById("whatsappQueryBtn");
   const userNameInput = document.getElementById("queryUserName");
 
-  // Enable button only if name is entered
   userNameInput.addEventListener("input", function() {
     if (userNameInput.value.trim() === "") {
       whatsappBtn.disabled = true;
@@ -556,32 +555,35 @@
     }
   });
 
-  // WhatsApp button click
   whatsappBtn.addEventListener("click", function() {
     const userName = userNameInput.value.trim();
-    if (!userName) return; // Safety check
+    if (!userName) return;
 
-    // Product details
     const productName = "<%= product.name %>";
     const productCategory = "<%= product.category?.name || 'N/A' %>";
     const productMetal = "<%= product.material || 'N/A' %>";
     const productWeight = "<%= product.specifications?.weight || 'N/A' %> gm";
     const productPrice = "<%= product.isManualPrice ? product.price.toFixed(2) : '0.00' %>";
     const productURL = window.location.href;
-    const adminPhone = "8000597887"; // Replace with your admin number
+    const adminPhone = "918000597887"; // correct format: country code + number
 
-    const message = `Hello Admin,%0AI am ${encodeURIComponent(userName)}.%0AI have a query about this product:%0A
-Product: ${encodeURIComponent(productName)}%0A
-Category: ${encodeURIComponent(productCategory)}%0A
-Metal: ${encodeURIComponent(productMetal)}%0A
-Weight: ${encodeURIComponent(productWeight)}%0A
-Price: ₹${encodeURIComponent(productPrice)}%0A
-Link: ${encodeURIComponent(productURL)}`;
+    const message = `Hello Admin,
+I am ${userName}.
+I have a query about this product:
+Product: ${productName}
+Category: ${productCategory}
+Metal: ${productMetal}
+Weight: ${productWeight}
+Price: ₹${productPrice}
+Link: ${productURL}`;
 
-    const whatsappURL = `https://wa.me/${adminPhone}?text=${message}`;
+    // Encode the message
+    const encodedMessage = encodeURIComponent(message);
+
+    // Open WhatsApp mobile-friendly link
+    const whatsappURL = `https://wa.me/${adminPhone}?text=${encodedMessage}`;
     window.open(whatsappURL, "_blank");
   });
-
 
 
 
