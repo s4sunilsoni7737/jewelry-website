@@ -490,11 +490,11 @@
                 <div class="card-price">
                   <i class="fas fa-rupee-sign price-icon"></i>
                   <span class="price-value"
-                        data-metal="<%= product.material || '' %>"
+                        data-metal="<%= (product.material || '').toLowerCase() %>"
                         data-weight="<%= product.specifications?.weight || 1 %>"
                         data-pricetype="<%= product.isManualPrice ? 'manual' : 'auto' %>"
                         data-manual="<%= product.price %>">
-                    <%= product.isManualPrice ? product.price.toFixed(2) : '0.00' %>
+                    ₹ <%= product.isManualPrice ? product.price.toFixed(2) : 'Calculating...' %>
                   </span>
                 </div>
               </div>

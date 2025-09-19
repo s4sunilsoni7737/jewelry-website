@@ -59,12 +59,31 @@
   .price {
     font-size: 2.2rem;
     font-weight: 800;
+    margin-bottom: 25px;
+  }
+
+  .price .main-price {
     background: linear-gradient(135deg, #e0bf50, #ffc107);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 25px;
   }
+
+  .making-charges {
+    font-size: 1rem !important;           /* Smaller than main price */
+    color: #8b6914 !important;              /* Gold-brown color */
+    background: none !important;            /* Remove any gradient background */
+    -webkit-background-clip: initial !important;
+    -webkit-text-fill-color: initial !important;
+    background-clip: initial !important;
+    margin-left: 8px;                       /* Spacing from main price */
+    font-weight: 400 !important;            /* Normal weight */
+    font-style: italic;                     /* Italic style for distinction */
+    text-shadow: none;                      /* Remove any text shadow */
+    opacity: 0.85;                          /* Slightly transparent */
+    display: inline-block;                  /* Ensure proper spacing */
+  }
+  
 
   .product-meta {
     background: rgba(224, 191, 80, 0.05);
@@ -350,13 +369,12 @@
           <p class="product-description"><%= product.description %></p>
           
           <h4 class="price"
-              data-metal="<%= (product.material || '').toLowerCase() %>"
-              data-weight="<%= product.specifications?.weight || 1 %>"
-              data-pricetype="<%= product.isManualPrice ? 'manual' : 'auto' %>"
-              data-manual="<%= product.price %>">
-              ₹ <%= product.isManualPrice ? product.price.toFixed(2) : '0.00' %> 
-              <span class="lang" data-en="+ Making Charges" data-hi="+ मेकिंग चार्जेस">+ Making Charges</span>
-          </h4>
+    data-metal="<%= (product.material || '').toLowerCase() %>"
+    data-weight="<%= product.specifications?.weight || 1 %>"
+    data-pricetype="<%= product.isManualPrice ? 'manual' : 'auto' %>"
+    data-manual="<%= product.price %>">
+    <span class="main-price">₹ <%= product.isManualPrice ? product.price.toFixed(2) : '0.00' %></span><span class="lang making-charges" data-en="+ Making Charges" data-hi="+ मेकिंग चार्जेस">+ Making Charges</span>
+</h4>
           
           <!-- Product Meta Information -->
           <div class="product-meta">
@@ -555,9 +573,9 @@
           const makingChargesText = currentLang === "hi" ? "+ मेकिंग चार्जेस" : "+ Making Charges";
           
           if (priceType === "manual") {
-            el.innerHTML = `₹ ${parseFloat(el.dataset.manual || 0).toFixed(2)} <span class="lang" data-en="+ Making Charges" data-hi="+ मेकिंग चार्जेस">${makingChargesText}</span>`;
-            return;
-          }
+  el.innerHTML = `<span class="main-price">₹ ${parseFloat(el.dataset.manual || 0).toFixed(2)}</span> <span class="lang making-charges" data-en="+ Making Charges" data-hi="+ मेकिंग चার्जेस">${makingChargesText}</span>`;
+  return;
+}
           
           const metal = el.dataset.metal?.toLowerCase() || '';
           const weight = parseFloat(el.dataset.weight) || 1;
@@ -568,8 +586,8 @@
 
           const price = ratePerGram * weight;
           el.innerHTML = ratePerGram > 0 
-            ? `₹ ${price.toFixed(2)} <span class="lang" data-en="+ Making Charges" data-hi="+ मेकिंग चार्जेस">${makingChargesText}</span>`
-            : `₹ 0.00 <span class="lang" data-en="+ Making Charges" data-hi="+ मेकिंग चार्जेस">${makingChargesText}</span>`;
+  ? `<span class="main-price">₹ ${price.toFixed(2)}</span> <span class="lang making-charges" data-en="+ Making Charges" data-hi="+ मेकिंग चार्जेस">${makingChargesText}</span>`
+  : `<span class="main-price">₹ 0.00</span> <span class="lang making-charges" data-en="+ Making Charges" data-hi="+ मেকিং চার্জেস">${makingChargesText}</span>`;
         });
       }
 
