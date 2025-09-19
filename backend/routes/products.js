@@ -169,9 +169,16 @@ router.get('/', asyncHandler(async (req, res) => {
     // Determine current shop
     const shopId = req.session.isSeller ? req.session.userId : req.session.selectedShop;
 
-    // 🔹 UPDATED: Get categories for current shop owner only
+    // 🔹 Get categories for current shop owner only
     const categories = await Categories.find({ owner: shopId });
-    const products = await Product.find({ owner: shopId });
+
+    // 🔹 Get products and randomize them
+    let products = await Product.find({ owner: shopId });
+    products = products
+      .map((item) => ({ item, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ item }) => item);
+
     const currentShop = await User.findById(shopId);
     const rates = await getLatestRates();
 
@@ -192,6 +199,7 @@ router.get('/', asyncHandler(async (req, res) => {
     res.status(500).send('Server Error');
   }
 }));
+
 
 
 // =================== PRODUCT SEARCH ===================

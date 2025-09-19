@@ -3,43 +3,158 @@
 <%- include('../partials/messages') %>
 
 <style>
-  .info { font-size: 0.9rem; color: #6c757d; }
-
-  /* Card sizing - improved responsive */
-  .add-card { 
-    width: 100%; 
-    max-width: 800px; 
-    margin: 1.5rem auto; 
+  /* Base styles from the provided code */
+  .form-container {
+    background: linear-gradient(135deg, #fff 0%, #fefefe 100%);
+    border: 2px solid #e0bf50;
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 8px 25px rgba(224, 191, 80, 0.1);
+    transition: transform 0.3s ease;
+    margin: 30px auto;
+    max-width: 800px;
   }
-  @media (max-width: 576px) { 
-    .add-card { max-width: 95%; margin: 1rem auto; } 
+
+  .form-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(224, 191, 80, 0.15);
   }
 
-  /* Keep validation messages visible */
-  .was-validated .form-control:invalid, .was-validated .form-select:invalid {
+  .page-title {
+    color: #2c2c2c;
+    font-weight: 700;
+    font-size: 2.2rem;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .form-section {
+    background: #fff;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+  }
+
+  .section-title {
+    color: #2c2c2c;
+    font-weight: 600;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #e0bf50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-icon {
+    color: #e0bf50;
+    font-size: 1.2rem;
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: #2c2c2c;
+    margin-bottom: 8px;
+    font-size: 1rem;
+  }
+
+  .form-control, .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-bottom: 1rem; /* Keep some bottom margin for spacing */
+  }
+
+  .form-control:focus, .form-select:focus {
+    border-color: #e0bf50;
+    box-shadow: 0 0 0 0.2rem rgba(224, 191, 80, 0.25);
+  }
+
+  .btn-primary-gold {
+    background: linear-gradient(135deg, #e0bf50, #ffc107);
+    border: none;
+    color: #000;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+
+  .btn-primary-gold:hover {
+    background: linear-gradient(135deg, #ffc107, #ffed4e);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(224, 191, 80, 0.3);
+    color: #000;
+  }
+
+  /* Specific styles for validation */
+  .was-validated .form-control:invalid, 
+  .was-validated .form-select:invalid {
     border-color: #dc3545;
     box-shadow: none;
   }
-
-  /* Better spacing for form sections */
-  .form-section {
-    margin-bottom: 2rem;
-  }
   
-  .form-section:last-child {
-    margin-bottom: 1rem;
+  .invalid-feedback {
+      color: #dc3545;
+      font-size: 0.875em;
+      margin-top: -0.5rem; /* Adjust to bring closer to input */
+      margin-bottom: 1rem;
   }
 
-  /* Enhanced card styling */
-  .add-card {
-    border: none;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  /* Specific styles for category form */
+  .back-button {
+    margin-left: 15px; /* Adjust as needed */
+    margin-top: 15px; /* Adjust as needed */
   }
 
-  /* Icon input styling */
   #icon {
     text-align: center;
     font-size: 1.5rem !important;
+    padding: 0.5rem 1rem; /* Adjust padding for better emoji display */
+  }
+
+  .form-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: -0.5rem; /* Adjust spacing */
+    margin-bottom: 1rem;
+  }
+
+  /* Media queries from the provided code */
+  @media (max-width: 768px) {
+    .form-container {
+      padding: 25px;
+      margin: 15px;
+    }
+    
+    .page-title {
+      font-size: 1.8rem;
+    }
+  }
+
+  @keyframes fadeInUp {
+    from { 
+      opacity: 0; 
+      transform: translateY(20px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+
+  .form-container {
+    animation: fadeInUp 0.6s ease-out;
   }
 </style>
 
@@ -47,19 +162,19 @@
   <i class="fa-solid fa-arrow-left"></i>
 </a>
 
-<div class="container">
-  <div class="card shadow p-4 add-card">
-    <h2 class="mb-3">Edit Category</h2>
-    <!-- Bootstrap validation enabled here -->
+<div class="container mt-4">
+  <div class="form-container">
+    <h2 class="page-title">Edit Category</h2>
     <form action="/categories/edit/<%= category._id %>" method="POST" class="needs-validation" novalidate>
       
-      <!-- Basic Information Section -->
       <div class="form-section">
-        <h5 class="text-primary mb-3">Basic Information</h5>
+        <h4 class="section-title">
+          <i class="fas fa-info-circle section-icon"></i>
+          Basic Information
+        </h4>
         
-        <!-- Category Name -->
-        <div class="form-group mb-3">
-          <label for="name">Category Name</label>
+        <div class="mb-3">
+          <label for="name" class="form-label">Category Name (English)</label>
           <input 
             type="text" 
             class="form-control" 
@@ -67,12 +182,23 @@
             name="name" 
             value="<%= category.name %>" 
             required>
-          <div class="invalid-feedback">Category Name is required.</div>
+          <div class="invalid-feedback">Category Name (English) is required.</div>
         </div>
 
-        <!-- Category Icon -->
-        <div class="form-group mb-3">
-          <label for="icon">Category Icon</label>
+        <div class="mb-3">
+          <label for="nameHindi" class="form-label">Category Name (Hindi)</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="nameHindi" 
+            name="nameHindi" 
+            value="<%= category.nameHindi %>" 
+            required>
+          <div class="invalid-feedback">Category Name (Hindi) is required.</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="icon" class="form-label">Category Icon</label>
           <input 
             type="text" 
             class="form-control" 
@@ -85,17 +211,18 @@
           <div class="form-text">Use a single emoji or short icon text (1–5 chars max)<br>
             <span class="text-muted">Suggestions: 💍💎🪢📿🦪⚪️🫶🏻🌙🪞🦢✨</span>
           </div>
-          <div class="invalid-feedback">Category Icon is required.</div>
+          <div class="invalid-feedback">Category Icon is required and must be 1-5 characters.</div>
         </div>
       </div>
 
-      <!-- Additional Information Section -->
       <div class="form-section">
-        <h5 class="text-primary mb-3">Additional Information</h5>
+        <h4 class="section-title">
+          <i class="fas fa-align-left section-icon"></i>
+          Description
+        </h4>
         
-        <!-- Description -->
-        <div class="form-group mb-3">
-          <label for="description">Description</label>
+        <div class="mb-3">
+          <label for="description" class="form-label">Category Description</label>
           <textarea 
             class="form-control" 
             id="description" 
@@ -107,10 +234,9 @@
         </div>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-        <a href="/categories" class="btn btn-secondary me-md-2">Cancel</a>
-        <button type="submit" class="btn btn-success">Update Category</button>
+      <div class="text-center mt-4">
+        <a href="/categories" class="btn btn-outline-secondary me-2"><i class="fas fa-arrow-left me-1"></i> Cancel</a>
+        <button type="submit" class="btn-primary-gold"><i class="fas fa-save me-1"></i> Update Category</button>
       </div>
     </form>
 
@@ -135,7 +261,7 @@
     form.addEventListener('submit', function (event) {
       // Custom validation for icon
       const icon = document.getElementById('icon');
-      if (icon.value.length > 5) {
+      if (icon.value.length === 0 || icon.value.length > 5) {
         icon.setCustomValidity("Icon must be between 1 and 5 characters.");
       } else {
         icon.setCustomValidity("");

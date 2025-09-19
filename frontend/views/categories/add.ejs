@@ -3,60 +3,190 @@
 <%- include('../partials/messages') %>
 
 <style>
-  .info { font-size: 0.9rem; color: #6c757d; }
+  /* Base styles from the provided code */
+  .form-container {
+    background: linear-gradient(135deg, #fff 0%, #fefefe 100%);
+    border: 2px solid #e0bf50;
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 8px 25px rgba(224, 191, 80, 0.1);
+    transition: transform 0.3s ease;
+    margin: 30px auto;
+    max-width: 800px;
+  }
 
-  .add-card { 
-    width: 100%; 
-    max-width: 800px; 
-    margin: 1.5rem auto; 
+  .form-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(224, 191, 80, 0.15);
+  }
+
+  .page-title {
+    color: #2c2c2c;
+    font-weight: 700;
+    font-size: 2.2rem;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .form-section {
+    background: #fff;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+  }
+
+  .section-title {
+    color: #2c2c2c;
+    font-weight: 600;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #e0bf50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-icon {
+    color: #e0bf50;
+    font-size: 1.2rem;
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: #2c2c2c;
+    margin-bottom: 8px;
+    font-size: 1rem;
+  }
+
+  .form-control, .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-bottom: 1rem; /* Keep some bottom margin for spacing */
+  }
+
+  .form-control:focus, .form-select:focus {
+    border-color: #e0bf50;
+    box-shadow: 0 0 0 0.2rem rgba(224, 191, 80, 0.25);
+  }
+
+  .btn-primary-gold {
+    background: linear-gradient(135deg, #e0bf50, #ffc107);
     border: none;
-    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
-  }
-  @media (max-width: 576px) { 
-    .add-card { max-width: 95%; margin: 1rem auto; } 
+    color: #000;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 1rem;
+    margin-top: 10px;
   }
 
-  .was-validated .form-control:invalid {
+  .btn-primary-gold:hover {
+    background: linear-gradient(135deg, #ffc107, #ffed4e);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(224, 191, 80, 0.3);
+    color: #000;
+  }
+
+  /* Specific styles for validation */
+  .was-validated .form-control:invalid, 
+  .was-validated .form-select:invalid {
     border-color: #dc3545;
     box-shadow: none;
   }
+  
+  .invalid-feedback {
+      color: #dc3545;
+      font-size: 0.875em;
+      margin-top: -0.5rem; /* Adjust to bring closer to input */
+      margin-bottom: 1rem;
+  }
 
-  .form-section { margin-bottom: 2rem; }
-  .form-section:last-child { margin-bottom: 1rem; }
+  /* Specific styles for category form */
+  .back-button {
+    margin-left: 15px; /* Adjust as needed */
+    margin-top: 15px; /* Adjust as needed */
+  }
 
-  #icon { text-align: center; font-size: 1.5rem !important; }
+  #icon {
+    text-align: center;
+    font-size: 1.5rem !important;
+    padding: 0.5rem 1rem; /* Adjust padding for better emoji display */
+  }
+
+  .form-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: -0.5rem; /* Adjust spacing */
+    margin-bottom: 1rem;
+  }
+
+  /* Media queries from the provided code */
+  @media (max-width: 768px) {
+    .form-container {
+      padding: 25px;
+      margin: 15px;
+    }
+    
+    .page-title {
+      font-size: 1.8rem;
+    }
+  }
+
+  @keyframes fadeInUp {
+    from { 
+      opacity: 0; 
+      transform: translateY(20px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+
+  .form-container {
+    animation: fadeInUp 0.6s ease-out;
+  }
 </style>
 
 <a type="button" class="btn btn-outline-warning back-button" href="/categories">
   <i class="fa-solid fa-arrow-left"></i>
 </a>
 
-<div class="container">
-  <div class="card p-4 add-card">
-    <h2 class="mb-3">Add Category</h2>
+<div class="container mt-4">
+  <div class="form-container">
+    <h2 class="page-title">Add Category</h2>
     <form id="addCategoryForm" class="needs-validation" action="/categories/add" method="POST" novalidate>
 
-      <!-- Basic Information -->
       <div class="form-section">
-        <h5 class="text-primary mb-3">Basic Information</h5>
+        <h4 class="section-title">
+          <i class="fas fa-info-circle section-icon"></i>
+          Basic Information
+        </h4>
 
-        <!-- Category Name (English) -->
-        <div class="form-group mb-3">
-          <label for="name">Category Name (English)</label>
+        <div class="mb-3">
+          <label for="name" class="form-label">Category Name (English)</label>
           <input type="text" class="form-control" id="name" name="name" required placeholder="e.g. Necklace, Ring">
           <div class="invalid-feedback">Please enter a category name in English.</div>
         </div>
 
-        <!-- Category Name (Hindi) -->
-        <div class="form-group mb-3">
-          <label for="nameHindi">Category Name (Hindi)</label>
+        <div class="mb-3">
+          <label for="nameHindi" class="form-label">Category Name (Hindi)</label>
           <input type="text" class="form-control" id="nameHindi" name="nameHindi" required placeholder="e.g. हार, अंगूठी">
           <div class="invalid-feedback">Please enter a category name in Hindi.</div>
         </div>
 
-        <!-- Category Icon -->
-        <div class="form-group mb-3">
-          <label for="icon">Category Icon</label>
+        <div class="mb-3">
+          <label for="icon" class="form-label">Category Icon</label>
           <input type="text" class="form-control" id="icon" name="icon" placeholder="💍" required maxlength="5">
           <div class="form-text">
             Use a single emoji or short icon (1–5 chars).<br>
@@ -66,20 +196,21 @@
         </div>
       </div>
 
-      <!-- Additional Information -->
       <div class="form-section">
-        <h5 class="text-primary mb-3">Additional Information</h5>
-        <div class="form-group mb-3">
-          <label for="description">Description</label>
+        <h4 class="section-title">
+          <i class="fas fa-align-left section-icon"></i>
+          Description
+        </h4>
+        <div class="mb-3">
+          <label for="description" class="form-label">Category Description</label>
           <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter a brief description..." style="resize: vertical;"></textarea>
           <div class="form-text">Optional: Provide a brief description of this category.</div>
         </div>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-        <a href="/categories" class="btn btn-secondary me-md-2">Cancel</a>
-        <button type="submit" class="btn btn-primary">Add Category</button>
+      <div class="text-center mt-4">
+        <a href="/categories" class="btn btn-outline-secondary me-2"><i class="fas fa-arrow-left me-1"></i> Cancel</a>
+        <button type="submit" class="btn-primary-gold"><i class="fas fa-plus-circle me-1"></i> Add Category</button>
       </div>
 
     </form>
