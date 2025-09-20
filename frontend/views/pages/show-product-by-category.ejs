@@ -2,14 +2,16 @@
 <%- include('../partials/header') %>
 
 <style>
-  /* Category page specific styles */
+  /* ==============================
+     Category Page Styles
+  ============================== */
   .category-hero {
     background: linear-gradient(135deg, rgba(224, 191, 80, 0.1) 0%, rgba(255, 193, 7, 0.05) 100%);
     padding: 2rem 0;
     margin-bottom: 2rem;
     border-bottom: 3px solid rgba(224, 191, 80, 0.2);
   }
-  
+
   .category-title {
     color: #2c2c2c;
     font-size: 2.5rem;
@@ -19,7 +21,7 @@
     position: relative;
     text-transform: capitalize;
   }
-  
+
   .category-title::after {
     content: '';
     position: absolute;
@@ -31,14 +33,14 @@
     background: linear-gradient(90deg, #e0bf50, #ffc107, #ffed4e);
     border-radius: 2px;
   }
-  
+
   .category-subtitle {
     text-align: center;
     color: #6c757d;
     font-size: 1.1rem;
     margin-bottom: 0;
   }
-  
+
   .back-button {
     position: fixed;
     top: 100px;
@@ -59,15 +61,15 @@
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 15px rgba(224, 191, 80, 0.2);
   }
-  
+
   .back-button:hover {
     background: #e0bf50;
     color: #fff;
     transform: scale(1.1);
     box-shadow: 0 6px 20px rgba(224, 191, 80, 0.4);
   }
-  
-  /* View Toggle Button Styles */
+
+  /* Toggle View Button */
   .view-toggle-btn {
     position: fixed;
     top: 100px;
@@ -99,24 +101,25 @@
     transition: transform 0.2s ease;
   }
 
-  /* Hide on desktop */
   @media (min-width: 769px) {
     .view-toggle-btn {
       display: none;
     }
   }
-  
-  /* Product Cards */
+
+  /* ==============================
+     Product Card
+  ============================== */
   .product-card {
     border: none;
     border-radius: 15px;
     overflow: hidden;
-    transition: all 0.4s ease;
     background: #fff;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
     position: relative;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
   }
-  
+
   .product-card::before {
     content: '';
     position: absolute;
@@ -128,32 +131,34 @@
     opacity: 0;
     transition: opacity 0.3s ease;
   }
-  
+
   .product-card:hover::before {
     opacity: 1;
   }
-  
+
   .product-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 20px 40px rgba(224, 191, 80, 0.15);
   }
-  
+
   .product-img {
     height: 220px;
     object-fit: cover;
-    transition: transform 0.4s ease;
+    border-radius: 10px;
+    transition: transform 0.4s ease, height 0.4s ease;
     background: linear-gradient(45deg, #f8f9fa, #e9ecef);
   }
-  
-  .product-card:hover .product-img {
-    transform: scale(1.08);
+
+  .product-card.active .product-img {
+    height: 260px;
+    transform: scale(1.15);
   }
-  
+
   .card-body {
     padding: 1.25rem;
     position: relative;
   }
-  
+
   .card-title {
     font-size: 1.2rem;
     font-weight: 700;
@@ -165,7 +170,7 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  
+
   .card-price {
     font-size: 1.3rem;
     font-weight: 800;
@@ -177,19 +182,19 @@
     display: flex;
     align-items: center;
   }
-  
+
   .price-icon {
     color: #e0bf50;
     margin-right: 0.5rem;
     font-size: 1rem;
   }
-  
+
   .card-footer {
     background: transparent;
     border: none;
     padding: 0 1.25rem 1.25rem;
   }
-  
+
   .btn-view-more {
     background: linear-gradient(135deg, #e0bf50, #ffc107);
     border: none;
@@ -206,81 +211,23 @@
     display: inline-block;
     text-align: center;
   }
-  
+
   .btn-view-more:hover {
     background: linear-gradient(135deg, #ffc107, #ffed4e);
     color: #000;
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(224, 191, 80, 0.3);
   }
-  
-  /* Empty state */
-  .empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    background: linear-gradient(135deg, #f8f9fa, #ffffff);
-    border-radius: 20px;
-    border: 2px dashed rgba(224, 191, 80, 0.3);
-    margin: 2rem 0;
-  }
-  
-  .empty-state-icon {
-    font-size: 4rem;
-    color: rgba(224, 191, 80, 0.5);
-    margin-bottom: 1.5rem;
-  }
-  
-  .empty-state h3 {
-    color: #2c2c2c;
-    font-weight: 700;
-    margin-bottom: 1rem;
-  }
-  
-  .empty-state p {
-    color: #6c757d;
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
-  }
-  
-  .empty-state-btn {
-    background: linear-gradient(135deg, #e0bf50, #ffc107);
-    border: none;
-    color: #000;
-    font-weight: 600;
-    padding: 0.75rem 2rem;
-    border-radius: 25px;
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: all 0.3s ease;
-  }
-  
-  .empty-state-btn:hover {
-    background: linear-gradient(135deg, #ffc107, #ffed4e);
-    color: #000;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(224, 191, 80, 0.3);
-  }
-  
-  /* Product count badge */
-  .product-count {
-    background: linear-gradient(135deg, rgba(224, 191, 80, 0.1), rgba(255, 193, 7, 0.05));
-    color: #2c2c2c;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    display: inline-block;
-    margin-top: 0.5rem;
-    border: 1px solid rgba(224, 191, 80, 0.2);
-  }
-  
-  /* Grid improvements - 4 cards per row on desktop */
+
+  /* ==============================
+     Grid & Responsive
+  ============================== */
   .products-grid {
     gap: 1.5rem;
     justify-content: center;
+    transition: gap 0.5s ease;
   }
-  
+
   .products-grid .col-12,
   .products-grid .col-sm-6,
   .products-grid .col-md-4,
@@ -288,127 +235,18 @@
     display: flex;
     justify-content: center;
     margin-bottom: 1.5rem;
+    transition: flex 0.5s ease, max-width 0.5s ease, padding 0.5s ease;
   }
-  
+
   .products-grid .product-card {
     max-width: 280px;
     width: 100%;
   }
 
-  /* Show toggle button only on mobile */
   @media (max-width: 768px) {
-    .view-toggle-btn {
-      display: block;
-    }
-    
-    /* Enhanced mobile grid layout */
-    .products-grid {
-      gap: 2rem !important;
-      justify-content: center;
-    }
-    
-    .products-grid .col-12,
-    .products-grid .col-sm-6,
-    .products-grid .col-md-4,
-    .products-grid .col-xl-3 {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 2rem;
-      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    /* Default card state on mobile - smaller and faded */
-    .product-card {
-      max-width: 280px !important;
-      width: 85vw !important;
-      transform: scale(0.8);
-      opacity: 0.6;
-      transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-      transform-origin: center center;
-    }
-    
-    /* Center card enhancement - Much bigger and more prominent */
-    .product-card.center-card {
-      transform: scale(1.3) !important;
-      opacity: 1 !important;
-      z-index: 15 !important;
-      box-shadow: 0 30px 70px rgba(224, 191, 80, 0.4) !important;
-      width: 95vw !important;
-      max-width: 340px !important;
-    }
-    
-    .product-card.center-card::before {
-      opacity: 1 !important;
-      height: 6px !important;
-      background: linear-gradient(90deg, #e0bf50, #ffc107, #ffed4e, #e0bf50) !important;
-    }
-    
-    .product-card.center-card .product-img {
-      height: 300px !important;
-      transform: scale(1.02);
-    }
-    
-    .product-card.center-card .card-body {
-      padding: 1.75rem !important;
-    }
-    
-    .product-card.center-card .card-title {
-      font-size: 1.6rem !important;
-      font-weight: 900 !important;
-      margin-bottom: 1.2rem !important;
-      -webkit-line-clamp: 3;
-      color: #1a1a1a !important;
-    }
-    
-    .product-card.center-card .card-price {
-      font-size: 1.8rem !important;
-      margin-bottom: 0.8rem !important;
-    }
-    
-    .product-card.center-card .price-icon {
-      font-size: 1.3rem !important;
-      margin-right: 0.7rem !important;
-    }
-    
-    .product-card.center-card .card-footer {
-      padding: 0 1.75rem 1.75rem !important;
-    }
-    
-    .product-card.center-card .btn-view-more {
-      font-size: 1.1rem !important;
-      padding: 1rem 2.5rem !important;
-      box-shadow: 0 8px 25px rgba(224, 191, 80, 0.5) !important;
-      font-weight: 800 !important;
-      letter-spacing: 1.2px !important;
-      border-radius: 30px !important;
-    }
-    
-    /* Adjacent cards slightly more visible */
-    .product-card.adjacent-card {
-      transform: scale(0.9);
-      opacity: 0.8;
-      z-index: 5;
-    }
-    
-    /* Enhanced view - single column */
-    .products-grid.enhanced-view {
-      gap: 2rem !important;
-    }
-    
-    .products-grid.enhanced-view .col-12,
-    .products-grid.enhanced-view .col-sm-6,
-    .products-grid.enhanced-view .col-md-4,
-    .products-grid.enhanced-view .col-xl-3 {
-      flex: 0 0 100%;
-      max-width: 100%;
-      margin-bottom: 2rem;
-    }
-
-    /* COMPACT VIEW STYLES - 2 cards per row */
     .products-grid.compact-view {
       gap: 1rem !important;
     }
-
     .products-grid.compact-view .col-12,
     .products-grid.compact-view .col-sm-6,
     .products-grid.compact-view .col-md-4,
@@ -418,123 +256,32 @@
       padding: 0 0.5rem;
       margin-bottom: 1rem;
     }
-    
-    /* Compact view card styles */
     .products-grid.compact-view .product-card {
-      max-width: 100% !important;
-      width: 100% !important;
-      transform: scale(1) !important;
-      opacity: 1 !important;
-      transition: all 0.3s ease !important;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+      width: 90vw !important;
+      max-width: 320px !important;
+      min-height: 180px !important;
+      margin: 0 auto 0.8rem !important;
+      padding: 8px !important;
     }
-    
-    .products-grid.compact-view .product-card:hover {
-      transform: translateY(-3px) !important;
-      box-shadow: 0 8px 20px rgba(224, 191, 80, 0.2) !important;
+    .products-grid.compact-view .card-title,
+    .products-grid.compact-view .card-price {
+      display: none !important;
     }
-    
-    /* Remove all mobile scroll zoom classes in compact view */
-    .products-grid.compact-view .product-card.center-card,
-    .products-grid.compact-view .product-card.adjacent-card {
-      transform: scale(1) !important;
-      opacity: 1 !important;
-      z-index: 1 !important;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-      width: 100% !important;
-      max-width: 100% !important;
+    .products-grid.compact-view .btn-view-more {
+      font-size: 0.65rem !important;
+      padding: 0.35rem 0.8rem !important;
+      border-radius: 16px !important;
+      width: auto !important;
+      display: block !important;
+      margin: 0.4rem auto 0 !important;
+      text-align: center;
     }
-    
-    .products-grid.compact-view .product-card.center-card::before {
-      opacity: 0 !important;
-      height: 3px !important;
-    }
-    
     .products-grid.compact-view .product-img {
       height: 140px !important;
-      transition: height 0.3s ease, transform 0.3s ease !important;
     }
-    
-    .products-grid.compact-view .product-card:hover .product-img {
-      transform: scale(1.02) !important;
-    }
-    
-    .products-grid.compact-view .card-body {
-      padding: 0.85rem !important;
-      transition: padding 0.3s ease !important;
-    }
-    
-    .products-grid.compact-view .card-title {
-      font-size: 1rem !important;
-      font-weight: 600 !important;
-      margin-bottom: 0.5rem !important;
-      -webkit-line-clamp: 2 !important;
-      transition: font-size 0.3s ease !important;
-    }
-    
-    .products-grid.compact-view .card-price {
-      font-size: 1.1rem !important;
-      margin-bottom: 0.3rem !important;
-      transition: font-size 0.3s ease !important;
-    }
-    
-    .products-grid.compact-view .price-icon {
-      font-size: 0.9rem !important;
-      margin-right: 0.4rem !important;
-      transition: font-size 0.3s ease !important;
-    }
-    
+    .products-grid.compact-view .card-body,
     .products-grid.compact-view .card-footer {
-      padding: 0 0.85rem 0.85rem !important;
-      transition: padding 0.3s ease !important;
-    }
-    
-    .products-grid.compact-view .btn-view-more {
-      font-size: 0.75rem !important;
-      padding: 0.45rem 1rem !important;
-      border-radius: 20px !important;
-      box-shadow: 0 2px 8px rgba(224, 191, 80, 0.2) !important;
-      font-weight: 600 !important;
-      letter-spacing: 0.3px !important;
-      transition: all 0.3s ease !important;
-    }
-    
-    .products-grid.compact-view .btn-view-more:hover {
-      transform: translateY(-1px) !important;
-      box-shadow: 0 4px 12px rgba(224, 191, 80, 0.3) !important;
-    }
-    
-    /* Smooth transitions for all card elements */
-    .product-img {
-      transition: height 0.7s ease, transform 0.5s ease;
-    }
-    
-    .card-body {
-      transition: padding 0.7s ease;
-    }
-    
-    .card-title {
-      transition: font-size 0.6s ease, font-weight 0.6s ease, margin-bottom 0.6s ease, color 0.6s ease;
-    }
-    
-    .card-price {
-      transition: font-size 0.6s ease, margin-bottom 0.6s ease;
-    }
-    
-    .price-icon {
-      transition: font-size 0.6s ease, margin-right 0.6s ease;
-    }
-    
-    .card-footer {
-      transition: padding 0.7s ease;
-    }
-    
-    .btn-view-more {
-      transition: all 0.6s ease;
-    }
-    
-    .product-card::before {
-      transition: opacity 0.4s ease, height 0.6s ease, background 0.6s ease;
+      padding: 0.5rem !important;
     }
   }
 
@@ -543,86 +290,9 @@
       width: 80vw !important;
       max-width: 260px !important;
     }
-    
-    .product-card.center-card {
-      width: 92vw !important;
-      max-width: 320px !important;
-      transform: scale(1.25) !important;
-    }
-    
-    .product-card.center-card .product-img {
-      height: 280px !important;
-    }
-    
-    .product-card.center-card .card-title {
-      font-size: 1.5rem !important;
-    }
-    
-    .product-card.center-card .card-price {
-      font-size: 1.7rem !important;
-    }
-    
-    .product-card.center-card .btn-view-more {
-      font-size: 1rem !important;
-      padding: 0.9rem 2.2rem !important;
-    }
-    
     .product-img {
       height: 160px;
     }
-    
-    .products-grid.compact-view .product-img {
-      height: 120px !important;
-    }
-    
-    .products-grid.compact-view .card-body {
-      padding: 0.75rem !important;
-    }
-    
-    .products-grid.compact-view .card-title {
-      font-size: 0.95rem !important;
-    }
-    
-    .products-grid.compact-view .card-price {
-      font-size: 1.05rem !important;
-    }
-    
-    .products-grid.compact-view .card-footer {
-      padding: 0 0.75rem 0.75rem !important;
-    }
-    
-    .products-grid.compact-view .btn-view-more {
-      font-size: 0.7rem !important;
-      padding: 0.4rem 0.8rem !important;
-    }
-  }
-
-  /* Very small screens */
-  @media (max-width: 400px) {
-    .product-card.center-card {
-      width: 95vw !important;
-      max-width: 300px !important;
-    }
-    
-    .product-card.center-card .card-title {
-      font-size: 1.4rem !important;
-    }
-    
-    .product-card.center-card .card-price {
-      font-size: 1.6rem !important;
-    }
-  }
-
-  /* Smooth transitions between views */
-  .products-grid {
-    transition: gap 0.5s ease;
-  }
-
-  .products-grid .col-12,
-  .products-grid .col-sm-6,
-  .products-grid .col-md-4,
-  .products-grid .col-xl-3 {
-    transition: flex 0.5s ease, max-width 0.5s ease, padding 0.5s ease;
   }
 </style>
 
@@ -633,7 +303,7 @@
     <i class="fas fa-arrow-left"></i>
   </a>
 
-  <!-- View Toggle Button (Mobile Only) - Next to back button -->
+  <!-- View Toggle Button -->
   <% if (products.length > 0) { %>
   <button class="view-toggle-btn" id="viewToggleBtn" type="button" data-view="enhanced" title="Toggle View">
     <i class="fa-solid fa-expand" id="toggleIcon"></i>
@@ -656,26 +326,22 @@
     </div>
   </div>
 
-  <!-- Main Content -->
+  <!-- Products Grid -->
   <div class="container">
     <% if (products.length === 0) { %>
-      <!-- Empty State -->
-      <div class="empty-state">
-        <div class="empty-state-icon">
-          <i class="fas fa-gem"></i>
-        </div>
+      <div class="empty-state text-center py-5">
+        <i class="fas fa-gem fa-3x mb-3"></i>
         <h3>No Items Found</h3>
-        <p>We're currently updating our <%= category.name.toLowerCase() %> collection. Please check back soon for new arrivals!</p>
-        <a href="/products" class="empty-state-btn">
+        <p>We're currently updating our <%= category.name.toLowerCase() %> collection. Please check back soon!</p>
+        <a href="/products" class="btn btn-outline-warning mt-3">
           <i class="fas fa-home me-2"></i>Browse All Collections
         </a>
       </div>
     <% } else { %>
-      <!-- Products Grid -->
       <div class="row products-grid enhanced-view justify-content-center">
         <% products.forEach(product => { %>
           <div class="col-12 col-sm-6 col-md-4 col-xl-3 product-card-wrapper d-flex justify-content-center">
-            <div class="card product-card h-100">
+            <div class="card product-card h-100" data-index="<%= product._id %>">
               <% if (product.image && product.image !== 'default.png') { %>
                 <img src="<%= product.image %>" class="card-img-top product-img" alt="<%= product.name %>" loading="lazy">
               <% } else { %>
@@ -683,7 +349,7 @@
                   <i class="fas fa-image text-muted" style="font-size: 2rem;"></i>
                 </div>
               <% } %>
-              
+
               <div class="card-body">
                 <h5 class="card-title"><%= product.name %></h5>
                 <div class="card-price">
@@ -697,7 +363,7 @@
                   </span>
                 </div>
               </div>
-              
+
               <div class="card-footer">
                 <a href="/products/<%= product._id %>" class="btn-view-more">
                   <i class="fas fa-eye me-2"></i>View Details
@@ -710,396 +376,160 @@
     <% } %>
   </div>
 
-  <!-- Include Footer -->
   <%- include('../partials/footer') %>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Price update functionality
-      function updatePrices() {
-        const metalsData = JSON.parse(localStorage.getItem("metalsData"));
-        if (!metalsData) {
-          console.warn("No metalsData found in localStorage");
+    // ==============================
+    // Price Update
+    // ==============================
+    function updatePrices() {
+      const metalsData = JSON.parse(localStorage.getItem("metalsData"));
+      if (!metalsData) return;
+
+      const { gold, silver } = metalsData;
+
+      document.querySelectorAll(".price-value").forEach(el => {
+        if (el.dataset.pricetype === "manual") {
+          el.textContent = parseFloat(el.dataset.manual || 0).toFixed(2);
           return;
         }
 
-        const { gold, silver } = metalsData;
+        const metal = el.dataset.metal;
+        const weight = parseFloat(el.dataset.weight) || 1;
+        let ratePerGram = 0;
 
-        document.querySelectorAll(".price-value").forEach(el => {
-          const priceType = el.dataset.pricetype;
-          if (priceType === "manual") {
-            el.textContent = parseFloat(el.dataset.manual || 0).toFixed(2);
-            return;
-          }
+        if (metal === "gold" && gold?.ratePerGram) ratePerGram = gold.ratePerGram;
+        else if (metal === "silver" && silver?.ratePerGram) ratePerGram = silver.ratePerGram;
 
-          const metal = el.dataset.metal;
-          const weight = parseFloat(el.dataset.weight) || 1;
-          let ratePerGram = 0;
-
-          if (metal === "gold" && gold?.ratePerGram) {
-            ratePerGram = gold.ratePerGram;
-          } else if (metal === "silver" && silver?.ratePerGram) {
-            ratePerGram = silver.ratePerGram;
-          }
-
-          const price = ratePerGram * weight;
-          el.textContent = ratePerGram > 0 ? price.toFixed(2) : "0.00";
-        });
-      }
-
-      // Initial price update
-      updatePrices();
-
-      // Update prices when localStorage changes
-      window.addEventListener("storage", e => {
-        if (e.key === "metalsData") updatePrices();
+        const price = ratePerGram * weight;
+        el.textContent = ratePerGram > 0 ? price.toFixed(2) : "0.00";
       });
+    }
 
-      // Periodic refresh
+    document.addEventListener('DOMContentLoaded', function() {
+      updatePrices();
       setInterval(updatePrices, 5000);
 
-      // Smooth scroll for back button if it's an anchor
-      const backButton = document.querySelector('.back-button');
-      if (backButton && backButton.getAttribute('href').startsWith('#')) {
-        backButton.addEventListener('click', function(e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute('href'));
-          if (target) {
-            target.scrollIntoView({ behavior: 'smooth' });
-          }
-        });
+      // Initialize view toggle
+      initializeViewToggle();
+
+      // Initialize mobile scroll zoom
+      initMobileScrollZoom();
+    });
+
+    window.addEventListener("storage", e => { if(e.key==="metalsData") updatePrices(); });
+
+    // ==============================
+    // Mobile Scroll Zoom
+    // ==============================
+    let isScrolling = false;
+    let scrollTimeout;
+
+    function initializeCards() {
+      const cards = document.querySelectorAll('.product-card');
+      cards.forEach((card, index) => card.setAttribute('data-index', index));
+    }
+
+    function updateCardStates() {
+      if(window.innerWidth>768 || currentView!=='enhanced') {
+        document.querySelectorAll('.product-card').forEach(card => card.classList.remove('center-card','adjacent-card'));
+        return;
       }
 
-      // Add loading states to view more buttons
-      document.querySelectorAll('.btn-view-more').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const originalText = this.innerHTML;
-          this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
-          
-          // Reset after a short delay (for visual feedback)
-          setTimeout(() => {
-            this.innerHTML = originalText;
-          }, 1000);
-        });
+      const cards = document.querySelectorAll('.product-card');
+      const viewportHeight = window.innerHeight;
+      const centerY = viewportHeight/2;
+
+      let closestCard=null, closestDistance=Infinity;
+      cards.forEach(card=>{
+        const rect=card.getBoundingClientRect();
+        const cardCenterY=rect.top+rect.height/2;
+        const distanceFromCenter=Math.abs(cardCenterY-centerY);
+        card.classList.remove('center-card','adjacent-card');
+        if(rect.top<viewportHeight && rect.bottom>0 && distanceFromCenter<closestDistance) {
+          closestDistance=distanceFromCenter;
+          closestCard=card;
+        }
       });
 
-      // Lazy loading for images (if needed)
-      if ('loading' in HTMLImageElement.prototype) {
-        const images = document.querySelectorAll('img[loading="lazy"]');
-        images.forEach(img => {
-          img.addEventListener('load', function() {
-            this.style.opacity = '1';
-          });
+      if(closestCard){
+        const closestIndex=parseInt(closestCard.dataset.index);
+        cards.forEach(card=>{
+          const cardIndex=parseInt(card.dataset.index);
+          if(cardIndex===closestIndex) card.classList.add('center-card');
+          else if(Math.abs(cardIndex-closestIndex)===1) card.classList.add('adjacent-card');
         });
       }
-    });
-
-    // ADD THIS JAVASCRIPT TO YOUR EXISTING SCRIPT SECTION
-// Place this code RIGHT AFTER your existing DOMContentLoaded event listener
-
-// Mobile Scroll Zoom Effect
-let isScrolling = false;
-let scrollTimeout;
-
-// Add data-index to each product card for tracking
-function initializeCards() {
-  const cards = document.querySelectorAll('.product-card');
-  cards.forEach((card, index) => {
-    card.setAttribute('data-index', index);
-  });
-}
-
-function updateCardStates() {
-  // Only apply on mobile devices
-  if (window.innerWidth > 768) {
-    // Remove mobile-specific classes on desktop
-    document.querySelectorAll('.product-card').forEach(card => {
-      card.classList.remove('center-card', 'adjacent-card');
-    });
-    return;
-  }
-  
-  const cards = document.querySelectorAll('.product-card');
-  if (cards.length === 0) return;
-  
-  const viewportHeight = window.innerHeight;
-  const centerY = viewportHeight / 2;
-  
-  let closestCard = null;
-  let closestDistance = Infinity;
-  
-  // Find the card closest to the center of the viewport
-  cards.forEach(card => {
-    const rect = card.getBoundingClientRect();
-    const cardCenterY = rect.top + rect.height / 2;
-    const distanceFromCenter = Math.abs(cardCenterY - centerY);
-    
-    // Remove all classes first
-    card.classList.remove('center-card', 'adjacent-card');
-    
-    // Only consider cards that are at least partially visible
-    if (rect.top < viewportHeight && rect.bottom > 0 && distanceFromCenter < closestDistance) {
-      closestDistance = distanceFromCenter;
-      closestCard = card;
     }
-  });
-  
-  // Apply classes based on proximity to center card
-  if (closestCard) {
-    const closestIndex = parseInt(closestCard.dataset.index);
-    
-    cards.forEach((card) => {
-      const cardIndex = parseInt(card.dataset.index);
-      
-      if (cardIndex === closestIndex) {
-        card.classList.add('center-card');
-      } else if (Math.abs(cardIndex - closestIndex) === 1) {
-        card.classList.add('adjacent-card');
+
+    function handleMobileScroll() {
+      clearTimeout(scrollTimeout);
+      if(!isScrolling) {
+        requestAnimationFrame(()=>{updateCardStates();isScrolling=false;});
+        isScrolling=true;
       }
-    });
-  }
-}
+      scrollTimeout=setTimeout(()=>{updateCardStates();},100);
+    }
 
-// Throttled scroll event for better performance
-function handleMobileScroll() {
-  clearTimeout(scrollTimeout);
-  
-  if (!isScrolling) {
-    requestAnimationFrame(function() {
-      updateCardStates();
-      isScrolling = false;
-    });
-    isScrolling = true;
-  }
-  
-  // Fine-tune after scrolling stops
-  scrollTimeout = setTimeout(() => {
-    updateCardStates();
-  }, 100);
-}
-
-// Initialize the mobile scroll effect
-function initMobileScrollZoom() {
-  initializeCards();
-  
-  // Initial state after a small delay to ensure layout is ready
-  setTimeout(() => {
-    updateCardStates();
-  }, 200);
-  
-  // Add scroll listener
-  window.addEventListener('scroll', handleMobileScroll, { passive: true });
-  
-  // Update on resize
-  window.addEventListener('resize', function() {
-    setTimeout(() => {
+    function initMobileScrollZoom() {
       initializeCards();
-      updateCardStates();
-    }, 150);
-  });
-  
-  // Add intersection observer for even better performance
-  if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (window.innerWidth <= 768) {
-          // Add a slight delay to prevent too frequent updates
-          clearTimeout(scrollTimeout);
-          scrollTimeout = setTimeout(updateCardStates, 50);
-        }
-      },
-      {
-        root: null,
-        rootMargin: '-5% 0px -5% 0px',
-        threshold: [0, 0.1, 0.25, 0.5, 0.75, 0.9, 1]
-      }
-    );
-    
-    document.querySelectorAll('.product-card').forEach(card => {
-      observer.observe(card);
-    });
-  }
-}
-
-// Initialize mobile scroll zoom effect
-initMobileScrollZoom();
-
-// Optional: Add smooth scroll to center functionality
-// Uncomment the following code if you want cards to automatically center when scrolling stops
-
-let autoScrollTimeout;
-window.addEventListener('scroll', function() {
-  clearTimeout(autoScrollTimeout);
-  autoScrollTimeout = setTimeout(() => {
-    if (window.innerWidth <= 768) {
-      const centerCard = document.querySelector('.product-card.center-card');
-      if (centerCard) {
-        const rect = centerCard.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const centerY = viewportHeight / 2;
-        const cardCenterY = rect.top + rect.height / 2;
-        const offset = cardCenterY - centerY;
-        
-        // Only auto-scroll if the card is significantly off-center
-        if (Math.abs(offset) > 50) {
-          window.scrollBy({
-            top: offset,
-            behavior: 'smooth'
-          });
-        }
+      setTimeout(()=>updateCardStates(),200);
+      window.addEventListener('scroll',handleMobileScroll,{passive:true});
+      window.addEventListener('resize',()=>{setTimeout(()=>{initializeCards();updateCardStates();},150);});
+      if('IntersectionObserver' in window){
+        const observer=new IntersectionObserver(()=>{if(window.innerWidth<=768){clearTimeout(scrollTimeout);scrollTimeout=setTimeout(updateCardStates,50);}},{
+          root:null,rootMargin:'-5% 0px -5% 0px',threshold:[0,0.1,0.25,0.5,0.75,0.9,1]
+        });
+        document.querySelectorAll('.product-card').forEach(card=>observer.observe(card));
       }
     }
-  }, 1500); // Auto-scroll after 1.5 seconds of no scrolling
-}, { passive: true });
 
-// Enhanced button interactions for center cards
-document.addEventListener('click', function(e) {
-  if (e.target.closest('.btn-view-more') && e.target.closest('.center-card')) {
-    // Add special effect for center card button clicks
-    const button = e.target.closest('.btn-view-more');
-    button.style.transform = 'scale(0.95)';
-    setTimeout(() => {
-      button.style.transform = '';
-    }, 150);
-  }
-});
+    // ==============================
+    // View Toggle
+    // ==============================
+    let currentView='enhanced';
 
-// View Toggle Functionality
-let currentView = 'enhanced'; // Default to enhanced view
+    function initializeViewToggle() {
+      const toggleBtn=document.getElementById('viewToggleBtn');
+      const toggleIcon=document.getElementById('toggleIcon');
+      const productsGrid=document.querySelector('.products-grid');
+      if(!toggleBtn||!productsGrid) return;
 
-function initializeViewToggle() {
-  const toggleBtn = document.getElementById('viewToggleBtn');
-  const toggleIcon = document.getElementById('toggleIcon');
-  const toggleText = document.getElementById('toggleText');
-  const productsGrid = document.querySelector('.products-grid');
-  
-  if (!toggleBtn || !productsGrid) return;
-  
-  // Set initial state
-  productsGrid.classList.add('enhanced-view');
-  
-  toggleBtn.addEventListener('click', function() {
-    if (currentView === 'enhanced') {
-      // Switch to compact view
-      currentView = 'compact';
-      productsGrid.classList.remove('enhanced-view');
-      productsGrid.classList.add('compact-view');
-      
-      toggleIcon.className = 'fas fa-expand-arrows-alt';
-      toggleText.textContent = 'Enhanced';
-      toggleBtn.setAttribute('data-view', 'compact');
-      
-      // Disable scroll zoom in compact view
-      disableScrollZoom();
-      
-    } else {
-      // Switch to enhanced view
-      currentView = 'enhanced';
-      productsGrid.classList.remove('compact-view');
       productsGrid.classList.add('enhanced-view');
-      
-      toggleIcon.className = 'fas fa-th-large';
-      toggleText.textContent = 'Compact';
-      toggleBtn.setAttribute('data-view', 'enhanced');
-      
-      // Re-enable scroll zoom in enhanced view
-      enableScrollZoom();
+
+      toggleBtn.addEventListener('click',function(){
+        if(currentView==='enhanced'){
+          currentView='compact';
+          productsGrid.classList.remove('enhanced-view');
+          productsGrid.classList.add('compact-view');
+          toggleIcon.className='fas fa-expand-arrows-alt';
+          disableScrollZoom();
+        }else{
+          currentView='enhanced';
+          productsGrid.classList.remove('compact-view');
+          productsGrid.classList.add('enhanced-view');
+          toggleIcon.className='fas fa-th-large';
+          enableScrollZoom();
+        }
+        localStorage.setItem('preferredView',currentView);
+        toggleBtn.style.transform='scale(0.95)';
+        setTimeout(()=>toggleBtn.style.transform='',150);
+      });
+
+      const savedView=localStorage.getItem('preferredView');
+      if(savedView&&savedView!==currentView) toggleBtn.click();
     }
-    
-    // Save preference to localStorage
-    localStorage.setItem('preferredView', currentView);
-    
-    // Add button animation
-    toggleBtn.style.transform = 'scale(0.95)';
-    setTimeout(() => {
-      toggleBtn.style.transform = '';
-    }, 150);
-  });
-  
-  // Load saved preference
-  const savedView = localStorage.getItem('preferredView');
-  if (savedView && savedView !== currentView) {
-    toggleBtn.click();
-  }
-}
 
-// Scroll zoom control functions
-function disableScrollZoom() {
-  // Remove all scroll zoom classes
-  document.querySelectorAll('.product-card').forEach(card => {
-    card.classList.remove('center-card', 'adjacent-card');
-  });
-}
-
-function enableScrollZoom() {
-  // Re-trigger scroll zoom update
-  setTimeout(() => {
-    if (window.updateCardStates) {
-      updateCardStates();
+    function disableScrollZoom(){
+      document.querySelectorAll('.product-card').forEach(card=>card.classList.remove('center-card','adjacent-card'));
     }
-  }, 100);
-}
 
-// Update your existing mobile scroll zoom code
-function updateCardStates() {
-  // Only apply on mobile devices and in enhanced view
-  if (window.innerWidth > 768 || currentView !== 'enhanced') {
-    document.querySelectorAll('.product-card').forEach(card => {
-      card.classList.remove('center-card', 'adjacent-card');
-    });
-    return;
-  }
-  
-  // Your existing updateCardStates logic here...
-  const cards = document.querySelectorAll('.product-card');
-  if (cards.length === 0) return;
-  
-  const viewportHeight = window.innerHeight;
-  const centerY = viewportHeight / 2;
-  
-  let closestCard = null;
-  let closestDistance = Infinity;
-  
-  cards.forEach(card => {
-    const rect = card.getBoundingClientRect();
-    const cardCenterY = rect.top + rect.height / 2;
-    const distanceFromCenter = Math.abs(cardCenterY - centerY);
-    
-    card.classList.remove('center-card', 'adjacent-card');
-    
-    if (rect.top < viewportHeight && rect.bottom > 0 && distanceFromCenter < closestDistance) {
-      closestDistance = distanceFromCenter;
-      closestCard = card;
+    function enableScrollZoom(){
+      setTimeout(()=>{updateCardStates();},100);
     }
-  });
-  
-  if (closestCard) {
-    const closestIndex = parseInt(closestCard.dataset.index);
-    
-    cards.forEach((card) => {
-      const cardIndex = parseInt(card.dataset.index);
-      
-      if (cardIndex === closestIndex) {
-        card.classList.add('center-card');
-      } else if (Math.abs(cardIndex - closestIndex) === 1) {
-        card.classList.add('adjacent-card');
-      }
-    });
-  }
-}
-
-// Initialize view toggle when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-  // Your existing code...
-  
-  // Add view toggle initialization
-  setTimeout(() => {
-    initializeViewToggle();
-  }, 100);
-});
   </script>
-  
-  <!-- Bootstrap JS Bundle with Popper -->
+
+  <!-- Bootstrap JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
