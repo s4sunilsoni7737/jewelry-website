@@ -1,5 +1,12 @@
-<%- include('../partials/head') %> 
-<%- include('../partials/header') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+</head>
+<body>
+ 
+  
+  <%- include('../partials/header') %>
 
 <style>
   /* ==============================
@@ -41,25 +48,37 @@
     margin-bottom: 0;
   }
 
-  .back-button {
+  /* Floating Action Buttons */
+  .floating-btn {
     position: fixed;
-    top: 100px;
-    left: 20px;
-    z-index: 1000;
-    width: 45px;
-    height: 45px;
+    width: 42px;
+    height: 42px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.1rem;
     border-radius: 50%;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    z-index: 9999; /* Very high z-index to ensure visibility */
+  }
+  
+  .floating-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Back Button */
+  .back-button {
+    left: 20px;
+    top: 100px;
     background: rgba(255, 255, 255, 0.95);
-    border: 2px solid #e0bf50;
+    border: 2px solid #e0bf50 !important;
     color: #e0bf50;
     text-decoration: none;
-    transition: all 0.3s ease;
     backdrop-filter: blur(10px);
-    box-shadow: 0 4px 15px rgba(224, 191, 80, 0.2);
   }
 
   .back-button:hover {
@@ -69,25 +88,13 @@
     box-shadow: 0 6px 20px rgba(224, 191, 80, 0.4);
   }
 
-  /* Toggle View Button */
+  /* View Toggle Button */
   .view-toggle-btn {
-    position: fixed;
+    right: 20px;
     top: 100px;
-    right: 15px;
-    z-index: 20;
     background: linear-gradient(135deg, #e0bf50, #ffc107);
-    border: none;
     color: #000;
     font-weight: 600;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s ease;
-    cursor: pointer;
   }
 
   .view-toggle-btn:hover {
@@ -108,16 +115,259 @@
   }
 
   /* ==============================
+     Bulk Operations Panel
+  ============================== */
+  .bulk-operations-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, rgba(224, 191, 80, 0.95) 0%, rgba(255, 193, 7, 0.9) 100%);
+    border: 2px solid rgba(224, 191, 80, 0.7);
+    border-radius: 15px 15px 0 0;
+    padding: 1.5rem;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
+    display: none;
+    animation: slideUp 0.3s ease-out;
+    z-index: 1000; /* High z-index to ensure it's above everything */
+    max-height: 60vh;
+    overflow-y: auto;
+    pointer-events: auto; /* Allow interaction with the panel */
+    transform: translateZ(0); /* Force hardware acceleration */
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  
+  @media (min-width: 768px) {
+    .bulk-operations-panel {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+      border-radius: 15px;
+      max-width: 800px;
+      max-height: none;
+      padding: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      animation: slideDown 0.3s ease-out;
+    }
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .bulk-operations-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .bulk-selection-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-right: 1rem;
+  }
+  
+  @media (max-width: 767px) {
+    .bulk-selection-info {
+      width: 100%;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      padding-right: 2rem;
+    }
+  }
+
+  .selected-count {
+    background: linear-gradient(135deg, #e0bf50, #ffc107);
+    color: #000;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .bulk-select-all {
+    background: transparent;
+    border: 2px solid #e0bf50;
+    color: #e0bf50;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .bulk-select-all:hover {
+    background: #e0bf50;
+    color: #000;
+  }
+
+  .bulk-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .bulk-action-btn {
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    margin: 0.25rem;
+    flex: 1 1 auto;
+    min-width: 120px;
+  }
+  
+  @media (max-width: 767px) {
+    .bulk-operations-header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .bulk-selection-info {
+      justify-content: center;
+    }
+
+    .bulk-actions {
+      justify-content: center;
+    }
+
+    .bulk-action-btn {
+      flex: 1 1 calc(50% - 0.5rem);
+      min-width: calc(50% - 0.5rem);
+      margin: 0.25rem;
+      font-size: 0.8rem;
+      padding: 0.5rem 0.5rem;
+    }
+    
+    .bulk-close-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: rgba(0,0,0,0.05);
+    }
+  }
+
+  .bulk-action-btn.danger {
+    background: #dc3545;
+    color: white;
+  }
+
+  .bulk-action-btn.danger:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+  }
+
+  .bulk-action-btn.success {
+    background: #28a745;
+    color: white;
+  }
+
+  .bulk-action-btn.success:hover {
+    background: #218838;
+    transform: translateY(-2px);
+  }
+
+  .bulk-action-btn.warning {
+    background: #ffc107;
+    color: #000;
+  }
+
+  .bulk-action-btn.warning:hover {
+    background: #e0a800;
+    transform: translateY(-2px);
+  }
+
+  .bulk-action-btn.secondary {
+    background: #6c757d;
+    color: white;
+  }
+
+  .bulk-action-btn.secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+  }
+
+  .bulk-close-btn {
+    background: transparent;
+    border: none;
+    color: #6c757d;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  .bulk-close-btn:hover {
+    background: rgba(108, 117, 125, 0.1);
+    color: #495057;
+  }
+
+  /* Bulk Operations Overlay */
+  .bulk-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent; /* Make overlay completely transparent */
+    z-index: 99; /* Below the panel but above the content */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none; /* Don't block interaction with elements below */
+  }
+
+  /* ==============================
      Product Card
   ============================== */
   .product-card {
-    border: none;
-    border-radius: 15px;
-    overflow: hidden;
     background: #fff;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
     position: relative;
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    height: 100%;
+    z-index: 1; /* Normal stacking context */
+  }
+
+  .product-card.selected {
+    box-shadow: 0 8px 25px rgba(224, 191, 80, 0.3);
+    transform: translateY(-5px);
+  }
+
+  .product-card.selected::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #e0bf50, #ffc107, #ffed4e);
+    z-index: 10;
   }
 
   .product-card::before {
@@ -139,6 +389,49 @@
   .product-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 20px 40px rgba(224, 191, 80, 0.15);
+  }
+
+  .product-card.selected:hover {
+    transform: translateY(-8px);
+  }
+
+  .product-checkbox {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 20px;
+    height: 20px;
+    z-index: 2; /* Above the card but below the panel */
+    pointer-events: auto; /* Ensure checkboxes are clickable */
+  }
+
+  .product-status-badges {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 15;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .status-badge {
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    backdrop-filter: blur(5px);
+  }
+
+  .status-badge.featured {
+    background: rgba(255, 193, 7, 0.9);
+    color: #000;
+  }
+
+  .status-badge.out-of-stock {
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
   }
 
   .product-img {
@@ -220,93 +513,194 @@
   }
 
   /* ==============================
-     Grid & Responsive
+     Grid & Responsive - FIXED VERSION
   ============================== */
   .products-grid {
     gap: 1.5rem;
     justify-content: center;
-    transition: gap 0.5s ease;
+    /* Remove transition from here to prevent flickering */
   }
 
-  .products-grid .col-12,
-  .products-grid .col-sm-6,
-  .products-grid .col-md-4,
-  .products-grid .col-xl-3 {
+  /* Enhanced View - Default Bootstrap Grid */
+  .products-grid.enhanced-view {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .products-grid.enhanced-view .col-12,
+  .products-grid.enhanced-view .col-sm-6,
+  .products-grid.enhanced-view .col-md-4,
+  .products-grid.enhanced-view .col-xl-3 {
     display: flex;
     justify-content: center;
     margin-bottom: 1.5rem;
-    transition: flex 0.5s ease, max-width 0.5s ease, padding 0.5s ease;
   }
 
-  .products-grid .product-card {
+  .products-grid.enhanced-view .product-card {
     max-width: 280px;
     width: 100%;
   }
 
-  @media (max-width: 768px) {
+  /* Compact View - Fixed CSS Grid Implementation */
+  .products-grid.compact-view {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    padding: 0 8px !important;
+  }
+  
+  .products-grid.compact-view .col-12,
+  .products-grid.compact-view .col-sm-6,
+  .products-grid.compact-view .col-md-4,
+  .products-grid.compact-view .col-xl-3 {
+    /* Reset all bootstrap column properties immediately */
+    flex: none !important;
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+  }
+  
+  .products-grid.compact-view .product-card {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    height: auto !important;
+  }
+  
+  .products-grid.compact-view .product-img {
+    height: 160px !important;
+    width: 100% !important;
+    object-fit: cover !important;
+  }
+  
+  .products-grid.compact-view .card-body {
+    padding: 0.75rem !important;
+  }
+  
+  .products-grid.compact-view .card-footer {
+    padding: 0 0.75rem 0.75rem !important;
+  }
+  
+  .products-grid.compact-view .card-title {
+    font-size: 1rem !important;
+    margin-bottom: 0.5rem !important;
+    -webkit-line-clamp: 1 !important;
+  }
+  
+  .products-grid.compact-view .card-price {
+    font-size: 1.1rem !important;
+  }
+  
+  .products-grid.compact-view .btn-view-more {
+    font-size: 0.75rem !important;
+    padding: 0.4rem 1rem !important;
+  }
+  
+  @media (max-width: 576px) {
     .products-grid.compact-view {
-      gap: 1rem !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 8px !important;
+      padding: 0 4px !important;
     }
-    .products-grid.compact-view .col-12,
-    .products-grid.compact-view .col-sm-6,
-    .products-grid.compact-view .col-md-4,
-    .products-grid.compact-view .col-xl-3 {
-      flex: 0 0 50%;
-      max-width: 50%;
-      padding: 0 0.5rem;
-      margin-bottom: 1rem;
-    }
-    .products-grid.compact-view .product-card {
-      width: 90vw !important;
-      max-width: 320px !important;
-      min-height: 180px !important;
-      margin: 0 auto 0.8rem !important;
-      padding: 8px !important;
-    }
-    .products-grid.compact-view .card-title,
-    .products-grid.compact-view .card-price {
-      display: none !important;
-    }
-    .products-grid.compact-view .btn-view-more {
-      font-size: 0.65rem !important;
-      padding: 0.35rem 0.8rem !important;
-      border-radius: 16px !important;
-      width: auto !important;
-      display: block !important;
-      margin: 0.4rem auto 0 !important;
-      text-align: center;
-    }
+    
     .products-grid.compact-view .product-img {
       height: 140px !important;
     }
-    .products-grid.compact-view .card-body,
-    .products-grid.compact-view .card-footer {
+    
+    .products-grid.compact-view .card-body {
       padding: 0.5rem !important;
+    }
+    
+    .products-grid.compact-view .card-footer {
+      padding: 0 0.5rem 0.5rem !important;
+    }
+    
+    .products-grid.compact-view .card-title {
+      font-size: 0.9rem !important;
+    }
+    
+    .products-grid.compact-view .btn-view-more {
+      font-size: 0.7rem !important;
+      padding: 0.3rem 0.8rem !important;
     }
   }
 
-  @media (max-width: 576px) {
-    .product-card {
-      width: 80vw !important;
-      max-width: 260px !important;
+  /* Bulk Operations Toggle Button */
+  .bulk-toggle-btn {
+    right: 20px;
+    bottom: 20px;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    font-size: 1.1rem;
+  }
+  
+  .bulk-toggle-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+  }
+
+  @media (max-width: 768px) {
+    .bulk-operations-header {
+      flex-direction: column;
+      align-items: stretch;
     }
-    .product-img {
-      height: 160px;
+
+    .bulk-selection-info {
+      justify-content: center;
     }
+
+    .bulk-actions {
+      justify-content: center;
+    }
+
+    .bulk-action-btn {
+      flex: 1;
+      min-width: 0;
+      justify-content: center;
+    }
+  }
+
+  /* Loading and Success States */
+  .bulk-action-btn.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .bulk-action-btn.loading::after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+    margin-left: 0.5rem;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
   }
 </style>
 
-</head>
 <body>
   <!-- Back Button -->
-  <a href="/products" class="back-button" title="Back to Home">
+  <button onclick="window.history.back()" class="floating-btn back-button" title="Go Back">
     <i class="fas fa-arrow-left"></i>
-  </a>
+  </button>
 
   <!-- View Toggle Button -->
   <% if (products.length > 0) { %>
-  <button class="view-toggle-btn" id="viewToggleBtn" type="button" data-view="enhanced" title="Toggle View">
+  <button class="floating-btn view-toggle-btn" id="viewToggleBtn" type="button" data-view="enhanced" title="Toggle View">
     <i class="fa-solid fa-expand" id="toggleIcon"></i>
+  </button>
+  <% } %>
+
+  <!-- Bulk Operations Toggle Button (Only for Logged In Users) -->
+  <% if (isLoggedIn && products.length > 0) { %>
+  <button class="floating-btn bulk-toggle-btn" id="bulkToggleBtn" type="button" title="Bulk Operations">
+    <i class="fas fa-tasks" id="bulkToggleIcon"></i>
   </button>
   <% } %>
 
@@ -326,6 +720,47 @@
     </div>
   </div>
 
+ <!-- Replace the bulk operations panel section in your EJS file with this: -->
+
+<!-- Bulk Operations Panel (Only for Logged In Users) -->
+<% if (isLoggedIn && products.length > 0) { %>
+  <div class="container">
+    <!-- Bulk Operations Overlay -->
+    <div class="bulk-overlay" id="bulkOverlay"></div>
+  
+    <!-- Bulk Operations Panel -->
+    <div class="bulk-operations-panel" id="bulkOperationsPanel">
+      <div class="bulk-operations-header">
+        <div class="bulk-selection-info">
+          <div class="selected-count">
+            <i class="fas fa-check-circle"></i>
+            <span id="selectedCount">0</span> Selected
+          </div>
+          <button id="bulkSelectAll" class="bulk-select-all">Select All</button>
+        </div>
+        <div class="bulk-actions">
+          <button class="bulk-action-btn warning" id="bulkFeaturedBtn" title="Mark as Featured">
+            <i class="fas fa-star"></i> <span class="btn-text">Featured</span>
+          </button>
+          <button class="bulk-action-btn success" id="bulkInStockBtn" title="Mark as In Stock">
+            <i class="fas fa-box"></i> <span class="btn-text">In Stock</span>
+          </button>
+          <button class="bulk-action-btn secondary" id="bulkOutStockBtn" title="Mark as Out of Stock">
+            <i class="fas fa-box-open"></i> <span class="btn-text">Out of Stock</span>
+          </button>
+          <button class="bulk-action-btn danger" id="bulkDeleteBtn" title="Delete Selected">
+            <i class="fas fa-trash"></i> <span class="btn-text">Delete</span>
+          </button>
+        </div>
+        <!-- Single close button positioned properly -->
+        <button class="bulk-close-btn" id="bulkCloseBtn" aria-label="Close bulk operations">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <% } %>
+
   <!-- Products Grid -->
   <div class="container">
     <% if (products.length === 0) { %>
@@ -341,7 +776,27 @@
       <div class="row products-grid enhanced-view justify-content-center">
         <% products.forEach(product => { %>
           <div class="col-12 col-sm-6 col-md-4 col-xl-3 product-card-wrapper d-flex justify-content-center">
-            <div class="card product-card h-100" data-index="<%= product._id %>">
+            <div class="card product-card h-100" data-index="<%= product._id %>" data-product-id="<%= product._id %>">
+              
+              <!-- Selection Controls -->
+<% if (isLoggedIn) { %>
+  <input type="checkbox" class="product-checkbox" data-product-id="<%= product._id %>" style="display: none;">
+  
+  <!-- Status Badges -->
+  <div class="product-status-badges">
+    <% if (product.featured) { %>
+      <span class="status-badge featured">
+        <i class="fas fa-star"></i> Featured
+      </span>
+    <% } %>
+    <% if (!product.inStock) { %>
+      <span class="status-badge out-of-stock">
+        <i class="fas fa-times-circle"></i> Out of Stock
+      </span>
+    <% } %>
+  </div>
+<% } %>
+
               <% if (product.image && product.image !== 'default.png') { %>
                 <img src="<%= product.image %>" class="card-img-top product-img" alt="<%= product.name %>" loading="lazy">
               <% } else { %>
@@ -378,158 +833,496 @@
 
   <%- include('../partials/footer') %>
 
-  <script>
+  <!-- Hidden input for login state -->
+  <input type="hidden" id="loginState" value="<%= typeof isLoggedIn !== 'undefined' ? isLoggedIn : 'false' %>">
+  
+  <script> 
+
+    // ==============================
+    // Global Variables
+    // ==============================
+    var isLoggedIn = document.getElementById('loginState').value === 'true';
+    let bulkMode = false;
+    let selectedProducts = new Set();
+    let currentView = 'enhanced';
+    
     // ==============================
     // Price Update
     // ==============================
     function updatePrices() {
       const metalsData = JSON.parse(localStorage.getItem("metalsData"));
       if (!metalsData) return;
-
+    
       const { gold, silver } = metalsData;
-
+    
       document.querySelectorAll(".price-value").forEach(el => {
         if (el.dataset.pricetype === "manual") {
           el.textContent = parseFloat(el.dataset.manual || 0).toFixed(2);
           return;
         }
-
+    
         const metal = el.dataset.metal;
         const weight = parseFloat(el.dataset.weight) || 1;
         let ratePerGram = 0;
-
+    
         if (metal === "gold" && gold?.ratePerGram) ratePerGram = gold.ratePerGram;
         else if (metal === "silver" && silver?.ratePerGram) ratePerGram = silver.ratePerGram;
-
+    
         const price = ratePerGram * weight;
         el.textContent = ratePerGram > 0 ? price.toFixed(2) : "0.00";
       });
     }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      updatePrices();
-      setInterval(updatePrices, 5000);
-
-      // Initialize view toggle
-      initializeViewToggle();
-
-      // Initialize mobile scroll zoom
-      initMobileScrollZoom();
-    });
-
-    window.addEventListener("storage", e => { if(e.key==="metalsData") updatePrices(); });
-
+    
     // ==============================
-    // Mobile Scroll Zoom
+    // View Toggle Fix
     // ==============================
-    let isScrolling = false;
-    let scrollTimeout;
-
-    function initializeCards() {
-      const cards = document.querySelectorAll('.product-card');
-      cards.forEach((card, index) => card.setAttribute('data-index', index));
-    }
-
-    function updateCardStates() {
-      if(window.innerWidth>768 || currentView!=='enhanced') {
-        document.querySelectorAll('.product-card').forEach(card => card.classList.remove('center-card','adjacent-card'));
-        return;
-      }
-
-      const cards = document.querySelectorAll('.product-card');
-      const viewportHeight = window.innerHeight;
-      const centerY = viewportHeight/2;
-
-      let closestCard=null, closestDistance=Infinity;
-      cards.forEach(card=>{
-        const rect=card.getBoundingClientRect();
-        const cardCenterY=rect.top+rect.height/2;
-        const distanceFromCenter=Math.abs(cardCenterY-centerY);
-        card.classList.remove('center-card','adjacent-card');
-        if(rect.top<viewportHeight && rect.bottom>0 && distanceFromCenter<closestDistance) {
-          closestDistance=distanceFromCenter;
-          closestCard=card;
-        }
-      });
-
-      if(closestCard){
-        const closestIndex=parseInt(closestCard.dataset.index);
-        cards.forEach(card=>{
-          const cardIndex=parseInt(card.dataset.index);
-          if(cardIndex===closestIndex) card.classList.add('center-card');
-          else if(Math.abs(cardIndex-closestIndex)===1) card.classList.add('adjacent-card');
-        });
-      }
-    }
-
-    function handleMobileScroll() {
-      clearTimeout(scrollTimeout);
-      if(!isScrolling) {
-        requestAnimationFrame(()=>{updateCardStates();isScrolling=false;});
-        isScrolling=true;
-      }
-      scrollTimeout=setTimeout(()=>{updateCardStates();},100);
-    }
-
-    function initMobileScrollZoom() {
-      initializeCards();
-      setTimeout(()=>updateCardStates(),200);
-      window.addEventListener('scroll',handleMobileScroll,{passive:true});
-      window.addEventListener('resize',()=>{setTimeout(()=>{initializeCards();updateCardStates();},150);});
-      if('IntersectionObserver' in window){
-        const observer=new IntersectionObserver(()=>{if(window.innerWidth<=768){clearTimeout(scrollTimeout);scrollTimeout=setTimeout(updateCardStates,50);}},{
-          root:null,rootMargin:'-5% 0px -5% 0px',threshold:[0,0.1,0.25,0.5,0.75,0.9,1]
-        });
-        document.querySelectorAll('.product-card').forEach(card=>observer.observe(card));
-      }
-    }
-
-    // ==============================
-    // View Toggle
-    // ==============================
-    let currentView='enhanced';
-
     function initializeViewToggle() {
-      const toggleBtn=document.getElementById('viewToggleBtn');
-      const toggleIcon=document.getElementById('toggleIcon');
-      const productsGrid=document.querySelector('.products-grid');
-      if(!toggleBtn||!productsGrid) return;
-
-      productsGrid.classList.add('enhanced-view');
-
-      toggleBtn.addEventListener('click',function(){
-        if(currentView==='enhanced'){
-          currentView='compact';
+      const viewToggleBtn = document.getElementById('viewToggleBtn');
+      const productsGrid = document.querySelector('.products-grid');
+      const toggleIcon = document.getElementById('toggleIcon');
+      
+      if (!viewToggleBtn || !productsGrid) return;
+      
+      viewToggleBtn.addEventListener('click', function() {
+        if (currentView === 'enhanced') {
+          currentView = 'compact';
           productsGrid.classList.remove('enhanced-view');
           productsGrid.classList.add('compact-view');
-          toggleIcon.className='fas fa-expand-arrows-alt';
-          disableScrollZoom();
-        }else{
-          currentView='enhanced';
+          toggleIcon.className = 'fa-solid fa-compress';
+          this.title = 'Switch to Enhanced View';
+        } else {
+          currentView = 'enhanced';
           productsGrid.classList.remove('compact-view');
           productsGrid.classList.add('enhanced-view');
-          toggleIcon.className='fas fa-th-large';
-          enableScrollZoom();
+          toggleIcon.className = 'fa-solid fa-expand';
+          this.title = 'Switch to Compact View';
         }
-        localStorage.setItem('preferredView',currentView);
-        toggleBtn.style.transform='scale(0.95)';
-        setTimeout(()=>toggleBtn.style.transform='',150);
       });
-
-      const savedView=localStorage.getItem('preferredView');
-      if(savedView&&savedView!==currentView) toggleBtn.click();
     }
-
-    function disableScrollZoom(){
-      document.querySelectorAll('.product-card').forEach(card=>card.classList.remove('center-card','adjacent-card'));
+    
+    // ==============================
+    // Bulk Operations
+    // ==============================
+    function initializeBulkOperations() {
+      if (!isLoggedIn) return;
+    
+      const bulkToggleBtn = document.getElementById('bulkToggleBtn');
+      const bulkPanel = document.getElementById('bulkOperationsPanel');
+      const bulkCloseBtns = document.querySelectorAll('.bulk-close-btn'); // Handle multiple close buttons
+      const bulkSelectAll = document.getElementById('bulkSelectAll');
+      const checkboxes = document.querySelectorAll('.product-checkbox');
+      const selectedCountEl = document.getElementById('selectedCount');
+    
+      // Toggle bulk mode
+      if (bulkToggleBtn) {
+        bulkToggleBtn.addEventListener('click', function() {
+          toggleBulkMode();
+        });
+      }
+    
+      // Handle all close buttons
+      bulkCloseBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          toggleBulkMode(false);
+        });
+      });
+    
+      // Select all functionality
+      if (bulkSelectAll) {
+        bulkSelectAll.addEventListener('click', function() {
+          const allSelected = selectedProducts.size === checkboxes.length;
+          
+          if (allSelected) {
+            selectedProducts.clear();
+            checkboxes.forEach(cb => {
+              cb.checked = false;
+              cb.closest('.product-card').classList.remove('selected');
+            });
+            bulkSelectAll.innerHTML = 'Select All';
+          } else {
+            checkboxes.forEach(cb => {
+              const productId = cb.dataset.productId;
+              selectedProducts.add(productId);
+              cb.checked = true;
+              cb.closest('.product-card').classList.add('selected');
+            });
+            bulkSelectAll.innerHTML = 'Deselect All';
+          }
+          
+          updateBulkUI();
+        });
+      }
+    
+      // Individual checkbox handling
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+          const productId = this.dataset.productId;
+          const card = this.closest('.product-card');
+          
+          if (this.checked) {
+            selectedProducts.add(productId);
+            card.classList.add('selected');
+          } else {
+            selectedProducts.delete(productId);
+            card.classList.remove('selected');
+          }
+          
+          updateBulkUI();
+        });
+      });
+    
+      // Bulk action buttons - Fixed event listeners
+      const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+      const bulkFeaturedBtn = document.getElementById('bulkFeaturedBtn');
+      const bulkInStockBtn = document.getElementById('bulkInStockBtn');
+      const bulkOutStockBtn = document.getElementById('bulkOutStockBtn');
+      
+      if (bulkDeleteBtn) bulkDeleteBtn.addEventListener('click', handleBulkDelete);
+      if (bulkFeaturedBtn) bulkFeaturedBtn.addEventListener('click', handleBulkFeatured);
+      if (bulkInStockBtn) bulkInStockBtn.addEventListener('click', () => handleBulkStock(true));
+      if (bulkOutStockBtn) bulkOutStockBtn.addEventListener('click', () => handleBulkStock(false));
     }
-
-    function enableScrollZoom(){
-      setTimeout(()=>{updateCardStates();},100);
+    
+    function toggleBulkMode(force = null) {
+      const bulkPanel = document.getElementById('bulkOperationsPanel');
+      const overlay = document.getElementById('bulkOverlay');
+      const checkboxes = document.querySelectorAll('.product-checkbox');
+      const bulkToggleIcon = document.getElementById('bulkToggleIcon');
+    
+      bulkMode = force !== null ? force : !bulkMode;
+      
+      if (bulkMode) {
+        bulkPanel.style.display = 'block';
+        if (overlay) {
+          overlay.style.display = 'block';
+          setTimeout(() => overlay.style.opacity = '1', 10);
+        }
+        checkboxes.forEach(cb => {
+          cb.style.display = 'block';
+        });
+        if (bulkToggleIcon) {
+          bulkToggleIcon.className = 'fas fa-times';
+        }
+      } else {
+        bulkPanel.style.display = 'none';
+        if (overlay) {
+          overlay.style.opacity = '0';
+          setTimeout(() => overlay.style.display = 'none', 300);
+        }
+        checkboxes.forEach(cb => {
+          cb.checked = false;
+          cb.style.display = 'none';
+          cb.closest('.product-card')?.classList.remove('selected');
+        });
+        if (bulkToggleIcon) {
+          bulkToggleIcon.className = 'fas fa-tasks';
+        }
+        selectedProducts.clear();
+        updateBulkUI();
+      }
     }
-  </script>
+    
+    function updateBulkUI() {
+      const selectedCountEl = document.getElementById('selectedCount');
+      const bulkSelectAll = document.getElementById('bulkSelectAll');
+      const bulkActions = document.querySelectorAll('.bulk-action-btn');
+      const checkboxes = document.querySelectorAll('.product-checkbox');
+    
+      const selectedCount = selectedProducts.size;
+      const totalCount = checkboxes.length;
+      
+      if (selectedCountEl) selectedCountEl.textContent = selectedCount;
+    
+      if (bulkSelectAll) {
+        if (selectedCount === 0) {
+          bulkSelectAll.innerHTML = 'Select All';
+        } else if (selectedCount === totalCount) {
+          bulkSelectAll.innerHTML = 'Deselect All';
+        } else {
+          bulkSelectAll.innerHTML = 'Select All';
+        }
+      }
+    
+      bulkActions.forEach(btn => {
+        btn.disabled = selectedCount === 0;
+        btn.style.opacity = selectedCount === 0 ? '0.5' : '1';
+        btn.style.cursor = selectedCount === 0 ? 'not-allowed' : 'pointer';
+      });
+    }
+    
+    // ==============================
+    // Fixed Bulk Action Handlers
+    // ==============================
+// ==============================
+// Fixed Bulk Operations with Better Error Handling
+// ==============================
+
+function handleBulkDelete() {
+  if (selectedProducts.size === 0) {
+    alert('No products selected for deletion.');
+    return;
+  }
+
+  if (!confirm(`Delete ${selectedProducts.size} product(s)? This action cannot be undone.`)) {
+    return;
+  }
+
+  const btn = document.getElementById('bulkDeleteBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  fetch('/api/bulk/delete', {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // Include session cookies
+    body: JSON.stringify({ 
+      productIds: Array.from(selectedProducts) 
+    })
+  })
+  .then(response => {
+    console.log('Delete response status:', response.status);
+    
+    // Handle non-JSON error responses
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error('Authentication required - please login again');
+      }
+      if (response.status === 403) {
+        throw new Error('Insufficient permissions - seller access required');
+      }
+      return response.text().then(text => {
+        let errorMsg;
+        try {
+          const errorData = JSON.parse(text);
+          errorMsg = errorData.error || errorData.message || text;
+        } catch (e) {
+          errorMsg = text || `HTTP Error ${response.status}`;
+        }
+        throw new Error(errorMsg);
+      });
+    }
+    return response.json();
+  })
+  .then(result => {
+    if (result.success) {
+      // Remove deleted products from DOM
+      selectedProducts.forEach(id => {
+        const card = document.querySelector(`[data-product-id="${id}"]`);
+        if (card) {
+          const wrapper = card.closest('.col-12, .col-sm-6, .col-md-4, .col-xl-3, .product-card-wrapper');
+          if (wrapper) wrapper.remove();
+        }
+      });
+      selectedProducts.clear();
+      updateBulkUI();
+      
+      // Check if no products left
+      const remainingProducts = document.querySelectorAll('.product-card');
+      if (remainingProducts.length === 0) {
+        location.reload(); // Reload to show empty state
+      } else {
+        alert(`Successfully deleted ${result.deletedCount} product(s)`);
+      }
+    } else {
+      throw new Error(result.error || 'Delete operation failed');
+    }
+  })
+  .catch(error => {
+    console.error('Delete error:', error);
+    if (error.message.includes('login') || error.message.includes('Authentication')) {
+      alert('Your session has expired. Please login again.');
+      window.location.href = '/products/login';
+    } else if (error.message.includes('permission') || error.message.includes('seller')) {
+      alert('You need seller permissions to perform this action.');
+    } else {
+      alert('Failed to delete products: ' + error.message);
+    }
+  })
+  .finally(() => {
+    btn.classList.remove('loading');
+    btn.disabled = selectedProducts.size === 0;
+  });
+}
+
+function handleBulkFeatured() {
+  if (selectedProducts.size === 0) {
+    alert('No products selected');
+    return;
+  }
+
+  const btn = document.getElementById('bulkFeaturedBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  fetch('/api/bulk/update', {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // Include session cookies
+    body: JSON.stringify({ 
+      productIds: Array.from(selectedProducts),
+      updates: { featured: true }
+    })
+  })
+  .then(response => {
+    console.log('Featured update response status:', response.status);
+    
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error('Authentication required - please login again');
+      }
+      if (response.status === 403) {
+        throw new Error('Insufficient permissions - seller access required');
+      }
+      return response.text().then(text => {
+        let errorMsg;
+        try {
+          const errorData = JSON.parse(text);
+          errorMsg = errorData.error || errorData.message || text;
+        } catch (e) {
+          errorMsg = text || `HTTP Error ${response.status}`;
+        }
+        throw new Error(errorMsg);
+      });
+    }
+    return response.json();
+  })
+  .then(result => {
+    if (result.success) {
+      alert(`Successfully marked ${result.modifiedCount} product(s) as featured`);
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      throw new Error(result.error || 'Featured update failed');
+    }
+  })
+  .catch(error => {
+    console.error('Featured update error:', error);
+    if (error.message.includes('login') || error.message.includes('Authentication')) {
+      alert('Your session has expired. Please login again.');
+      window.location.href = '/products/login';
+    } else if (error.message.includes('permission') || error.message.includes('seller')) {
+      alert('You need seller permissions to perform this action.');
+    } else {
+      alert('Failed to update featured status: ' + error.message);
+    }
+  })
+  .finally(() => {
+    btn.classList.remove('loading');
+    btn.disabled = selectedProducts.size === 0;
+  });
+}
+
+function handleBulkStock(inStock) {
+  if (selectedProducts.size === 0) {
+    alert('No products selected');
+    return;
+  }
+
+  const btnId = inStock ? 'bulkInStockBtn' : 'bulkOutStockBtn';
+  const btn = document.getElementById(btnId);
+  
+  if (!btn) {
+    console.error('Button not found:', btnId);
+    return;
+  }
+  
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  const payload = { 
+    productIds: Array.from(selectedProducts),
+    updates: { 
+      inStock: Boolean(inStock) 
+    }
+  };
+  
+  console.log('Sending stock update:', payload);
+
+  fetch('/api/bulk/update', {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // Include session cookies
+    body: JSON.stringify(payload)
+  })
+  .then(response => {
+    console.log('Stock update response status:', response.status);
+    
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error('Authentication required - please login again');
+      }
+      if (response.status === 403) {
+        throw new Error('Insufficient permissions - seller access required');
+      }
+      return response.text().then(text => {
+        let errorMsg;
+        try {
+          const errorData = JSON.parse(text);
+          errorMsg = errorData.error || errorData.message || text;
+        } catch (e) {
+          errorMsg = text || `HTTP Error ${response.status}`;
+        }
+        throw new Error(errorMsg);
+      });
+    }
+    
+    return response.json();
+  })
+  .then(result => {
+    console.log('Stock update success result:', result);
+    
+    if (result.success) {
+      const count = result.modifiedCount || 0;
+      const status = inStock ? 'in stock' : 'out of stock';
+      alert(`Successfully marked ${count} product(s) as ${status}`);
+      
+      // Refresh the page to show changes
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } else {
+      throw new Error(result.error || result.message || 'Update failed');
+    }
+  })
+  .catch(error => {
+    console.error('Stock update error:', error);
+    
+    // Handle authentication errors
+    if (error.message.includes('login') || error.message.includes('Authentication')) {
+      alert('Your session has expired. Please login again.');
+      window.location.href = '/products/login';
+    } else if (error.message.includes('permission') || error.message.includes('seller')) {
+      alert('You need seller permissions to perform this action.');
+    } else {
+      alert('Failed to update stock status: ' + error.message);
+    }
+  })
+  .finally(() => {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  });
+}
+    // ==============================
+    // Initialization
+    // ==============================
+    document.addEventListener('DOMContentLoaded', function() {
+      updatePrices();
+      initializeBulkOperations();
+      initializeViewToggle();
+    
+      // Auto-update prices every 30 seconds
+      setInterval(updatePrices, 30000);
+    });
+    </script>
+
 
   <!-- Bootstrap JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+</html>

@@ -10,6 +10,9 @@ const asyncHandler = (fn) => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch(next);
 };
 
+// Import isOwner middleware
+const isOwner = require('../middleware/isOwner');
+
 const mongoose = require('mongoose');
 const Product = require('../models/Product');
 const User = require('../models/user');
@@ -757,8 +760,9 @@ router.get('/category/:name', asyncHandler(async (req, res) => {
       category,
       products: formattedProducts,
       currentShop,
-      session: req.session
-    });
+      session: req.session,
+      isLoggedIn: !!req.session.userId 
+   });
 
   } catch (error) {
     console.error('Error fetching products by category:', error);

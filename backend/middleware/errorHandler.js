@@ -19,7 +19,9 @@ function errorHandler(error, req, res, next) {
     '/robots.txt',
     '/sitemap.xml',
     '/apple-touch-icon',
-    '/browserconfig.xml'
+    '/browserconfig.xml',
+    '/css/category.css',
+    '/js/category.js'
   ];
   
   const shouldIgnore = ignoredPaths.some(path => req.originalUrl.startsWith(path));
