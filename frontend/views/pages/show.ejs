@@ -563,19 +563,40 @@
     const productCategory = "<%= product.category?.name || 'N/A' %>";
     const productMetal = "<%= product.material || 'N/A' %>";
     const productWeight = "<%= product.specifications?.weight || 'N/A' %> gm";
-    const productPrice = "<%= product.isManualPrice ? product.price.toFixed(2) : '0.00' %>";
+    
+    // Get the displayed price from the page
+    const priceElement = document.querySelector('.price .main-price');
+    const productPrice = priceElement ? priceElement.textContent.trim() : '₹0.00';
+    
     const productURL = window.location.href;
     const adminPhone = "918000597887"; // correct format: country code + number
 
-    const message = `Hello Admin,
+    // Bilingual message in English and Hindi
+    const message = `*🌐 English:*
+Hello Admin,
 I am ${userName}.
 I have a query about this product:
-Product: ${productName}
-Category: ${productCategory}
-Metal: ${productMetal}
-Weight: ${productWeight}
-Price: ₹${productPrice}
-Link: ${productURL}`;
+
+*Product Details:*
+📦 Product: ${productName}
+🏷️ Category: ${productCategory}
+✨ Metal: ${productMetal}
+⚖️ Weight: ${productWeight}
+💰 Price: ₹${productPrice}
+🔗 Link: ${productURL}
+
+*🌍 हिंदी:*
+नमस्ते एडमिन,
+मेरा नाम ${userName} है।
+मुझे इस उत्पाद के बारे में जानकारी चाहिए:
+
+*उत्पाद विवरण:*
+📦 उत्पाद: ${productName}
+🏷️ श्रेणी: ${productCategory}
+✨ धातु: ${productMetal}
+⚖️ वजन: ${productWeight}
+💰 कीमत: ₹${productPrice}
+🔗 लिंक: ${productURL}`;
 
     // Encode the message
     const encodedMessage = encodeURIComponent(message);

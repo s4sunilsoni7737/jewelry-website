@@ -22,11 +22,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
-// Request logging middleware
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
-  next();
-});
+// Request logging middleware (disabled for production)
+// app.use((req, res, next) => {
+//   console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+//   next();
+// });
 
 // Trust proxy (important for Render/Heroku so secure cookies work)
 app.set('trust proxy', 1);
@@ -52,16 +52,8 @@ app.use(generalLimiter); // Apply rate limiting to all routes
 app.use(express.static(path.join(__dirname, '../frontend/public')));
 
 // =================== BULK ROUTES - MOVED AFTER SESSION ===================
-// Bulk operations debug middleware
+// Bulk operations middleware with proper error handling
 app.use('/api/bulk', (req, res, next) => {
-  console.log('=== BULK SESSION DEBUG ===');
-  console.log('Session exists:', !!req.session);
-  console.log('Session ID:', req.sessionID);
-  console.log('User ID:', req.session?.userId);
-  console.log('Is Seller:', req.session?.isSeller);
-  console.log('Cookies:', req.headers.cookie);
-  console.log('==========================');
-  
   // Check if session exists
   if (!req.session) {
     console.error('❌ No session object found');
@@ -98,17 +90,7 @@ app.use('/api/bulk', bulkRoutes);
 // API routes (some may not require authentication)
 app.use('/api/metal-rates', apiLimiter, require('./routes/api/metalRates'));
 
-// Log all registered routes
-console.log('Registered routes:');
-app._router.stack.forEach((middleware) => {
-  if (middleware.name === 'router') {
-    middleware.handle.stack.forEach((handler) => {
-      if (handler.route && handler.route.path) {
-        console.log(`- ${Object.keys(handler.route.methods).join(', ').toUpperCase()} ${middleware.regexp.toString().replace('/^', '').replace('\\/?', '').replace('(?=\\/|$)/i', '')}${handler.route.path}`);
-      }
-    });
-  }
-});
+// Route registration logging disabled
 
 // Apply authentication middleware to all routes that come after this point
 app.use(isLoggedIn);

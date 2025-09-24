@@ -1359,34 +1359,8 @@ button[data-bs-target="#userInfoModal"]:hover {
 <%- include("../partials/footer") %>
 
 <script>
-  // Language state management
-  let currentLanguage = localStorage.getItem('language') || 'en';
-  
-  // Language translations
-  const translations = {
-    en: {
-      toggleText: 'हिं',
-      toggleTooltip: 'Switch to Hindi'
-    },
-    hi: {
-      toggleText: 'EN',
-      toggleTooltip: 'Switch to English'
-    }
-  };
-
-  // Initialize language on page load
+  // Slider functionality
   document.addEventListener("DOMContentLoaded", () => {
-    // Apply saved language
-    if (currentLanguage === 'hi') {
-      switchToHindi();
-    } else {
-      switchToEnglish();
-    }
-    
-    // Update toggle button
-    updateToggleButton();
-
-    // Slider functionality
     const slider = document.getElementById('featuredSlider');
     const slideLeft = document.getElementById('slide-left');
     const slideRight = document.getElementById('slide-right');
@@ -1405,125 +1379,54 @@ button[data-bs-target="#userInfoModal"]:hover {
 
     // Price update functionality
     function updateRates() {
-      const metalsData = JSON.parse(localStorage.getItem("metalsData"));
-      if (!metalsData) {
-        console.warn("No metalsData found in localStorage");
-        return;
-      }
+  const metalsData = JSON.parse(localStorage.getItem("metalsData"));
+  if (!metalsData) {
+    console.warn("No metalsData found in localStorage");
+    return;
+  }
 
-      const { gold, silver } = metalsData;
+  const { gold, silver } = metalsData;
 
-      // 🔹 Current Rates (10g for display only, without GST)
-      const goldTotal10g = gold?.ratePerGram ? (gold.ratePerGram * 10) : 0;
-      const silverTotal10g = silver?.ratePerGram ? (silver.ratePerGram * 10) : 0;
+  // Current Rates (10g for display only, without GST)
+  const goldTotal10g = gold?.ratePerGram ? (gold.ratePerGram * 10) : 0;
+  const silverTotal10g = silver?.ratePerGram ? (silver.ratePerGram * 10) : 0;
 
-      document.querySelectorAll(".goldRate").forEach(el => {
-        el.textContent = `₹ ${goldTotal10g.toFixed(2)}`;
-      });
-      document.querySelectorAll(".silverRate").forEach(el => {
-        el.textContent = `₹ ${silverTotal10g.toFixed(2)}`;
-      });
-
-      // 🔹 Update each product card dynamically
-      document.querySelectorAll(".price").forEach(el => {
-        const priceType = el.dataset.pricetype;
-        if (priceType === "manual") {
-          el.textContent = `₹ ${parseFloat(el.dataset.manual || 0).toFixed(2)}`;
-          return; // ✅ Skip auto price calculation
-        }
-
-        const metal = el.dataset.metal;
-        const weight = parseFloat(el.dataset.weight) || 1;
-
-        let ratePerGram = 0;
-
-        if (metal === "gold" && gold?.ratePerGram) {
-          ratePerGram = gold.ratePerGram;
-        } else if (metal === "silver" && silver?.ratePerGram) {
-          ratePerGram = silver.ratePerGram;
-        }
-
-        const price = ratePerGram * weight;
-        el.textContent = ratePerGram > 0 ? `₹ ${price.toFixed(2)}` : "₹ 0.00";
-      });
-    }
-
-    // First run
-    updateRates();
-
-    // Update if metalsData changes from another tab or page
-    window.addEventListener("storage", e => {
-      if (e.key === "metalsData") updateRates();
-    });
-
-    // Periodic refresh (fallback)
-    setInterval(updateRates, 5000);
+  // Update rate displays
+  document.querySelectorAll(".goldRate").forEach(el => {
+    el.textContent = `₹ ${goldTotal10g.toFixed(2)}`;
+  });
+  document.querySelectorAll(".silverRate").forEach(el => {
+    el.textContent = `₹ ${silverTotal10g.toFixed(2)}`;
   });
 
-  // Language toggle function
-  function toggleLanguage() {
-    const elements = document.querySelectorAll('*');
-    
-    // Add fade out effect
-    elements.forEach(el => el.classList.add('lang-transition'));
-    
-    setTimeout(() => {
-      if (currentLanguage === 'en') {
-        switchToHindi();
-        currentLanguage = 'hi';
-      } else {
-        switchToEnglish();
-        currentLanguage = 'en';
-      }
-      
-      // Save to localStorage
-      localStorage.setItem('language', currentLanguage);
-      
-      // Update toggle button
-      updateToggleButton();
-    }, 150);
-  }
-
-  function switchToHindi() {
-    document.querySelectorAll('[data-hi]').forEach(element => {
-      const hindiText = element.getAttribute('data-hi');
-      if (hindiText) {
-        element.textContent = hindiText;
-        element.classList.add('hindi');
-      }
-    });
-  }
-
-  function switchToEnglish() {
-    document.querySelectorAll('[data-en]').forEach(element => {
-      const englishText = element.getAttribute('data-en');
-      if (englishText) {
-        element.textContent = englishText;
-        element.classList.remove('hindi');
-      }
-    });
-  }
-
-  function updateToggleButton() {
-    const toggleBtn = document.getElementById('languageToggle');
-    const translation = translations[currentLanguage];
-    
-    toggleBtn.textContent = translation.toggleText;
-    toggleBtn.setAttribute('title', translation.toggleTooltip);
-    
-    // Add visual feedback
-    toggleBtn.style.transform = 'scale(1.1)';
-    setTimeout(() => {
-      toggleBtn.style.transform = 'scale(1)';
-    }, 200);
-  }
-
-  // Keyboard shortcut for language toggle (Ctrl + L)
-  document.addEventListener('keydown', function(e) {
-    if (e.ctrlKey && e.key === 'l') {
-      e.preventDefault();
-      toggleLanguage();
+  // Update each product card dynamically
+  document.querySelectorAll(".price").forEach(el => {
+    const priceType = el.dataset.pricetype;
+    if (priceType === "manual") {
+      const manualPrice = parseFloat(el.dataset.manual || 0);
+      el.textContent = `₹ ${manualPrice.toFixed(2)}`;
+      return; // Skip auto price calculation
     }
+
+    // Auto price calculation
+    const metal = (el.dataset.metal || '').toLowerCase();
+    const weight = parseFloat(el.dataset.weight) || 1;
+    
+    let ratePerGram = 0;
+    if (metal === 'gold') {
+      ratePerGram = gold?.ratePerGram || 0;
+    } else if (metal === 'silver') {
+      ratePerGram = silver?.ratePerGram || 0;
+    }
+    
+    const calculatedPrice = ratePerGram * weight;
+    el.textContent = `₹ ${calculatedPrice.toFixed(2)}`;
+  });
+}
+
+    // Initialize rates and update every 5 seconds
+    updateRates();
+    setInterval(updateRates, 5000);
   });
 
   // User Info Modal functionality
@@ -1531,7 +1434,6 @@ button[data-bs-target="#userInfoModal"]:hover {
     const userInfoModal = new bootstrap.Modal(document.getElementById('userInfoModal'));
     userInfoModal.show();
   }
-
   // AGGRESSIVE fix for modal shaking
   document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('userInfoModal');

@@ -86,37 +86,68 @@
           <hr class="divider w-50 mx-auto mb-5">
 
           <div class="d-flex flex-column flex-md-row gap-4 justify-content-center align-items-center fade-in-delayed">
-
-            <!-- Shop 1 -->
-            <form action="/products/select-shop" method="POST">
+            <!-- Auto-submit form for Kesar Chand -->
+            <form id="autoSubmitForm" action="/products/select-shop" method="POST">
               <input type="hidden" name="shopId" value="688308407d30574f52400dcc">
-              
+              <button type="submit" class="btn shop-btn" style="display: none;"></button>
+            </form>
+
+            <!-- Visible shop buttons -->
+            <form action="/products/select-shop" method="POST" class="shop-form">
+              <input type="hidden" name="shopId" value="688308407d30574f52400dcc">
+              <button type="submit" class="btn shop-btn shop-premium">
+                <div class="d-flex align-items-center justify-content-center">
+                  <i class="fas fa-crown me-3 crown-icon"></i>
+                  <div class="text-start">
+                    <div class="fw-bold">Kesar Chand</div>
+                    <small class="shop-label">Premium Jewelers</small>
+                  </div>
+                </div>
+              </button>
+            </form>
+
+            <form action="/products/select-shop" method="POST" class="shop-form">
+              <input type="hidden" name="shopId" value="688308407d30574f52400dcd">
               <button type="submit" class="btn shop-btn">
                 <div class="d-flex align-items-center justify-content-center">
                   <i class="fas fa-store me-3"></i>
                   <div class="text-start">
-                    <div class="fw-bold">kesarchand</div>
+                    <div class="fw-bold">Manish Jewelers</div>
                     <small class="shop-label">Jewelry Boutique</small>
                   </div>
                 </div>
               </button>
             </form>
-
-            <!-- Shop 2 -->
-            <form action="/products/select-shop" method="POST">
-              <input type="hidden" name="shopId" value="688308407d30574f52400dcd">
-              <button type="submit" class="btn shop-btn shop-premium">
-                <div class="d-flex align-items-center justify-content-center">
-                  <i class="fas fa-store me-3"></i>
-                  <div class="text-start">
-                    <div class="fw-bold">manish</div>
-                    <small class="shop-label">Jewelry Boutique</small>
-                  </div>
-                </div>
-              </button>
-            </form>
-
           </div>
+          
+          <script>
+            // Set language to Hindi and handle shop selection
+            document.addEventListener('DOMContentLoaded', function() {
+              // Ensure language is set to Hindi
+              if (localStorage.getItem('language') !== 'hi') {
+                localStorage.setItem('language', 'hi');
+                if (typeof applyHindiTranslations === 'function') {
+                  applyHindiTranslations();
+                } else {
+                  window.location.reload();
+                }
+              }
+              
+              // Auto-submit the form
+              setTimeout(() => {
+                const form = document.getElementById('autoSubmitForm');
+                if (form) form.submit();
+              }, 100);
+              
+              // Handle manual shop selection
+              document.querySelectorAll('.shop-form').forEach(form => {
+                form.addEventListener('submit', function() {
+                  localStorage.setItem('language', 'hi');
+                  return true;
+                });
+              });
+            });
+          </script>
 
           <div class="mt-5 pt-4 border-top border-warning fade-in-delayed">
             <small class="text-muted">

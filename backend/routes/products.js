@@ -194,6 +194,7 @@ router.get('/', asyncHandler(async (req, res) => {
       currentShop,
       goldRate: rates.gold,
       silverRate: rates.silver,
+      rates: rates,
       admin: adminUser,
       user
     });

@@ -302,27 +302,30 @@
    async function refreshMainRates() {
     const btn = document.getElementById('mainRefreshBtn');
     btn.classList.add('loading');
-
-    // Keep your old behavior
-    updateWebsiteRates();
-    fetchAPIRate('gold');
-    fetchAPIRate('silver');
-
-    // Also trigger backend refresh
+    
     try {
-        const res = await fetch('/api/metal-rates/refresh', { method: 'POST' });
-        const data = await res.json();
-
-        if (data.success) {
-            console.log('Rates updated on server');
+        // Get rates from localStorage
+        const storedMetals = localStorage.getItem('metalsData');
+        if (storedMetals) {
+            const parsedMetals = JSON.parse(storedMetals);
+            
+            // Update the UI with stored rates
+            if (parsedMetals.gold && parsedMetals.silver) {
+                metalsData = parsedMetals;
+                updateWebsiteRates();
+                showBootstrapAlert('clientMessage', 'Rates refreshed from local storage!', 'success');
+            } else {
+                showBootstrapAlert('clientMessage', 'No valid rates found in local storage', 'warning');
+            }
         } else {
-            console.warn('Server refresh failed');
+            showBootstrapAlert('clientMessage', 'No rates found in local storage', 'warning');
         }
-    } catch (err) {
-        console.error('Error refreshing rates on server:', err);
+    } catch (error) {
+        console.error('Error refreshing rates:', error);
+        showBootstrapAlert('clientMessage', 'Error refreshing rates', 'danger');
+    } finally {
+        btn.classList.remove('loading');
     }
-
-    setTimeout(() => btn.classList.remove('loading'), 1000);
 }
 
 
