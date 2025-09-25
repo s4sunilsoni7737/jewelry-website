@@ -1044,7 +1044,14 @@ button[data-bs-target="#userInfoModal"]:hover {
           <div class="col-6 col-md-4 col-lg-3">
             <div class="card shadow-sm h-100">
               <% if (product.image && product.image !== 'default.png') { %>
-                <img src="<%= product.image %>" class="card-img-top" alt="<%= product.name %>">
+                <!-- <img src="<%= product.image %>" class="card-img-top" alt="<%= product.name %>"> -->
+                <img 
+                src="<%= product.image.replace('/upload/', '/upload/w_50,q_20/') %>" 
+                data-src="<%= product.image.replace('/upload/', '/upload/w_500/') %>" 
+                class="lazy card-img-top" 
+                alt="<%= product.name %>" 
+                width="300" height="300" />
+
               <% } else { %>
                 <img src="/images/default.png" class="card-img-top" alt="No image available">
               <% } %>
@@ -1359,6 +1366,52 @@ button[data-bs-target="#userInfoModal"]:hover {
 <%- include("../partials/footer") %>
 
 <script>
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+  const lazyImages = document.querySelectorAll("img.lazy");
+
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        img.src = img.dataset.src;  // swap preview with real image
+        img.classList.remove("lazy");
+        obs.unobserve(img);
+      }
+    });
+  });
+
+  lazyImages.forEach(img => observer.observe(img));
+});
+
+
+
+
+  // Ultra-fast smooth scroll function
+  function smoothScrollTo(element, target, duration = 50) {
+    const start = element.scrollLeft;
+    const change = target - start;
+    const startTime = performance.now();
+    
+    function animateScroll(currentTime) {
+      const timeElapsed = currentTime - startTime;
+      let progress = timeElapsed / duration;
+      
+      // Linear easing for maximum speed
+      if (progress >= 1) {
+        element.scrollLeft = target;
+        return;
+      }
+      
+      element.scrollLeft = start + change * progress;
+      requestAnimationFrame(animateScroll);
+    }
+    
+    requestAnimationFrame(animateScroll);
+  }
+
   // Slider functionality
   document.addEventListener("DOMContentLoaded", () => {
     const slider = document.getElementById('featuredSlider');
@@ -1367,13 +1420,16 @@ button[data-bs-target="#userInfoModal"]:hover {
     
     if (slideLeft && slideRight && slider) {
       const cardWidth = 250 + 16; // card width + gap
+      const scrollDistance = cardWidth * 2; // Scroll 2 cards at a time
       
       slideLeft.addEventListener('click', () => {
-        slider.scrollBy({ left: -cardWidth * 2, behavior: 'smooth' });
+        const target = Math.max(slider.scrollLeft - scrollDistance, 0);
+        smoothScrollTo(slider, target);
       });
       
       slideRight.addEventListener('click', () => {
-        slider.scrollBy({ left: cardWidth * 2, behavior: 'smooth' });
+        const target = Math.min(slider.scrollLeft + scrollDistance, slider.scrollWidth - slider.clientWidth);
+        smoothScrollTo(slider, target);
       });
     }
 
