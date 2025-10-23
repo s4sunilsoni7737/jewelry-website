@@ -10,7 +10,7 @@
 
     <div class="row text-center g-3 g-md-4 justify-content-center">
       <% if (categories && categories.length > 0) { %>
-        <% categories.forEach(category => { %>
+        <% categories.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).forEach(category => { %>
           <div class="col-6 col-sm-4 col-md-3 col-lg-2">
             <div class="card p-3 p-md-4 border-0 shadow-sm rounded-4 h-100 position-relative category-card">
               <a href="/products/category/<%= category.name %>" class="text-decoration-none text-dark">
@@ -25,6 +25,7 @@
                 <p class="text-muted small d-none d-md-block">
                   <%= category.description %>
                 </p>
+                
               </a>
 
               <% if (session && session.isSeller) { %>
@@ -120,6 +121,7 @@
 
 <style>
   /* Category card hover effects */
+ */
   .category-card {
     transition: all 0.3s ease;
     border: 2px solid transparent;
